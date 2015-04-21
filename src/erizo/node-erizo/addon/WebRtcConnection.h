@@ -82,9 +82,12 @@ class WebRtcConnection : public node::ObjectWrap, erizo::WebRtcConnectionEventLi
    * Returns the state.
    */
   static void getCurrentState(const v8::FunctionCallbackInfo<v8::Value>& args);
-
+  /*
+   * Request a PLI packet from this WRTCConn
+   */
   static void generatePLIPacket(const v8::FunctionCallbackInfo<v8::Value>& args);
 
+  static void setFeedbackReports(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   static void getStats(const v8::FunctionCallbackInfo<v8::Value>& args);  
 

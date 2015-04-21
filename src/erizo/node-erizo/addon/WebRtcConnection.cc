@@ -24,6 +24,7 @@ void WebRtcConnection::Init(Handle<Object> exports) {
   NODE_SET_PROTOTYPE_METHOD(tpl, "getCurrentState", getCurrentState);
   NODE_SET_PROTOTYPE_METHOD(tpl, "getStats", getStats);
   NODE_SET_PROTOTYPE_METHOD(tpl, "generatePLIPacket", generatePLIPacket);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "setFeedbackReports", setFeedbackReports);
 
   constructor.Reset(isolate, tpl->GetFunction());
   exports->Set(String::NewFromUtf8(isolate, "WebRtcConnection"), tpl->GetFunction());
@@ -186,6 +187,16 @@ void WebRtcConnection::generatePLIPacket(const v8::FunctionCallbackInfo<v8::Valu
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
   erizo::WebRtcConnection *me = obj->me;
   me->sendPLI();
+}
+
+void WebRtcConnection::setFeedbackReports(const v8::FunctionCallbackInfo<v8::Value>& args){
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
+
+  WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
+  erizo::WebRtcConnection *me = obj->me;
+  bool v = (args[0]->ToBoolean())->BooleanValue();
+  me->setFeedbackReports(v);
 }
 
 void WebRtcConnection::notifyEvent(erizo::WebRTCEvent event, const std::string& message) {
