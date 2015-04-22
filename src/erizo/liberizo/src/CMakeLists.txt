@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
 project (ERIZO_ALL)
 option (COMPILE_EXAMPLES "COMPILE_EXAMPLES" OFF)
