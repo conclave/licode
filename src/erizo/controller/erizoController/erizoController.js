@@ -3,8 +3,8 @@ var crypto = require('crypto');
 var rpcPublic = require('./rpc/rpcPublic');
 var ST = require('./Stream');
 var http = require('http');
-var server = http.createServer();
-var io = require('socket.io').listen(server, {log:false});
+var server = http.createServer().listen(8080);
+var io = require('socket.io').listen(server);
 var config = require('./../../licode_config');
 var Permission = require('./permission');
 var Getopt = require('node-getopt');
@@ -91,10 +91,6 @@ var controller = require('./roomController');
 // Logger
 var log = logger.getLogger("ErizoController");
 
-server.listen(8080);
-
-io.set('log level', 0);
-
 var nuveKey = GLOBAL.config.nuve.superserviceKey;
 
 var WARNING_N_ROOMS = GLOBAL.config.erizoController.warning_n_rooms;
@@ -140,7 +136,7 @@ var sendMsgToRoom = function (room, type, arg) {
     for (id in sockets) {
         if (sockets.hasOwnProperty(id)) {
             log.info('Sending message to', sockets[id], 'in room ', room.id);
-            io.sockets.socket(sockets[id]).emit(type, arg);
+            io.sockets.to(sockets[id]).emit(type, arg);
         }
     }
 };
@@ -322,7 +318,7 @@ var listen = function () {
                                         room.controller.removePublisher(streamId);
 
                                         for (var s in room.sockets) {
-                                            var streams = io.sockets.socket(room.sockets[s]).streams;
+                                            var streams = io.sockets.to(room.sockets[s]).streams;
                                             var index = streams.indexOf(streamId);
                                             if (index !== -1) {
                                                 streams.splice(index, 1);
@@ -400,14 +396,14 @@ var listen = function () {
             for (id in sockets) {
                 if (sockets.hasOwnProperty(id)) {
                     log.info('Sending dataStream to', sockets[id], 'in stream ', msg.id);
-                    io.sockets.socket(sockets[id]).emit('onDataStream', msg);
+                    io.sockets.to(sockets[id]).emit('onDataStream', msg);
                 }
             }
         });
 
         socket.on('signaling_message', function (msg) {
             if (socket.room.p2p) {
-                io.sockets.socket(msg.peerSocket).emit('signaling_message_peer', {streamId: msg.streamId, peerSocket: socket.id, msg: msg.msg});
+                io.sockets.to(msg.peerSocket).emit('signaling_message_peer', {streamId: msg.streamId, peerSocket: socket.id, msg: msg.msg});
             } else {
                 socket.room.controller.processSignaling(msg.streamId, socket.id, msg.msg);
             }
@@ -424,7 +420,7 @@ var listen = function () {
             for (id in sockets) {
                 if (sockets.hasOwnProperty(id)) {
                     log.info('Sending new attributes to', sockets[id], 'in stream ', msg.id);
-                    io.sockets.socket(sockets[id]).emit('onUpdateAttributeStream', msg);
+                    io.sockets.to(sockets[id]).emit('onUpdateAttributeStream', msg);
                 }
             }
         });
@@ -551,7 +547,7 @@ var listen = function () {
 
                 if (socket.room.p2p) {
                     var s = stream.getSocket();
-                    io.sockets.socket(s).emit('publish_me', {streamId: options.streamId, peerSocket: socket.id});
+                    io.sockets.to(s).emit('publish_me', {streamId: options.streamId, peerSocket: socket.id});
 
                 } else {
                     socket.room.controller.addSubscriber(socket.id, options.streamId, options, function (signMess) {
@@ -777,7 +773,7 @@ exports.getUsersInRoom = function (room, callback) {
 
     for (id in sockets) {
         if (sockets.hasOwnProperty(id)) {
-            users.push(io.sockets.socket(sockets[id]).user);
+            users.push(io.sockets.to(sockets[id]).user);
         }
     }
 
@@ -802,7 +798,7 @@ exports.deleteUser = function (user, room, callback) {
 
     for (id in sockets) {
         if (sockets.hasOwnProperty(id)) {
-            if (io.sockets.socket(sockets[id]).user.name === user){
+            if (io.sockets.to(sockets[id]).user.name === user){
                 sockets_to_delete.push(sockets[id]);
             }
         }
@@ -810,8 +806,8 @@ exports.deleteUser = function (user, room, callback) {
 
     for (var s in sockets_to_delete) {
 
-        log.info('Deleted user', io.sockets.socket(sockets_to_delete[s]).user.name);
-        io.sockets.socket(sockets_to_delete[s]).disconnect();
+        log.info('Deleted user', io.sockets.to(sockets_to_delete[s]).user.name);
+        io.sockets.to(sockets_to_delete[s]).disconnect();
     }
 
     if (sockets_to_delete.length !== 0) {
