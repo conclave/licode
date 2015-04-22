@@ -17,8 +17,8 @@ if(DOXYGEN_FOUND)
 endif(DOXYGEN_FOUND)
 
 #global variable
-set(THIRD_PARTY_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../../build/libdeps/build/include/")
-set(THIRD_PARTY_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../../build/libdeps/build/lib/")
+set(THIRD_PARTY_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../../../../local/include/")
+set(THIRD_PARTY_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../../../../local/lib/")
 
 #erizo
 add_subdirectory("${ERIZO_ALL_SOURCES}erizo")
