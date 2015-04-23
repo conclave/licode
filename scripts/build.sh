@@ -21,7 +21,7 @@ BUILD_ADDON=false
 
 build_liberizo(){
   local DIR="${BUILD_DIR}/liberizo"
-  local SRC_DIR="${ROOT_DIR}/src/erizo/liberizo/"
+  local SRC_DIR="${ROOT_DIR}/src/erizo/liberizo"
   mkdir -p ${DIR} && pushd ${DIR}
   cmake ${SRC_DIR} && make
   [[ -s liberizo.so ]] && cp -av liberizo.so ${PREFIX_DIR}/lib || echo "Failed to produce liberizo.so"
@@ -29,7 +29,10 @@ build_liberizo(){
 }
 
 build_addon(){
-  echo "${FUNCNAME}: not completed"
+  local SRC_DIR="${ROOT_DIR}/src/erizo/addon"
+  pushd ${SRC_DIR}
+  PREFIX_DIR=${PREFIX_DIR} node-gyp rebuild
+  popd
 }
 
 build() {
