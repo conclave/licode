@@ -1,3 +1,13 @@
+install_opus(){
+  local VERSION="1.1"
+  mkdir -p ${BUILD_DIR} && cd ${BUILD_DIR}
+  curl -O http://downloads.xiph.org/releases/opus/opus-${VERSION}.tar.gz
+  tar xf opus-${VERSION}.tar.gz
+  cd opus-${VERSION}
+  ./configure --prefix=${PREFIX_DIR}
+  make -s V=0 && make install
+}
+
 install_libav(){
   local VERSION="11.1"
   local DIR="libav-${VERSION}"
@@ -6,9 +16,9 @@ install_libav(){
   local MD5SUM="ce788f04693d63ae168b696eac8ca888"
   mkdir -p ${BUILD_DIR} && cd ${BUILD_DIR}
   [[ ! -s ${SRC} ]] && curl -O ${URL}
-  if ! (echo "${MD5SUM} ${SRC}" | md5sum --check); then
+  if ! (echo "${MD5SUM} ${SRC}" | md5sum --check) ; then
     rm -f ${SRC} && curl -O ${URL} # re-try
-    [ (echo "${MD5SUM} ${SRC}" | md5sum --check) ] || (echo "${SRC} corrupted." && return 1)
+    (echo "${MD5SUM} ${SRC}" | md5sum --check) || (echo "${SRC} corrupted." && return 1)
   fi
   rm -rf ${DIR}
   tar xf ${SRC}
@@ -16,8 +26,7 @@ install_libav(){
   [[ "${ENABLE_GPL}" == "true" ]] && \
   PKG_CONFIG_PATH=${PREFIX_DIR}/lib/pkgconfig ./configure --prefix=${PREFIX_DIR} --enable-shared --enable-libvpx --enable-libopus --enable-gpl --enable-libx264 || \
   PKG_CONFIG_PATH=${PREFIX_DIR}/lib/pkgconfig ./configure --prefix=${PREFIX_DIR} --enable-shared --enable-libvpx --enable-libopus && \
-  make -j4 -s V=0 && \
-  make install
+  make -j4 -s V=0 && make install
 }
 
 install_libnice(){
@@ -59,7 +68,9 @@ install_libuv(){
   [[ ! -s ${UV_DST} ]] && wget -c ${UV_SRC} -O ${UV_DST}
   tar xf ${UV_DST}
   cd libuv-${UV_VERSION} && make
+  ##make_install:
+  cp -av include/* ${PREFIX_DIR}/include
   local symbol=$(readelf -d ./libuv.so | grep soname | sed 's/.*\[\(.*\)\]/\1/g')
   ln -s libuv.so ${symbol}
-  cd .. && rm -f libuv && ln -s libuv-${UV_VERSION} libuv
+  cp -dv libuv.so ${symbol} ${PREFIX_DIR}/lib
 }
