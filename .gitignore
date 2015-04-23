@@ -8,3 +8,5 @@ site
 extras/vagrant/.vagrant
 extras/vagrant/licode/
 local/
+etc/default
+run/

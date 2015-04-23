@@ -1,4 +1,6 @@
-var config = {}
+'use strict';
+
+var config = {};
 
 /*********************************************************
  COMMON CONFIGURATION
@@ -25,10 +27,8 @@ config.cloudProvider.secretAccessKey = '';
  NUVE CONFIGURATION
 **********************************************************/
 config.nuve = {};
-config.nuve.dataBaseURL = "localhost/nuvedb"; // default value: 'localhost/nuvedb'
+config.nuve.dataBaseURL = 'localhost/nuvedb'; // default value: 'localhost/nuvedb'
 config.nuve.superserviceID = '_auto_generated_ID_'; // default value: ''
-config.nuve.superserviceKey = '_auto_generated_KEY_'; // default value: ''
-config.nuve.testErizoController = 'localhost:8080'; // default value: 'localhost:8080'
 
 /*********************************************************
  ERIZO CONTROLLER CONFIGURATION
@@ -66,9 +66,9 @@ config.erizoController.interval_time_keepAlive = 1000; // default value: 1000
 
 // Roles to be used by services
 config.erizoController.roles =
-{"presenter": {"publish": true, "subscribe": true, "record": true},
-    "viewer": {"subscribe": true},
-    "viewerWithData": {"subscribe": true, "publish": {"audio": false, "video": false, "screen": false, "data": true}}}; // default value: {"presenter":{"publish": true, "subscribe":true, "record":true}, "viewer":{"subscribe":true}, "viewerWithData":{"subscribe":true, "publish":{"audio":false,"video":false,"screen":false,"data":true}}}
+{'presenter': {'publish': true, 'subscribe': true, 'record': true},
+    'viewer': {'subscribe': true},
+    'viewerWithData': {'subscribe': true, 'publish': {'audio': false, 'video': false, 'screen': false, 'data': true}}}; // default value: {"presenter":{"publish": true, "subscribe":true, "record":true}, "viewer":{"subscribe":true}, "viewerWithData":{"subscribe":true, "publish":{"audio":false,"video":false,"screen":false,"data":true}}}
 
 // If true, erizoController sends report to rabbitMQ queue "report_handler" 
 config.erizoController.report = {
