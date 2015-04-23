@@ -10,7 +10,7 @@ endfunction(test_lib)
 project (ERIZO_EXAMPLES)
 file(GLOB_RECURSE ERIZO_EXAMPLES_SOURCES ${ERIZO_EXAMPLES_SOURCE_DIR}/*.cpp ${ERIZO_EXAMPLES_SOURCE_DIR}/*.h)
 add_executable(hsam ${ERIZO_EXAMPLES_SOURCES})
-include_directories(${ERIZO_EXAMPLES_SOURCE_DIR}/../erizo)
+include_directories("${ERIZO_EXAMPLES_SOURCE_DIR}/..")
 link_directories(${ERIZO_EXAMPLES_SOURCE_DIR}/../../build)
 
 set (BOOST_LIBS thread regex system)
