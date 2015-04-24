@@ -1,8 +1,10 @@
+/* global require, module, Buffer */
 'use strict';
 
 (function () {
   var crypto = require('crypto');
   var http = require('http');
+  var https = require('https');
   var URL = require('url');
   var hmacMethod = 'sha1';
 
@@ -16,7 +18,7 @@
 
   function NuveClient (spec) {
     var dest = URL.parse(spec.url);
-
+    var request;
     var params = {
       service: spec.service,
       key: spec.key,
@@ -24,6 +26,19 @@
       port: dest.port,
       protocol: dest.protocol
     };
+
+    switch (params.protocol) {
+      case undefined:
+      case '':
+      case 'http:':
+        request = http.request;
+        break;
+      case 'https:':
+        request = https.request;
+        break;
+      default:
+        throw 'Protocol not supported.';
+    }
 
     this.send = function send (callback, callbackError, method, body, url, username, role) {
       var timestamp = new Date().getTime();
@@ -68,7 +83,7 @@
         opt['Content-type'] = 'application/json';
       }
 
-      http.request(opt, function (response) {
+      request(opt, function (response) {
         var data = '';
         response.on('data', function (chunk) {
           data += chunk;
@@ -147,5 +162,5 @@
     return new NuveClient(spec);
   };
 
-  exports = module.exports = NuveClient;
+  module.exports = NuveClient;
 }());
