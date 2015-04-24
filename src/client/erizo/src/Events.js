@@ -1,4 +1,3 @@
-/*global L*/
 /*
  * Class EventDispatcher provides event handling to sub-classes.
  * It is inherited from Publisher, Room, etc.
@@ -23,8 +22,8 @@ Erizo.EventDispatcher = function (spec) {
 
     // It removes an available event listener.
     that.removeEventListener = function (eventType, listener) {
-        var index;
-        index = spec.dispatcher.eventListeners[eventType].indexOf(listener);
+        if (!spec.dispatcher.eventListeners[eventType]) {return;}
+        var index = spec.dispatcher.eventListeners[eventType].indexOf(listener);
         if (index !== -1) {
             spec.dispatcher.eventListeners[eventType].splice(index, 1);
         }
@@ -33,13 +32,10 @@ Erizo.EventDispatcher = function (spec) {
     // It dispatch a new event to the event listeners, based on the type 
     // of event. All events are intended to be LicodeEvents.
     that.dispatchEvent = function (event) {
-        var listener;
-        L.Logger.debug("Event: " + event.type);
-        for (listener in spec.dispatcher.eventListeners[event.type]) {
-            if (spec.dispatcher.eventListeners[event.type].hasOwnProperty(listener)) {
-                spec.dispatcher.eventListeners[event.type][listener](event);
-            }
-        }
+        if (!spec.dispatcher.eventListeners[event.type]) {return;}
+        spec.dispatcher.eventListeners[event.type].map(function (listener) {
+            listener(event);
+        });
     };
 
     return that;
