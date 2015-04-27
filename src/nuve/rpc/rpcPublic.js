@@ -12,16 +12,13 @@ var log = require('../../common/logger')('RPCPublic');
  */
 exports.deleteToken = function (id, callback) {
     tokenRegistry.removeOldTokens();
-
-    tokenRegistry.getToken(id, function (token) {
-
-        if (token === undefined) {
-            callback('callback', 'error');
+    tokenRegistry.removeToken(id, function (err, token) {
+        if (!err) {
+            log.info('Consumed token', token._id, 'from room', token.room, 'of service', token.service);
+            callback('callback', token);
         } else {
-            tokenRegistry.removeToken(id, function () {
-                log.info('Consumed token ', token._id, 'from room ', token.room, ' of service ', token.service);
-                callback('callback', token);
-            });
+            log.info('Consume token error:', err, id);
+            callback('callback', 'error');
         }
     });
 };

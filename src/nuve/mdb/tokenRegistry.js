@@ -55,13 +55,21 @@ exports.addToken = function (token, callback) {
  * Removes a token from the data base.
  */
 var removeToken = exports.removeToken = function (id, callback) {
-    hasToken(id, function (hasT) {
-        if (hasT) {
+    getToken(id, function (token) {
+        if (token) {
             db.tokens.remove({_id: db.ObjectId(id)}, function (error, removed) {
-                if (error) log.info('MongoDB: Error removing token: ', error);
-                callback();
+                if (error) {
+                    log.info('MongoDB: Error removing token: ', error);
+                    return callback('removing token error', null);
+                }
+                if (removed.n === 1) {
+                    callback(null, token);
+                } else {
+                    callback('token already removed', null);
+                }
             });
-            
+        } else {
+            callback('no such token', null);
         }
     });
 };
