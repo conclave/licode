@@ -1,20 +1,15 @@
 #!/usr/bin/env node
 'use strict';
 
-var HOME = process.env.ROOT_DIR;
-if (!HOME) {
-  throw 'ROOT_DIR not found';
-}
-
 var fs = require('fs');
 var path = require('path');
 var crypto = require('crypto');
-var defaultConfigFile = path.join(HOME, 'etc/licode_default.js');
+var defaultConfigFile = path.resolve(__dirname, '../etc/licode_default.js');
 var nuveConfig = require(defaultConfigFile).nuve;
 var dbURL = process.env.DB_URL || nuveConfig.dataBaseURL;
 var mongojs = require('mongojs');
 var db = mongojs.connect(dbURL, ['services']);
-var nuveConfigFile = path.join(HOME, 'etc/default/nuve.json');
+var nuveConfigFile = path.resolve(__dirname, '../local/etc/nuve.json');
 
 function prepareService (serviceName, next) {
   db.services.findOne({name: serviceName}, function cb (err, service) {

@@ -9,8 +9,25 @@ var config = {};
 config.rabbit = {};
 config.rabbit.host = 'localhost'; //default value: 'localhost'
 config.rabbit.port = 5672; //default value: 5672
-config.logger = {};
-config.logger.config_file = '../log4js_configuration.json'; //default value: "../log4js_configuration.json"
+config.logger = {
+  appenders: [
+    {
+      type: 'console',
+      layout: {
+        type: 'pattern',
+        pattern: '%d  - %p: %c - %m',
+        replaceConsole: true
+      }
+    }
+  ],
+  levels: {
+    ErizoController: 'INFO',
+    RPC: 'INFO',
+    AMQPER: 'INFO',
+    ErizoJS: 'DEBUG',
+    ErizoJSController: 'DEBUG'
+  }
+};
 
 /*********************************************************
  CLOUD PROVIDER CONFIGURATION
