@@ -1,10 +1,10 @@
-/*global require, console, setInterval, clearInterval, exports*/
+/*global require, setInterval, clearInterval, exports*/
+'use strict';
 var rpc = require('./rpc/rpc');
-var config = require('./../../licode_config');
-var logger = require('./logger').logger;
+var config = require('../../local/etc/common');
 
 // Logger
-var log = logger.getLogger("CloudHandler");
+var log = require('../common/logger')('CloudHandler');
 
 var ec2;
 
@@ -18,8 +18,6 @@ var ecQueue = [];
 var idIndex = 0;
 
 var recalculatePriority = function () {
-    "use strict";
-
     //*******************************************************************
     // States: 
     //  0: Not available
@@ -56,48 +54,39 @@ var recalculatePriority = function () {
         log.info('[CLOUD HANDLER]: Warning! No erizoController is available.');
     }
 
-},
+};
 
-    checkKA = function () {
-        "use strict";
-        var ec, room;
-
-        for (ec in erizoControllers) {
-            if (erizoControllers.hasOwnProperty(ec)) {
-                erizoControllers[ec].keepAlive += 1;
-                if (erizoControllers[ec].keepAlive > MAX_KA_COUNT) {
-                    log.info('ErizoController', ec, ' in ', erizoControllers[ec].ip, 'does not respond. Deleting it.');
-                    delete erizoControllers[ec];
-                    for (room in rooms) {
-                        if (rooms.hasOwnProperty(room)) {
-                            if (rooms[room] === ec) {
-                                delete rooms[room];
-                            }
+setInterval(function checkKA () {
+    for (var ec in erizoControllers) {
+        if (erizoControllers.hasOwnProperty(ec)) {
+            erizoControllers[ec].keepAlive += 1;
+            if (erizoControllers[ec].keepAlive > MAX_KA_COUNT) {
+                log.info('ErizoController', ec, ' in ', erizoControllers[ec].ip, 'does not respond. Deleting it.');
+                delete erizoControllers[ec];
+                for (var room in rooms) {
+                    if (rooms.hasOwnProperty(room)) {
+                        if (rooms[room] === ec) {
+                            delete rooms[room];
                         }
                     }
-                    recalculatePriority();
                 }
+                recalculatePriority();
             }
         }
-    },
-
-    checkKAInterval = setInterval(checkKA, INTERVAL_TIME_CHECK_KA);
+    }
+}, INTERVAL_TIME_CHECK_KA);
 
 exports.addNewErizoController = function (msg, callback) {
-    "use strict";
-
     if (msg.cloudProvider === '') {
         addNewPrivateErizoController(msg.ip, msg.hostname, msg.port, msg.ssl, callback);
     } else if (msg.cloudProvider === 'amazon') {
         addNewAmazonErizoController(msg.ip, msg.hostname, msg.port, msg.ssl, callback);
     }
-    
 };
 
-var addNewAmazonErizoController = function(privateIP, callback) {
+var addNewAmazonErizoController = function (privateIP, hostname, port, ssl, callback) {
     
     var publicIP;
-    var instaceId;
 
     if (ec2 === undefined) {
         var opt = {version: '2012-12-01'};
@@ -119,10 +108,9 @@ var addNewAmazonErizoController = function(privateIP, callback) {
             addNewPrivateErizoController(publicIP, hostname, port, ssl, callback);
         }
     });
-}
+};
 
 var addNewPrivateErizoController = function (ip, hostname, port, ssl, callback) {
-    "use strict";
     idIndex += 1;
     var id = idIndex,
         rpcID = 'erizoController_' + id;
@@ -141,7 +129,6 @@ var addNewPrivateErizoController = function (ip, hostname, port, ssl, callback) 
 };
 
 exports.keepAlive = function (id, callback) {
-    "use strict";
     var result;
 
     if (erizoControllers[id] === undefined) {
@@ -156,23 +143,16 @@ exports.keepAlive = function (id, callback) {
 };
 
 exports.setInfo = function (params) {
-    "use strict";
-
     log.info('Received info ', params,    '.Recalculating erizoControllers priority');
     erizoControllers[params.id].state = params.state;
     recalculatePriority();
 };
 
 exports.killMe = function (ip) {
-    "use strict";
-
     log.info('[CLOUD HANDLER]: ErizoController in host ', ip, 'does not respond.');
-
 };
 
 exports.getErizoControllerForRoom = function (roomId, callback) {
-    "use strict";
-
     if (rooms[roomId] !== undefined) {
         callback(erizoControllers[rooms[roomId]]);
         return;
@@ -197,15 +177,13 @@ exports.getErizoControllerForRoom = function (roomId, callback) {
 };
 
 exports.getUsersInRoom = function (roomId, callback) {
-    "use strict";
-
     if (rooms[roomId] === undefined) {
         callback([]);
         return;
     }
 
     var rpcID = erizoControllers[rooms[roomId]].rpcID;
-    rpc.callRpc(rpcID, 'getUsersInRoom', [roomId], {"callback": function (users) {
+    rpc.callRpc(rpcID, 'getUsersInRoom', [roomId], {callback: function (users) {
         if (users === 'timeout') {
             users = '?';
         }
@@ -214,24 +192,20 @@ exports.getUsersInRoom = function (roomId, callback) {
 };
 
 exports.deleteRoom = function (roomId, callback) {
-    "use strict";
-
     if (rooms[roomId] === undefined) {
         callback('Success');
         return;
     }
 
     var rpcID = erizoControllers[rooms[roomId]].rpcID;
-    rpc.callRpc(rpcID, 'deleteRoom', [roomId], {"callback": function (result) {
+    rpc.callRpc(rpcID, 'deleteRoom', [roomId], {callback: function (result) {
         callback(result);
     }});
 };
 
 exports.deleteUser = function (user, roomId, callback) {
-    "use strict";
-
     var rpcID = erizoControllers[rooms[roomId]].rpcID;
-    rpc.callRpc(rpcID, 'deleteUser', [{user: user, roomId:roomId}], {"callback": function (result) {
+    rpc.callRpc(rpcID, 'deleteUser', [{user: user, roomId:roomId}], {callback: function (result) {
         callback(result);
     }});
 };

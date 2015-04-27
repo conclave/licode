@@ -1,12 +1,11 @@
-/*global exports, require, console, Buffer, setTimeout, clearTimeout*/
-var sys = require('util');
+/* global exports, require */
+'use strict';
 var amqp = require('amqp');
 var rpcPublic = require('./rpcPublic');
-var config = require('./../../../licode_config');
-var logger = require('./../logger').logger;
+var config = require('../../local/etc/common');
 
 // Logger
-var log = logger.getLogger("RPC");
+var log = require('../../common/logger')('RPC');
 
 // Configuration default values
 config.rabbit = config.rabbit || {};
@@ -32,12 +31,9 @@ if (config.rabbit.url !== undefined) {
 }
 
 exports.connect = function () {
-
     connection = amqp.createConnection(addr);
 
     connection.on('ready', function () {
-        "use strict";
-
         log.info('Conected to rabbitMQ server');
 
         //Create a direct exchange 
@@ -78,10 +74,9 @@ exports.connect = function () {
         });
 
     });
-}
+};
 
 var callbackError = function (corrID) {
-    "use strict";
     for (var i in map[corrID].fn) {
         map[corrID].fn[i]('timeout');
     }
@@ -92,8 +87,6 @@ var callbackError = function (corrID) {
  * Calls remotely the 'method' function defined in rpcPublic of 'to'.
  */
 exports.callRpc = function (to, method, args, callbacks) {
-    "use strict";
-
     corrID += 1;
     map[corrID] = {};
     map[corrID].fn = callbacks;
@@ -102,6 +95,5 @@ exports.callRpc = function (to, method, args, callbacks) {
     var send = {method: method, args: args, corrID: corrID, replyTo: clientQueue.name};
 
     exc.publish(to, send);
-
 };
 

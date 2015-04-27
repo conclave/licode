@@ -1,12 +1,10 @@
-/*global exports, require, console, Buffer*/
-var roomRegistry = require('./../mdb/roomRegistry');
+/* global exports, require */
+'use strict';
 var serviceRegistry = require('./../mdb/serviceRegistry');
 var cloudHandler = require('../cloudHandler');
 
-var logger = require('./../logger').logger;
-
 // Logger
-var log = logger.getLogger("UsersResource");
+var log = require('../../common/logger')('UsersResource');
 
 var currentService;
 var currentRoom;
@@ -15,8 +13,6 @@ var currentRoom;
  * Gets the service and the room for the proccess of the request.
  */
 var doInit = function (roomId, callback) {
-    "use strict";
-
     currentService = require('./../auth/nuveAuthenticator').service;
 
     serviceRegistry.getRoomForService(roomId, currentService, function (room) {
@@ -30,8 +26,6 @@ var doInit = function (roomId, callback) {
  * Get Users. Represent a list of users of a determined room. This is consulted to cloudHandler.
  */
 exports.getList = function (req, res) {
-    "use strict";
-
     doInit(req.params.room, function () {
 
         if (currentService === undefined) {

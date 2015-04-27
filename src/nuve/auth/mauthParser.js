@@ -1,17 +1,13 @@
 /*global require, exports, Buffer*/
+'use strict';
 var crypto = require('crypto');
 
-var logger = require('./../logger').logger;
-
-// Logger
-var log = logger.getLogger("MAuthParser");
+// var log = require('../../common/logger')('MAuthParser');
 
 /*
  * Parses a string header to a json with the fields of the authentication header.
  */
 exports.parseHeader = function (header) {
-    "use strict";
-
     var params = {},
 
         array = [],
@@ -43,8 +39,6 @@ exports.parseHeader = function (header) {
  * Makes a string header from a json with the fields of an authentication header.
  */
 exports.makeHeader = function (params) {
-    "use strict";
-
     if (params.realm === undefined) {
         return undefined;
     }
@@ -66,8 +60,6 @@ exports.makeHeader = function (params) {
  * Given a json with the header params and the key calculates the signature.
  */
 exports.calculateClientSignature = function (params, key) {
-    "use strict";
-
     var toSign = params.timestamp + ',' + params.cnonce,
         signed;
 
@@ -84,8 +76,6 @@ exports.calculateClientSignature = function (params, key) {
  * Given a json with the header params and the key calculates the signature.
  */
 exports.calculateServerSignature = function (params, key) {
-    "use strict";
-
     var toSign = params.timestamp,
         signed = crypto.createHmac('sha1', key).update(toSign).digest('hex');
 

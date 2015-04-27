@@ -1,18 +1,8 @@
 /*global require, exports*/
-var config = require('./../../../licode_config');
+'use strict';
+var config = require('../../../local/etc/nuve');
 
-var logger = require('./../logger').logger;
-
-// Logger
-var log = logger.getLogger("Database");
-
-config.nuve = config.nuve || {};
-config.nuve.dataBaseURL = config.nuve.dataBaseURL || "localhost/nuvedb";
-config.nuve.superserviceID = config.nuve.superserviceID || '';
-config.nuve.superserviceKey = config.nuve.superserviceKey || '';
-config.nuve.testErizoController = config.nuve.testErizoController || 'localhost:8080';
-
-var databaseUrl = config.nuve.dataBaseURL;
+var databaseUrl = config.dataBaseURL;
 
 /*
  * Data base collections and its fields are:
@@ -24,13 +14,8 @@ var databaseUrl = config.nuve.dataBaseURL;
  * token {host: '', userName: '', room: '', role: '', service: '', creationDate: Date(), [use: int], [p2p: bool], _id: ObjectId}
  *
  */
-var collections = ["rooms", "tokens", "services"];
-exports.db = require("mongojs").connect(databaseUrl, collections);
+var collections = ['rooms', 'tokens', 'services'];
+exports.db = require('mongojs').connect(databaseUrl, collections);
 
 // Superservice ID
-exports.superService = config.nuve.superserviceID;
-
-// Superservice key
-exports.nuveKey = config.nuve.superserviceKey;
-
-exports.testErizoController = config.nuve.testErizoController;
+exports.superService = config.superserviceID;

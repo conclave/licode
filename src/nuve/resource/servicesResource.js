@@ -1,9 +1,9 @@
-/*global exports, require, console*/
+/* global exports, require */
+'use strict';
 var serviceRegistry = require('./../mdb/serviceRegistry');
-var logger = require('./../logger').logger;
 
 // Logger
-var log = logger.getLogger("ServicesResource");
+var log = require('../../common/logger')('ServicesResource');
 
 var currentService;
 
@@ -11,8 +11,6 @@ var currentService;
  * Gets the service and checks if it is superservice. Only superservice can do actions about services.
  */
 var doInit = function (serv) {
-    "use strict";
-
     currentService = require('./../auth/nuveAuthenticator').service;
     var superService = require('./../mdb/dataBase').superService;
     currentService._id = currentService._id + '';
@@ -23,8 +21,6 @@ var doInit = function (serv) {
  * Post Service. Creates a new service.
  */
 exports.create = function (req, res) {
-    "use strict";
-
     if (!doInit()) {
         log.info('Service ', currentService._id, ' not authorized for this action');
         res.send('Service not authorized for this action', 401);
@@ -41,8 +37,6 @@ exports.create = function (req, res) {
  * Get Service. Represents a determined service.
  */
 exports.represent = function (req, res) {
-    "use strict";
-
     if (!doInit()) {
         log.info('Service ', currentService, ' not authorized for this action');
         res.send('Service not authorized for this action', 401);

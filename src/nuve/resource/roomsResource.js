@@ -1,11 +1,10 @@
-/*global exports, require, console*/
+/* global exports, require */
+'use strict';
 var roomRegistry = require('./../mdb/roomRegistry');
 var serviceRegistry = require('./../mdb/serviceRegistry');
 
-var logger = require('./../logger').logger;
-
 // Logger
-var log = logger.getLogger("RoomsResource");
+var log = require('../../common/logger')('RoomsResource');
 
 var currentService;
 
@@ -13,7 +12,6 @@ var currentService;
  * Gets the service for the proccess of the request.
  */
 var doInit = function () {
-    "use strict";
     currentService = require('./../auth/nuveAuthenticator').service;
 };
 
@@ -21,8 +19,6 @@ var doInit = function () {
  * Post Room. Creates a new room for a determined service.
  */
 exports.createRoom = function (req, res) {
-    "use strict";
-
     var room;
 
     doInit();
@@ -75,8 +71,6 @@ exports.createRoom = function (req, res) {
  * Get Rooms. Represent a list of rooms for a determined service.
  */
 exports.represent = function (req, res) {
-    "use strict";
-
     doInit();
     if (currentService === undefined) {
         res.send('Service not found', 404);
