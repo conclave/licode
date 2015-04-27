@@ -4,14 +4,12 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 
-var rpc = require('./rpc/rpc');
-
-var app = express();
-
-rpc.connect();
+var rpc = require('../common/rpc');
+rpc.connect(function () {
+    rpc.bind('nuve', require('./rpcPublic'), function () {});
+});
 
 var nuveAuthenticator = require('./auth/nuveAuthenticator');
-
 var roomsResource = require('./resource/roomsResource');
 var roomResource = require('./resource/roomResource');
 var tokensResource = require('./resource/tokensResource');
@@ -20,6 +18,7 @@ var serviceResource = require('./resource/serviceResource');
 var usersResource = require('./resource/usersResource');
 var userResource = require('./resource/userResource');
 
+var app = express();
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({

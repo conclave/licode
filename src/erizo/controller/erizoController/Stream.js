@@ -1,7 +1,7 @@
-/*global exports*/
-exports.Stream = function (spec) {
-    "use strict";
+/*global module*/
+'use strict';
 
+module.exports = function (spec) {
     var that = {},
         dataSubscribers = [];
 

@@ -1,6 +1,6 @@
 /*global require, setInterval, clearInterval, exports*/
 'use strict';
-var rpc = require('./rpc/rpc');
+var rpc = require('../common/rpc');
 var config = require('../../local/etc/common');
 
 // Logger
@@ -160,20 +160,15 @@ exports.getErizoControllerForRoom = function (roomId, callback) {
 
     var id,
         intervarId = setInterval(function () {
-
             id = ecQueue[0];
-
             if (id !== undefined) {
-
                 rooms[roomId] = id;
                 callback(erizoControllers[id]);
 
                 recalculatePriority();
                 clearInterval(intervarId);
             }
-
         }, INTERVAL_TIME_EC_READY);
-
 };
 
 exports.getUsersInRoom = function (roomId, callback) {
