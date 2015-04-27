@@ -5,7 +5,6 @@
 var fs = require('fs');
 var path = require('path');
 var homeDir = path.resolve(__dirname, '../local');
-console.log(homeDir);
 var config = require('../etc/licode_default');
 
 fs.writeFileSync(path.join(homeDir, 'etc/common.json'), JSON.stringify({
