@@ -14,6 +14,7 @@ var Getopt = require('node-getopt');
 GLOBAL.config = {};
 GLOBAL.config.erizoController = require('../../../local/etc/erizoController');
 GLOBAL.config.rabbit = require('../../../local/etc/common').rabbit;
+GLOBAL.config.cloudProvider = require('../../../local/etc/common').cloudProvider;
 
 // Parse command line arguments
 var getopt = new Getopt([
