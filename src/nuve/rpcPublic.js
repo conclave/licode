@@ -1,10 +1,10 @@
 /* global exports, require */
 'use strict';
-var tokenRegistry = require('./../mdb/tokenRegistry');
-var cloudHandler = require('./../cloudHandler');
+var tokenRegistry = require('./mdb/tokenRegistry');
+var cloudHandler = require('./cloudHandler');
 
 // Logger
-var log = require('../../common/logger')('RPCPublic');
+var log = require('../common/logger')('RPCPublic');
 
 /*
  * This function is used to consume a token. Removes it from the data base and returns to erizoController.
