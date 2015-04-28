@@ -1,4 +1,4 @@
-/*global require, process*/
+/*global require, process, GLOBAL*/
 'use strict';
 
 var Getopt = require('node-getopt');
@@ -68,4 +68,17 @@ rpc.connect(function () {
     } catch (err) {
         log.error('Error', err);
     }
+});
+
+['SIGINT', 'SIGTERM'].map(function (sig) {
+    process.on(sig, function () {
+        log.warn('Exiting on', sig);
+        process.exit();
+    });
+});
+
+['SIGHUP', 'SIGPIPE'].map(function (sig) {
+    process.on(sig, function () {
+        log.warn(sig, 'caught and ignored');
+    });
 });

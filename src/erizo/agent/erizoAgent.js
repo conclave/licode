@@ -195,3 +195,18 @@ rpc.connect(function () {
     var rpcID = 'ErizoAgent'; //FIXME: register to NUVE and get rpcID from it.
     rpc.bind(rpcID);
 });
+
+['SIGINT', 'SIGTERM'].map(function (sig) {
+    process.on(sig, function () {
+        log.warn('Exiting on', sig);
+        process.exit();
+    });
+});
+
+process.on('exit', function () {
+    Object.keys(processes).map(function (k) {
+        dropErizoJS(k, function(status){
+            log.info('Terminate ErizoJS', k, status);
+        });
+    });
+});

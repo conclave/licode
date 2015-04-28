@@ -825,3 +825,10 @@ rpc.connect(function () {
         log.info('Error in Erizo Controller: ', error);
     }
 });
+
+['SIGINT', 'SIGTERM'].map(function (sig) {
+    process.on(sig, function () {
+        log.warn('Exiting on', sig);
+        process.exit();
+    });
+});
