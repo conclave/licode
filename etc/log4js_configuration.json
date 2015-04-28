@@ -1,0 +1,19 @@
+{
+  "appenders": [
+    {
+      "type": "console",
+      "layout": {
+        "type": "pattern",
+        "pattern": "%d  - %p: %c - %m",
+        "replaceConsole": true
+      }
+    }
+  ],
+  "levels": {
+    "ErizoController": "INFO",
+    "RPC": "INFO",
+    "AMQPER": "INFO",
+    "ErizoJS": "DEBUG",
+    "ErizoJSController": "DEBUG"
+  }
+}
