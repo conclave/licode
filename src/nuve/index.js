@@ -16,7 +16,6 @@ var tokensResource = require('./resource/tokensResource');
 var servicesResource = require('./resource/servicesResource');
 var serviceResource = require('./resource/serviceResource');
 var usersResource = require('./resource/usersResource');
-var userResource = require('./resource/userResource');
 
 var app = express();
 // app.use(express.static(__dirname + '/public'));
@@ -60,7 +59,7 @@ app.delete('/services/:service', serviceResource.deleteService);
 
 app.get('/rooms/:room/users', usersResource.getList);
 
-app.get('/rooms/:room/users/:user', userResource.getUser);
-app.delete('/rooms/:room/users/:user', userResource.deleteUser);
+app.get('/rooms/:room/users/:user', usersResource.getUser);
+app.delete('/rooms/:room/users/:user', usersResource.deleteUser);
 
 app.listen(3000);
