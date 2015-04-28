@@ -29,20 +29,18 @@ exports.getUser = function (req, res) {
     doInit(req.params.room, function () {
 
         if (currentService === undefined) {
-            res.send('Service not found', 404);
+            res.status(404).send('Service not found');
             return;
         } else if (currentRoom === undefined) {
             log.info('Room ', req.params.room, ' does not exist');
-            res.send('Room does not exist', 404);
+            res.status(404).send('Room does not exist');
             return;
         }
 
         var user = req.params.user;
-
-        
         cloudHandler.getUsersInRoom (currentRoom._id, function (users) {
             if (users === 'error') {
-                res.send('CloudHandler does not respond', 401);
+                res.status(401).send('CloudHandler does not respond');
                 return;
             }
             for (var index in users){
@@ -53,12 +51,9 @@ exports.getUser = function (req, res) {
                 }
             }
             log.error('User', req.params.user, 'does not exist');
-            res.send('User does not exist', 404);
+            res.status(404).send('User does not exist');
             return;
-            
-
         });
-
     });
 };
 
@@ -69,20 +64,19 @@ exports.deleteUser = function (req, res) {
     doInit(req.params.room, function () {
 
         if (currentService === undefined) {
-            res.send('Service not found', 404);
+            res.status(404).send('Service not found');
             return;
         } else if (currentRoom === undefined) {
             log.info('Room ', req.params.room, ' does not exist');
-            res.send('Room does not exist', 404);
+            res.status(404).send('Room does not exist');
             return;
         }
 
         var user = req.params.user;
         cloudHandler.deleteUser (user, currentRoom._id, function(result){
             if(result === 'User does not exist'){
-                res.send(result, 404);
-            }
-            else {
+                res.status(404).send(result);
+            } else {
                 res.send(result);
                 return;
             }

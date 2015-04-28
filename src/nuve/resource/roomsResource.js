@@ -24,47 +24,30 @@ exports.createRoom = function (req, res) {
     doInit();
 
     if (currentService === undefined) {
-        res.send('Service not found', 404);
+        res.status(404).send('Service not found');
         return;
     }
     if (req.body.name === undefined) {
         log.info('Invalid room');
-        res.send('Invalid room', 404);
+        res.status(404).send('Invalid room');
         return;
     }
 
     req.body.options = req.body.options || {};
 
-    if (req.body.options.test) {
-        if (currentService.testRoom !== undefined) {
-            log.info('TestRoom already exists for service', currentService.name);
-            res.send(currentService.testRoom);
-        } else {
-            room = {name: 'testRoom'};
-            roomRegistry.addRoom(room, function (result) {
-                currentService.testRoom = result;
-                currentService.rooms.push(result);
-                serviceRegistry.updateService(currentService);
-                log.info('TestRoom created for service', currentService.name);
-                res.send(result);
-            });
-        }
-    } else {
-        room = {name: req.body.name};
-        
-        if (req.body.options.p2p) {
-            room.p2p = true;
-        }
-        if (req.body.options.data) {
-            room.data = req.body.options.data;
-        }
-        roomRegistry.addRoom(room, function (result) {
-            currentService.rooms.push(result);
-            serviceRegistry.updateService(currentService);
-            log.info('Room created:', req.body.name, 'for service', currentService.name, 'p2p = ', room.p2p);
-            res.send(result);
-        });
+    room = {name: req.body.name};
+    if (req.body.options.p2p) {
+        room.p2p = true;
     }
+    if (req.body.options.data) {
+        room.data = req.body.options.data;
+    }
+    roomRegistry.addRoom(room, function (result) {
+        currentService.rooms.push(result);
+        serviceRegistry.updateService(currentService);
+        log.info('Room created:', req.body.name, 'for service', currentService.name, 'p2p = ', room.p2p);
+        res.send(result);
+    });
 };
 
 /*
@@ -73,7 +56,7 @@ exports.createRoom = function (req, res) {
 exports.represent = function (req, res) {
     doInit();
     if (currentService === undefined) {
-        res.send('Service not found', 404);
+        res.status(404).send('Service not found');
         return;
     }
     log.info('Representing rooms for service ', currentService._id);

@@ -49,10 +49,7 @@ var getTokenString = function (id, token) {
 var generateToken = function (callback) {
     var user = require('./../auth/nuveAuthenticator').user,
         role = require('./../auth/nuveAuthenticator').role,
-        r,
-        tr,
-        token,
-        tokenS;
+        token;
 
     if (user === undefined || user === '') {
         callback(undefined);
@@ -73,68 +70,25 @@ var generateToken = function (callback) {
         token.p2p = true;
     }
 
-    r = currentRoom._id;
-    tr = undefined;
-
-    if (currentService.testRoom !== undefined) {
-        tr = currentService.testRoom._id;
-    }
-
-    if (tr === r) {
-
-        if (currentService.testToken === undefined) {
-            token.use = 0;
-            token.host = dataBase.testErizoController;
-
-            log.info('Creating testToken');
-
-            tokenRegistry.addToken(token, function (id) {
-
-                token._id = id;
-                currentService.testToken = token;
-                serviceRegistry.updateService(currentService);
-
-                tokenS = getTokenString(id, token);
-                callback(tokenS);
-                return;
-            });
-
-        } else {
-
-            token = currentService.testToken;
-
-            log.info('TestToken already exists, sending it', token);
-
-            tokenS = getTokenString(token._id, token);
-            callback(tokenS);
+    cloudHandler.getErizoControllerForRoom (currentRoom._id, function (ec) {
+        if (ec === 'timeout') {
+            callback('error');
             return;
-
         }
-    } else {
 
-        cloudHandler.getErizoControllerForRoom (currentRoom._id, function (ec) {
+        token.secure = ec.ssl;
+        if (ec.hostname !== '') {
+            token.host = ec.hostname;
+        } else {
+            token.host = ec.ip;
+        }
 
-            if (ec === 'timeout') {
-                callback('error');
-                return;
-            }
+        token.host += ':' + ec.port;
 
-            token.secure = ec.ssl;
-            if (ec.hostname !== '') {
-                token.host = ec.hostname;
-            } else {
-                token.host = ec.ip;
-            }
-
-            token.host += ':' + ec.port;
-
-            tokenRegistry.addToken(token, function (id) {
-
-                var tokenS = getTokenString(id, token);
-                callback(tokenS);
-            });
+        tokenRegistry.addToken(token, function (id) {
+            callback(getTokenString(id, token));
         });
-    }
+    });
 };
 
 /*
@@ -145,22 +99,21 @@ exports.create = function (req, res) {
 
         if (currentService === undefined) {
             log.info('Service not found');
-            res.send('Service not found', 404);
+            res.status(404).send('Service not found');
             return;
         } else if (currentRoom === undefined) {
             log.info('Room ', req.params.room, ' does not exist');
-            res.send('Room does not exist', 404);
+            res.status(404).send('Room does not exist');
             return;
         }
 
         generateToken(function (tokenS) {
-
             if (tokenS === undefined) {
-                res.send('Name and role?', 401);
+                res.status(401).send('Name and role?');
                 return;
             }
             if (tokenS === 'error') {
-                res.send('CloudHandler does not respond', 401);
+                res.status(401).send('CloudHandler does not respond');
                 return;
             }
             log.info('Created token for room ', currentRoom._id, 'and service ', currentService._id);

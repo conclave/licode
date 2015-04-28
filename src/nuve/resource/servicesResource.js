@@ -23,7 +23,7 @@ var doInit = function (serv) {
 exports.create = function (req, res) {
     if (!doInit()) {
         log.info('Service ', currentService._id, ' not authorized for this action');
-        res.send('Service not authorized for this action', 401);
+        res.status(401).send('Service not authorized for this action');
         return;
     }
 
@@ -39,7 +39,7 @@ exports.create = function (req, res) {
 exports.represent = function (req, res) {
     if (!doInit()) {
         log.info('Service ', currentService, ' not authorized for this action');
-        res.send('Service not authorized for this action', 401);
+        res.status(401).send('Service not authorized for this action');
         return;
     }
 

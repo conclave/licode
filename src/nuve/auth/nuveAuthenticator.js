@@ -65,7 +65,7 @@ exports.authenticate = function (req, res, next) {
         serviceRegistry.getService(params.serviceid, function (serv) {
             if (serv === undefined || serv === null) {
                 log.info('[Auth] Unknow service:', params.serviceid);
-                res.send(401, {'WWW-Authenticate': challengeReq});
+                res.status(401).send({'WWW-Authenticate': challengeReq});
                 return;
             }
 
@@ -74,7 +74,7 @@ exports.authenticate = function (req, res, next) {
             // Check if timestam and cnonce are valids in order to avoid duplicate requests.
             if (!checkTimestamp(serv, params)) {
                 log.info('[Auth] Invalid timestamp or cnonce');
-                res.send(401, {'WWW-Authenticate': challengeReq});
+                res.status(401).send({'WWW-Authenticate': challengeReq});
                 return;
             }
 
@@ -94,7 +94,7 @@ exports.authenticate = function (req, res, next) {
 
             } else {
                 log.info('[Auth] Wrong credentials');
-                res.send(401, {'WWW-Authenticate': challengeReq});
+                res.status(401).send({'WWW-Authenticate': challengeReq});
                 return;
             }
 
@@ -102,7 +102,7 @@ exports.authenticate = function (req, res, next) {
 
     } else {
         log.info('[Auth] MAuth header not presented');
-        res.send(401, {'WWW-Authenticate': challengeReq});
+        res.status(401).send({'WWW-Authenticate': challengeReq});
         return;
     }
 };

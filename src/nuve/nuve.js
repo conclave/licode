@@ -1,4 +1,4 @@
-/*global require, __dirname*/
+/*global require*/
 'use strict';
 
 var express = require('express');
@@ -19,11 +19,11 @@ var usersResource = require('./resource/usersResource');
 var userResource = require('./resource/userResource');
 
 var app = express();
-app.use(express.static(__dirname + '/public'));
+// app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
-}));app.set('view engine', 'ejs');
+}));
 app.set('view options', {
     layout: false
 });
@@ -42,6 +42,7 @@ app.options('*', function(req, res) {
 app.get('*', nuveAuthenticator.authenticate);
 app.post('*', nuveAuthenticator.authenticate);
 app.delete('*', nuveAuthenticator.authenticate);
+app.put('*', nuveAuthenticator.authenticate);
 
 app.post('/rooms', roomsResource.createRoom);
 app.get('/rooms', roomsResource.represent);
