@@ -2,7 +2,7 @@
 'use strict';
 
 // Logger
-var log = require('../../../common/logger')('RoomController');
+var log = require('../../common/logger')('RoomController');
 
 module.exports  = function (spec) {
     var that = {},

@@ -3,7 +3,7 @@
   {
     'target_name': 'addon',
       'sources': [ 'addon.cc', 'WebRtcConnection.cc', 'OneToManyProcessor.cc', 'ExternalInput.cc', 'ExternalOutput.cc', 'OneToManyTranscoder.cc' ],
-      'include_dirs' : ['../liberizo', '$(PREFIX_DIR)/include'],
+      'include_dirs' : ['../../../liberizo', '$(PREFIX_DIR)/include'],
       'libraries': ['-L$(PREFIX_DIR)/lib', '-lerizo'],
       'conditions': [
         [ 'OS=="mac"', {

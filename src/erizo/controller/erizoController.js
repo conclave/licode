@@ -12,8 +12,8 @@ var Getopt = require('node-getopt');
 
 // Configuration default values
 GLOBAL.config = {};
-GLOBAL.config.erizoController = require('../../../../local/etc/erizoController');
-GLOBAL.config.rabbit = require('../../../../local/etc/common').rabbit;
+GLOBAL.config.erizoController = require('../../../local/etc/erizoController');
+GLOBAL.config.rabbit = require('../../../local/etc/common').rabbit;
 
 // Parse command line arguments
 var getopt = new Getopt([
@@ -62,11 +62,11 @@ for (var prop in opt.options) {
 }
 
 // Load submodules with updated config
-var rpc = require('../../../common/rpc');
+var rpc = require('../../common/rpc');
 var controller = require('./roomController');
 
 // Logger
-var log = require('../../../common/logger')('ErizoController');
+var log = require('../../common/logger')('ErizoController');
 
 var nuveKey = GLOBAL.config.nuve.superserviceKey;
 

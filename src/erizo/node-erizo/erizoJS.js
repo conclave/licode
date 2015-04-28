@@ -4,8 +4,8 @@
 var Getopt = require('node-getopt');
 
 GLOBAL.config = {};
-GLOBAL.config.erizo = require('../../../../local/etc/erizo');
-GLOBAL.config.rabbit = require('../../../../local/etc/common').rabbit;
+GLOBAL.config.erizo = require('../../../local/etc/erizo');
+GLOBAL.config.rabbit = require('../../../local/etc/common').rabbit;
 
 // Parse command line arguments
 var getopt = new Getopt([
@@ -43,10 +43,10 @@ for (var prop in opt.options) {
     }
 }
 
-var rpc = require('../../../common/rpc');
+var rpc = require('../../common/rpc');
 
 // Logger
-var log = require('../../../common/logger')('ErizoJS');
+var log = require('../../common/logger')('ErizoJS');
 
 var rpcPublic = require('./erizoJSController')();
 

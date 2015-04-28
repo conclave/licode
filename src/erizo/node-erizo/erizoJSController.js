@@ -1,11 +1,11 @@
 /*global require, module, process, setInterval, clearInterval*/
 'use strict';
 
-var addon = require('../../addon/build/Release/addon');
-var rpc = require('../../../common/rpc');
+var addon = require('./addon/build/Release/addon');
+var rpc = require('../../common/rpc');
 
 // Logger
-var log = require('../../../common/logger')('ErizoJSController');
+var log = require('../../common/logger')('ErizoJSController');
 
 module.exports = function (spec) {
     var that = {},

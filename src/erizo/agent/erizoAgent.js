@@ -1,4 +1,4 @@
-/*global require, process*/
+/*global require, process, GLOBAL*/
 'use strict';
 
 var Getopt = require('node-getopt');
@@ -6,8 +6,8 @@ var spawn = require('child_process').spawn;
 
 // Configuration default values
 GLOBAL.config = {};
-GLOBAL.config.erizoAgent = require('../../../../local/etc/erizoAgent');
-GLOBAL.config.rabbit = require('../../../../local/etc/common').rabbit;
+GLOBAL.config.erizoAgent = require('../../../local/etc/erizoAgent');
+GLOBAL.config.rabbit = require('../../../local/etc/common').rabbit;
 
 var BINDED_INTERFACE_NAME = GLOBAL.config.erizoAgent.networkInterface;
 
@@ -45,10 +45,10 @@ for (var prop in opt.options) {
     }
 }
 
-var rpc = require('../../../common/rpc');
+var rpc = require('../../common/rpc');
 
 // Logger
-var log = require('../../../common/logger')('ErizoAgent');
+var log = require('../../common/logger')('ErizoAgent');
 
 var childs = [];
 

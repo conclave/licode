@@ -29,7 +29,7 @@ build_liberizo(){
 }
 
 build_addon(){
-  local SRC_DIR="${ROOT_DIR}/src/erizo/addon"
+  local SRC_DIR="${ROOT_DIR}/src/erizo/node-erizo/addon"
   pushd ${SRC_DIR}
   PREFIX_DIR=${PREFIX_DIR} node-gyp rebuild
   popd
