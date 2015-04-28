@@ -46,9 +46,9 @@ for (var prop in opt.options) {
 var rpc = require('../../common/rpc');
 
 // Logger
-var log = require('../../common/logger')('ErizoJS');
+var log = require('../../common/logger')('Erizo.node');
 
-var rpcPublic = require('./erizoJSController')();
+var rpcPublic = require('./rpcPublic')();
 
 rpcPublic.keepAlive = function (callback) {
     log.debug('KeepAlive from ErizoController');
@@ -61,9 +61,9 @@ rpcPublic.publicIP = process.argv[4];
 rpc.connect(function () {
     try {
         var rpcID = process.argv[2];
-        log.info('ID: ErizoJS_' + rpcID);
-        rpc.bind('ErizoJS_' + rpcID, rpcPublic, function () {
-            log.info('ErizoJS started');
+        log.info('ID: Erizo.node_' + rpcID);
+        rpc.bind('Erizo.node_' + rpcID, rpcPublic, function () {
+            log.info('Erizo.node started');
         });
     } catch (err) {
         log.error('Error', err);

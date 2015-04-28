@@ -5,7 +5,7 @@ var addon = require('./addon/build/Release/addon');
 var rpc = require('../../common/rpc');
 
 // Logger
-var log = require('../../common/logger')('ErizoJSController');
+var log = require('../../common/logger')('Erizo.node::RPCPublic');
 
 module.exports = function (spec) {
     var that = {},
