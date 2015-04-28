@@ -68,7 +68,7 @@ var controller = require('./roomController');
 // Logger
 var log = require('../../common/logger')('ErizoController');
 
-var nuveKey = GLOBAL.config.nuve.superserviceKey;
+var nuveKey;
 
 var WARNING_N_ROOMS = GLOBAL.config.erizoController.warning_n_rooms;
 var LIMIT_N_ROOMS = GLOBAL.config.erizoController.limit_n_rooms;
@@ -179,7 +179,6 @@ var addToCloudHandler = function (callback) {
 
                     rpc.callRpc('nuve', 'keepAlive', myId, {callback: function (result) {
                         if (result === 'whoareyou') {
-
                             // TODO: It should try to register again in Cloud Handler. But taking into account current rooms, users, ...
                             log.info('I don`t exist in cloudHandler. I`m going to be killed');
                             clearInterval(intervarId);
@@ -189,7 +188,17 @@ var addToCloudHandler = function (callback) {
 
                 }, INTERVAL_TIME_KEEPALIVE);
 
-                callback('callback');
+                rpc.callRpc('nuve', 'getKey', myId, {
+                    callback: function (key) {
+                        if (key === 'error' || key === 'timeout') {
+                            rpc.callRpc('nuve', 'killMe', publicIP, {callback: function () {}});
+                            log.warn('Failed to join nuve network.');
+                            return process.exit();
+                        }
+                        nuveKey = key;
+                        callback();
+                    }
+                });
             }
         });
     };

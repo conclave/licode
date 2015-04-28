@@ -5,6 +5,7 @@ var config = require('../../local/etc/common');
 
 // Logger
 var log = require('../common/logger')('CloudHandler');
+var nuveKey = require('./mdb/dataBase').nuveKey;
 
 var ec2;
 
@@ -205,3 +206,9 @@ exports.deleteUser = function (user, roomId, callback) {
     }});
 };
 
+exports.getKey = function getKey (id) {
+    if (erizoControllers[id]) {
+        return nuveKey;
+    }
+    return 'error';
+};

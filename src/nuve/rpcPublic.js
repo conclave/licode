@@ -44,3 +44,7 @@ exports.killMe = function (ip, callback) {
     cloudHandler.killMe(ip);
     callback('callback');
 };
+
+exports.getKey = function (id, callback) {
+    callback('callback', cloudHandler.getKey(id));
+};

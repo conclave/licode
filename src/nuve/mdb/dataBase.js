@@ -19,3 +19,5 @@ exports.db = require('mongojs').connect(databaseUrl, collections);
 
 // Superservice ID
 exports.superService = config.superserviceID;
+// token key
+exports.nuveKey = require('crypto').randomBytes(64).toString('hex');
