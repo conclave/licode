@@ -14,7 +14,6 @@ var roomsResource = require('./resource/roomsResource');
 var roomResource = require('./resource/roomResource');
 var tokensResource = require('./resource/tokensResource');
 var servicesResource = require('./resource/servicesResource');
-var serviceResource = require('./resource/serviceResource');
 var usersResource = require('./resource/usersResource');
 
 var app = express();
@@ -52,10 +51,9 @@ app.delete('/rooms/:room', roomResource.deleteRoom);
 app.post('/rooms/:room/tokens', tokensResource.create);
 
 app.post('/services', servicesResource.create);
-app.get('/services', servicesResource.represent);
-
-app.get('/services/:service', serviceResource.represent);
-app.delete('/services/:service', serviceResource.deleteService);
+app.get('/services', servicesResource.getList);
+app.get('/services/:service', servicesResource.represent);
+app.delete('/services/:service', servicesResource.deleteService);
 
 app.get('/rooms/:room/users', usersResource.getList);
 
