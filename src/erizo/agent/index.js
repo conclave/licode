@@ -50,6 +50,9 @@ var rpc = require('../../common/rpc');
 // Logger
 var log = require('../../common/logger')('ErizoAgent');
 
+var privateIP = require('../../common/util').getPrivateIP(BINDED_INTERFACE_NAME);
+var publicIP = GLOBAL.config.erizoAgent.publicIP || privateIP;
+
 var childs = [];
 
 var SEARCH_INTERVAL = 5000;
@@ -155,38 +158,6 @@ var api = {
         }
     }
 };
-
-var interfaces = require('os').networkInterfaces(),
-    addresses = [],
-    k,
-    k2,
-    address, 
-    privateIP, 
-    publicIP;
-
-
-for (k in interfaces) {
-    if (interfaces.hasOwnProperty(k)) {
-        for (k2 in interfaces[k]) {
-            if (interfaces[k].hasOwnProperty(k2)) {
-                address = interfaces[k][k2];
-                if (address.family === 'IPv4' && !address.internal) {
-                    if (k === BINDED_INTERFACE_NAME || !BINDED_INTERFACE_NAME) {
-                        addresses.push(address.address);
-                    }
-                }
-            }
-        }
-    }
-}
-
-privateIP = addresses[0];
-
-if (GLOBAL.config.erizoAgent.publicIP === '' || GLOBAL.config.erizoAgent.publicIP === undefined) {
-    publicIP = addresses[0];
-} else {
-    publicIP = GLOBAL.config.erizoAgent.publicIP;
-}
 
 fillErizos();
 

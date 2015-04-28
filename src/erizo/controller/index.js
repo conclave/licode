@@ -116,34 +116,9 @@ var privateRegexp;
 var publicIP;
 
 var addToCloudHandler = function (callback) {
-    var interfaces = require('os').networkInterfaces(),
-        addresses = [],
-        k,
-        k2,
-        address;
-
-    for (k in interfaces) {
-        if (interfaces.hasOwnProperty(k)) {
-            for (k2 in interfaces[k]) {
-                if (interfaces[k].hasOwnProperty(k2)) {
-                    address = interfaces[k][k2];
-                    if (address.family === 'IPv4' && !address.internal) {
-                        if (k === BINDED_INTERFACE_NAME || !BINDED_INTERFACE_NAME) {
-                            addresses.push(address.address);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    privateRegexp = new RegExp(addresses[0], 'g');
-
-    if (GLOBAL.config.erizoController.publicIP === '' || GLOBAL.config.erizoController.publicIP === undefined){
-        publicIP = addresses[0];
-    } else {
-        publicIP = GLOBAL.config.erizoController.publicIP;
-    }
+    var privateIP = require('../../common/util').getPrivateIP(BINDED_INTERFACE_NAME);
+    privateRegexp = new RegExp(privateIP, 'g');
+    publicIP = GLOBAL.config.erizoController.publicIP || privateIP;
 
     var addECToCloudHandler = function(attempt) {
         if (attempt <= 0) {
