@@ -11,7 +11,6 @@ rpc.connect(function () {
 
 var nuveAuthenticator = require('./auth/nuveAuthenticator');
 var roomsResource = require('./resource/roomsResource');
-var roomResource = require('./resource/roomResource');
 var tokensResource = require('./resource/tokensResource');
 var servicesResource = require('./resource/servicesResource');
 var usersResource = require('./resource/usersResource');
@@ -43,20 +42,17 @@ app.delete('*', nuveAuthenticator.authenticate);
 app.put('*', nuveAuthenticator.authenticate);
 
 app.post('/rooms', roomsResource.createRoom);
-app.get('/rooms', roomsResource.represent);
-
-app.get('/rooms/:room', roomResource.represent);
-app.delete('/rooms/:room', roomResource.deleteRoom);
-
-app.post('/rooms/:room/tokens', tokensResource.create);
+app.get('/rooms', roomsResource.getList);
+app.get('/rooms/:room', roomsResource.represent);
+app.delete('/rooms/:room', roomsResource.deleteRoom);
 
 app.post('/services', servicesResource.create);
 app.get('/services', servicesResource.getList);
 app.get('/services/:service', servicesResource.represent);
 app.delete('/services/:service', servicesResource.deleteService);
 
+app.post('/rooms/:room/tokens', tokensResource.create);
 app.get('/rooms/:room/users', usersResource.getList);
-
 app.get('/rooms/:room/users/:user', usersResource.getUser);
 app.delete('/rooms/:room/users/:user', usersResource.deleteUser);
 
