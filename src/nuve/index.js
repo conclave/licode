@@ -1,4 +1,4 @@
-/*global require*/
+/*global require, exports*/
 'use strict';
 
 var express = require('express');
@@ -6,7 +6,9 @@ var bodyParser = require('body-parser');
 
 var rpc = require('../common/rpc');
 rpc.connect(function () {
-    rpc.bind('nuve', require('./rpcPublic'), function () {});
+    rpc.bind('nuve', require('./rpcPublic'), function () {
+      exports.rpc = rpc;
+    });
 });
 
 var nuveAuthenticator = require('./auth/nuveAuthenticator');

@@ -1,6 +1,6 @@
 /*global require, setInterval, clearInterval, exports*/
 'use strict';
-var rpc = require('../common/rpc');
+var rpc = require('./').rpc;
 var config = require('../../local/etc/common');
 
 // Logger
