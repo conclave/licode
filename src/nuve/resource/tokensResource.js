@@ -9,19 +9,13 @@ var cloudHandler = require('../cloudHandler');
 // Logger
 var log = require('../../common/logger')('TokensResource');
 
-var currentService;
-var currentRoom;
-
 /*
  * Gets the service and the room for the proccess of the request.
  */
 var doInit = function (roomId, callback) {
-    currentService = require('./../auth/nuveAuthenticator').service;
-
+    var currentService = require('./../auth/nuveAuthenticator').service;
     serviceRegistry.getRoomForService(roomId, currentService, function (room) {
-        //log.info(room);
-        currentRoom = room;
-        callback();
+        callback(currentService, room);
     });
 };
 
@@ -46,7 +40,7 @@ var getTokenString = function (id, token) {
  * The format of a token is:
  * {tokenId: id, host: erizoController host, signature: signature of the token};
  */
-var generateToken = function (callback) {
+var generateToken = function (service, room, callback) {
     var user = require('./../auth/nuveAuthenticator').user,
         role = require('./../auth/nuveAuthenticator').role,
         token;
@@ -58,19 +52,19 @@ var generateToken = function (callback) {
 
     token = {};
     token.userName = user;
-    token.room = currentRoom._id;
+    token.room = room._id;
     token.role = role;
-    token.service = currentService._id;
+    token.service = service._id;
     token.creationDate = new Date();
 
     // Values to be filled from the erizoController
     token.secure = false;
 
-    if (currentRoom.p2p) {
+    if (room.p2p) {
         token.p2p = true;
     }
 
-    cloudHandler.getErizoControllerForRoom (currentRoom._id, function (ec) {
+    cloudHandler.getErizoControllerForRoom(room._id, function (ec) {
         if (ec === 'timeout') {
             callback('error');
             return;
@@ -95,19 +89,18 @@ var generateToken = function (callback) {
  * Post Token. Creates a new token for a determined room of a service.
  */
 exports.create = function (req, res) {
-    doInit(req.params.room, function () {
-
-        if (currentService === undefined) {
+    doInit(req.params.room, function (service, room) {
+        if (service === undefined) {
             log.info('Service not found');
             res.status(404).send('Service not found');
             return;
-        } else if (currentRoom === undefined) {
-            log.info('Room ', req.params.room, ' does not exist');
+        } else if (room === undefined) {
+            log.info('Room', req.params.room, 'does not exist');
             res.status(404).send('Room does not exist');
             return;
         }
 
-        generateToken(function (tokenS) {
+        generateToken(service, room, function (tokenS) {
             if (tokenS === undefined) {
                 res.status(401).send('Name and role?');
                 return;
@@ -116,7 +109,7 @@ exports.create = function (req, res) {
                 res.status(401).send('CloudHandler does not respond');
                 return;
             }
-            log.info('Created token for room ', currentRoom._id, 'and service ', currentService._id);
+            log.info('Created token for room ', room._id, 'and service ', service._id);
             res.send(tokenS);
         });
     });
