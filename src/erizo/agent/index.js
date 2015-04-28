@@ -86,7 +86,7 @@ var launchErizoJS = function() {
     var fs = require('fs');
     var out = fs.openSync('./erizo-' + id + '.log', 'a');
     var err = fs.openSync('./erizo-' + id + '.log', 'a');
-    var erizoProcess = spawn('./launch.sh', ['./../erizoJS/erizoJS.js', id, privateIP, publicIP], { detached: true, stdio: [ 'ignore', out, err ] });
+    var erizoProcess = spawn('./launch.sh', ['../node-erizo', id, privateIP, publicIP], { detached: true, stdio: [ 'ignore', out, err ] });
     erizoProcess.unref();
     erizoProcess.on('close', function (code) {
         var index = idle_erizos.indexOf(id);
