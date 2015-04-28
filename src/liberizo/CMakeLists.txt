@@ -17,8 +17,8 @@ if(DOXYGEN_FOUND)
 endif(DOXYGEN_FOUND)
 
 #global variable
-set(THIRD_PARTY_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../../../local/include/")
-set(THIRD_PARTY_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../../../local/lib/")
+set(THIRD_PARTY_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../../local/include/")
+set(THIRD_PARTY_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../../local/lib/")
 
 find_package(PkgConfig)
 #functions
