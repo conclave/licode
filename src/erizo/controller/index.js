@@ -564,12 +564,12 @@ var listen = function () {
                 url = '/tmp/' + recordingId + '.mkv';
             }
 
-            log.info('erizoController.js: Starting recorder streamID ' + streamId + 'url ', url);
+            log.info('Starting recorder streamID ' + streamId + 'url ', url);
 
             if (socket.room.streams[streamId].hasAudio() || socket.room.streams[streamId].hasVideo() || socket.room.streams[streamId].hasScreen()) {
                 socket.room.controller.addExternalOutput(streamId, url, function (result) {
                     if (result === 'success') {
-                        log.info('erizoController.js: Recorder Started');
+                        log.info('Recorder Started');
                         callback(recordingId);
                     } else {
                         callback(null, 'This stream is not published in this room');
@@ -597,7 +597,7 @@ var listen = function () {
                 url = '/tmp/' + recordingId + '.mkv';
             }
 
-            log.info('erizoController.js: Stoping recording  ' + recordingId + ' url ' + url);
+            log.info('Stoping recording  ' + recordingId + ' url ' + url);
             socket.room.controller.removeExternalOutput(url, callback);
         });
 

@@ -1,7 +1,7 @@
 /*global require, exports*/
 'use strict';
 
-var erizoController = require('./erizoController');
+var erizoController = require('./');
 
 /*
  * This function is called remotely from nuve to get a list of the users in a determined room.
