@@ -54,15 +54,13 @@ var log = require('../../common/logger')('ErizoAgent');
 var privateIP = require('../../common/util').getPrivateIP(BINDED_INTERFACE_NAME);
 var publicIP = GLOBAL.config.erizoAgent.publicIP || privateIP;
 
-var childs = [];
-
-var SEARCH_INTERVAL = 5000;
+// var SEARCH_INTERVAL = 5000;
 
 var idle_erizos = [];
 
 var erizos = [];
 
-var processes = {};
+var children = {};
 
 var guid = (function() {
     function s4() {
@@ -76,23 +74,15 @@ var guid = (function() {
     };
 })();
 
-var saveChild = function(id) {
-    childs.push(id);
-};
-
-var removeChild = function(id) {
-    childs.push(id);
-};
-
 var launchErizoJS = function() {
     log.info('Running process');
     var id = guid();
     var fs = require('fs');
     var out = fs.openSync('./erizo-' + id + '.log', 'a');
     var err = fs.openSync('./erizo-' + id + '.log', 'a');
-    var erizoProcess = spawn(path.resolve(__dirname, './launch.sh'), [path.resolve(__dirname, '../node-erizo'), id, privateIP, publicIP], { detached: true, stdio: [ 'ignore', out, err ] });
-    erizoProcess.unref();
-    erizoProcess.on('close', function (code) {
+    var child = spawn(path.resolve(__dirname, './launch.sh'), [path.resolve(__dirname, '../node-erizo'), id, privateIP, publicIP], { detached: true, stdio: [ 'ignore', out, err ] });
+    child.unref();
+    child.on('close', function () {
         var index = idle_erizos.indexOf(id);
         var index2 = erizos.indexOf(id);
         if (index > -1) {
@@ -100,21 +90,21 @@ var launchErizoJS = function() {
         } else if (index2 > -1) {
             erizos.splice(index2, 1);
         }
-        delete processes[id];
+        delete children[id];
         fillErizos();
     });
 
-    log.info('Launched new ErizoJS ', id);
-    processes[id] = erizoProcess;
+    log.info('Launched new Erizo.node ', id);
+    children[id] = child;
     idle_erizos.push(id);
 };
 
 var dropErizoJS = function(erizo_id, callback) {
-   if (processes.hasOwnProperty(erizo_id)) {
-      var process = processes[erizo_id];
+   if (children.hasOwnProperty(erizo_id)) {
+      var process = children[erizo_id];
       process.kill();
-      delete processes[erizo_id];
-      callback('callback', 'ok');
+      delete children[erizo_id];
+      callback('ok');
    }
 };
 
@@ -175,7 +165,7 @@ rpc.connect(function () {
 });
 
 process.on('exit', function () {
-    Object.keys(processes).map(function (k) {
+    Object.keys(children).map(function (k) {
         dropErizoJS(k, function(status){
             log.info('Terminate ErizoJS', k, status);
         });
