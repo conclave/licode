@@ -9,7 +9,7 @@ var express = require('express'),
     https = require('https');
 
 
-var nuve = require('./nuve').create({
+var nuve = require('../../src/client/nuve/nodejs').create({
     service: '__auto_generated_service_id__',
     key: '__auto_generated_service_key__',
     url: 'http://localhost:3000/'
