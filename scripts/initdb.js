@@ -5,11 +5,16 @@ var fs = require('fs');
 var path = require('path');
 var crypto = require('crypto');
 var defaultConfigFile = path.resolve(__dirname, '../etc/licode_default.js');
+var nuveConfigFile = path.resolve(__dirname, '../local/etc/nuve.json');
 var nuveConfig = require(defaultConfigFile).nuve;
+try {
+  nuveConfig = require(nuveConfigFile);
+} catch (e) {
+  console.log(e);
+}
 var dbURL = process.env.DB_URL || nuveConfig.dataBaseURL;
 var mongojs = require('mongojs');
 var db = mongojs.connect(dbURL, ['services']);
-var nuveConfigFile = path.resolve(__dirname, '../local/etc/nuve.json');
 
 function prepareService (serviceName, next) {
   db.services.findOne({name: serviceName}, function cb (err, service) {
@@ -34,10 +39,6 @@ prepareService('superService', function (service) {
   var superServiceKey = service.key;
   console.log('superServiceId:', superServiceId);
   console.log('superServiceKey:', superServiceKey);
-  try {
-    fs.statSync(nuveConfigFile);
-    nuveConfig = require(nuveConfigFile);
-  } catch (e) {}
   nuveConfig.dataBaseURL = dbURL;
   nuveConfig.superserviceID = superServiceId;
   fs.writeFile(nuveConfigFile, JSON.stringify(nuveConfig, null, '  '), 'utf8', function (err) {
