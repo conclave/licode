@@ -14,7 +14,7 @@
 #define SERVER_SIDE_TURN 0
 
 namespace erizo {
-  
+
   DEFINE_LOGGER(NiceConnection, "NiceConnection")
 
 
@@ -84,8 +84,9 @@ namespace erizo {
     for (unsigned int i = 1; i<=iceComponents_; i++) {
       comp_state_list_[i] = NICE_INITIAL;
     }
-    
+#ifndef GLIB_VERSION_2_36
     g_type_init();
+#endif
     context_ = g_main_context_new();
     g_main_context_set_poll_func(context_,timed_poll);
     ELOG_DEBUG("Creating Agent");
@@ -156,7 +157,7 @@ namespace erizo {
               NICE_RELAY_TYPE_TURN_UDP);
         }
     }
-    
+
     if(agent_){
       for (unsigned int i = 1; i<=iceComponents_; i++){
         nice_agent_attach_recv(agent_, 1, i, context_, cb_nice_recv, this);
@@ -174,7 +175,7 @@ namespace erizo {
     this->close();
     ELOG_DEBUG("NiceConnection Destructor END");
   }
-  
+
   packetPtr NiceConnection::getPacket(){
       if(this->checkIceState()==NICE_FINISHED || !running_) {
           packetPtr p (new dataPacket());
@@ -243,7 +244,7 @@ namespace erizo {
         cond_.notify_one();
       }
     }
-  
+
   }
   int NiceConnection::sendData(unsigned int compId, const void* buf, int len) {
     int val = -1;
@@ -257,7 +258,6 @@ namespace erizo {
   }
 
   void NiceConnection::init() {
-    
     ELOG_DEBUG("Gathering candidates %p", this);
     nice_agent_gather_candidates(agent_, 1);   
     // Attach to the component to receive the data
@@ -310,7 +310,7 @@ namespace erizo {
       thecandidate->transport = NICE_CANDIDATE_TRANSPORT_UDP;
       nice_address_set_from_string(&thecandidate->addr, cinfo.hostAddress.c_str());
       nice_address_set_port(&thecandidate->addr, cinfo.hostPort);
-      
+
       if (cinfo.hostType == RELAY||cinfo.hostType==SRFLX){
         nice_address_set_from_string(&thecandidate->base_addr, cinfo.rAddress.c_str());
         nice_address_set_port(&thecandidate->base_addr, cinfo.rPort);
@@ -332,7 +332,6 @@ namespace erizo {
     //TODO: Set Component Id properly, now fixed at 1 
     nice_agent_set_remote_candidates(agent_, (guint) 1, 1, candList);
     g_slist_free_full(candList, (GDestroyNotify)&nice_candidate_free);
-    
     return true;
   }
 
