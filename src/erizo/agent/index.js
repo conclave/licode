@@ -140,7 +140,7 @@ var getErizo = function () {
     return erizo_id;
 };
 
-var api = {
+var rpcPublic = {
     createErizoJS: function(callback) {
         try {
             var erizo_id = getErizo(); 
@@ -163,9 +163,8 @@ var api = {
 fillErizos();
 
 rpc.connect(function () {
-    rpc.setPublicRPC(api);
     var rpcID = 'ErizoAgent'; //FIXME: register to NUVE and get rpcID from it.
-    rpc.bind(rpcID);
+    rpc.bind(rpcID, rpcPublic, function () {});
 });
 
 ['SIGINT', 'SIGTERM'].map(function (sig) {
