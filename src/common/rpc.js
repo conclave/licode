@@ -73,6 +73,9 @@ exports.bind = function (id, rpcPublic, callback) {
                 try {
                     log.debug('New message received', message);
                     message.args = message.args || [];
+                    if (!(message.args instanceof Array)) {
+                        message.args = [message.args];
+                    }
                     message.args.push(function (type, result) {
                         rpc_exc.publish(message.replyTo, {data: result, corrID: message.corrID, type: type});
                     });
