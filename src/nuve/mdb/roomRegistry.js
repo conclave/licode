@@ -30,6 +30,26 @@ exports.addRoom = function (room, callback) {
 };
 
 /*
+ * Updates a room in the data base.
+ */
+exports.updateRoom = function (id, content, callback) {
+    getRoom(id, function (room) {
+        if (room) {
+            content._id = db.ObjectId(id);
+            db.rooms.save(content, function (error, saved) {
+                if (error) {
+                    log.warn('MongoDB: Error adding room: ', error);
+                    return callback('adding room error');
+                }
+                callback(null, saved);
+            });
+        } else {
+            callback('no such room');
+        }
+    });
+};
+
+/*
  * Removes a determined room from the data base.
  */
 exports.removeRoom = function (id, callback) {
