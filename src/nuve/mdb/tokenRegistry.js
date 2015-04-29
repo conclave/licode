@@ -30,17 +30,6 @@ var getToken = exports.getToken = function (id, callback) {
     });
 };
 
-var hasToken = exports.hasToken = function (id, callback) {
-    getToken(id, function (token) {
-        if (token === undefined) {
-            callback(false);
-        } else {
-            callback(true);
-        }
-    });
-
-};
-
 /*
  * Adds a new token to the data base.
  */
@@ -77,9 +66,10 @@ var removeToken = exports.removeToken = function (id, callback) {
 /*
  * Updates a determined token in the data base.
  */
-exports.updateToken = function (token) {
+exports.updateToken = function (token, callback) {
     db.tokens.save(token, function (error, saved) {
         if (error) log.info('MongoDB: Error updating token: ', error);
+        callback(saved);
     });
 };
 

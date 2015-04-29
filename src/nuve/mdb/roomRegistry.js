@@ -16,35 +16,38 @@ var getRoom = exports.getRoom = function (id, callback) {
     });
 };
 
-var hasRoom = exports.hasRoom = function (id, callback) {
-    getRoom(id, function (room) {
-        if (room === undefined) {
-            callback(false);
-        } else {
-            callback(true);
-        }
-    });
-};
-
 /*
  * Adds a new room to the data base.
  */
 exports.addRoom = function (room, callback) {
     db.rooms.save(room, function (error, saved) {
-        if (error) log.warn('MongoDB: Error adding room: ', error);
-        callback(saved);
+        if (error) {
+            log.warn('MongoDB: Error adding room: ', error);
+            return callback('adding room error');
+        }
+        callback(null, saved);
     });
 };
 
 /*
  * Removes a determined room from the data base.
  */
-exports.removeRoom = function (id) {
-    hasRoom(id, function (hasR) {
-        if (hasR) {
+exports.removeRoom = function (id, callback) {
+    getRoom(id, function (room) {
+        if (room) {
             db.rooms.remove({_id: db.ObjectId(id)}, function (error, removed) {
-                if (error) log.warn('MongoDB: Error romoving room: ', error);
+                if (error) {
+                    log.warn('MongoDB: Error removing room: ', error);
+                    return callback('removing room error');
+                }
+                if (removed.n === 1) {
+                    callback(null);
+                } else {
+                    callback('room already removed');
+                }
             });
+        } else {
+            callback('no such room');
         }
     });
 };

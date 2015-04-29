@@ -27,13 +27,11 @@ var doInit = function (roomId, callback) {
 exports.createRoom = function (req, res) {
     doInit(null, function (service) {
         if (service === undefined) {
-            res.status(404).send('Service not found');
-            return;
+            return res.status(404).send('Service not found');
         }
         if (req.body.name === undefined) {
             log.info('Invalid room');
-            res.status(404).send('Invalid room');
-            return;
+            return res.status(404).send('Invalid room');
         }
 
         req.body.options = req.body.options || {};
@@ -45,7 +43,10 @@ exports.createRoom = function (req, res) {
         if (req.body.options.data) {
             room.data = req.body.options.data;
         }
-        roomRegistry.addRoom(room, function (result) {
+        roomRegistry.addRoom(room, function (err, result) {
+            if (err) {
+                return res.status(500).send(err);
+            }
             service.rooms.push(result);
             serviceRegistry.updateService(service);
             log.info('Room created:', req.body.name, 'for service', service.name, 'p2p = ', room.p2p);
@@ -60,8 +61,7 @@ exports.createRoom = function (req, res) {
 exports.getList = function (req, res) {
     doInit(null, function (service) {
         if (service === undefined) {
-            res.status(404).send('Service not found');
-            return;
+            return res.status(404).send('Service not found');
         }
         log.info('Representing rooms for service', service._id);
         res.send(service.rooms);
@@ -100,21 +100,24 @@ exports.deleteRoom = function (req, res) {
                 index = -1;
 
             var id = '' + room._id;
-            roomRegistry.removeRoom(id);
-
-            for (var i = 0; i < array.length; i += 1) {
-                if (array[i]._id === room._id) {
-                    index = i;
-                    break;
+            roomRegistry.removeRoom(id, function (err) {
+                if (err) {
+                    return res.status(500).send(err);
                 }
-            }
-            if (index !== -1) {
-                service.rooms.splice(index, 1);
-                serviceRegistry.updateService(service);
-                log.info('Room', id, 'deleted for service', service._id);
-                cloudHandler.deleteRoom(id, function () {});
-                res.send('Room deleted');
-            }
+                for (var i = 0; i < array.length; i += 1) {
+                    if (array[i]._id === room._id) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index !== -1) {
+                    service.rooms.splice(index, 1);
+                    serviceRegistry.updateService(service);
+                    log.info('Room', id, 'deleted for service', service._id);
+                    cloudHandler.deleteRoom(id, function () {});
+                    res.send('Room deleted');
+                }
+            });
         }
     });
 };
