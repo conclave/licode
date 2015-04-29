@@ -326,7 +326,7 @@ namespace erizo {
       if (bundleTags.size()>2){
         ELOG_WARN("More bundleTags than supported, expect unexpected behaviour");
       }
-      for (int i = 0; i < bundleTags.size(); i++){
+      for (unsigned int i = 0; i < bundleTags.size(); i++){
         if(bundleTags[i].mediaType == AUDIO_TYPE){
           sdp << "a=mid:" << bundleTags[i].id << endl;
         }
@@ -420,7 +420,7 @@ namespace erizo {
           sdp << "a=recvonly" << endl;
           break;
       }
-      for (int i = 0; i < bundleTags.size(); i++){
+      for (unsigned int i = 0; i < bundleTags.size(); i++){
         if(bundleTags[i].mediaType == VIDEO_TYPE){
           sdp << "a=mid:" << bundleTags[i].id << endl;
         }

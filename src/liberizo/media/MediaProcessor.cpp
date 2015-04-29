@@ -450,7 +450,7 @@ namespace erizo {
 
     timeval time;
     gettimeofday(&time, NULL);
-    long millis = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+//    long millis = (time.tv_sec * 1000) + (time.tv_usec / 1000);
 
     RtpHeader head;
     head.setSeqNumber(audioSeqnum_++);
