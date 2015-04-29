@@ -60,6 +60,7 @@ set(ERIZO_SOURCES
   "${ERIZO_SOURCE_DIR}/media/ExternalInput.cpp"
   "${ERIZO_SOURCE_DIR}/media/OneToManyTranscoder.cpp"
   "${ERIZO_SOURCE_DIR}/media/ExternalOutput.cpp"
+  "${ERIZO_SOURCE_DIR}/rtp/RtcpProcessor.cpp"
   "${ERIZO_SOURCE_DIR}/rtp/RtpPacketQueue.cpp"
   "${ERIZO_SOURCE_DIR}/rtp/RtpSource.cpp"
   "${ERIZO_SOURCE_DIR}/rtp/webrtc/fec_receiver_impl.cc"
