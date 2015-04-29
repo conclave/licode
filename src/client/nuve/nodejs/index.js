@@ -79,11 +79,16 @@
         }
       };
 
-      if (body !== undefined) {
-        opt['Content-type'] = 'application/json';
+      if (body) {
+        if (typeof body === 'object') {
+          body = JSON.stringify(body);
+        }
+        opt.headers['Content-type'] = 'application/json';
+        opt.headers['Content-Length'] = Buffer.byteLength(body);
       }
 
-      request(opt, function (response) {
+      var req = request(opt, function (response) {
+        response.setEncoding('utf8');
         var data = '';
         response.on('data', function (chunk) {
           data += chunk;
@@ -106,7 +111,11 @@
               return;
           }
         });
-      }).end();
+      });
+      if (body) {
+        req.write(body);
+      }
+      req.end();
     };
   }
 
