@@ -60,21 +60,12 @@ install_openssl(){
 }
 
 install_libsrtp(){
-  local VERSION="1.5.2"
-  local DIR="libsrtp-${VERSION}"
-  local SRC="${DIR}.tar.gz"
-  local URL="https://github.com/cisco/libsrtp/archive/v${VERSION}.tar.gz"
-  mkdir -p ${BUILD_DIR} && pushd ${BUILD_DIR}
-  wget -c ${URL} -O ${SRC}
-  rm -rf ${DIR}
-  tar xf ${SRC}
-  pushd ${DIR}
+  pushd ${ROOT_DIR}/third_party/srtp
   CFLAGS="-fPIC" ./configure --prefix=$PREFIX_DIR && \
   make clean && \
   make -s V=0 && \
   make uninstall && \
   make install
-  popd
   popd
 }
 
