@@ -7,7 +7,9 @@
 
 #include "SrtpChannel.h"
 
-
+extern "C" {
+  char* octet_string_hex_string(const void *str, int length);
+}
 
 namespace erizo {
     DEFINE_LOGGER(SrtpChannel, "SrtpChannel");
