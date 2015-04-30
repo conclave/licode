@@ -79,8 +79,9 @@ var launchErizoJS = function () {
     log.info('Running process');
     var id = guid();
     var fs = require('fs');
-    var out = fs.openSync('./erizo-' + id + '.log', 'a');
-    var err = fs.openSync('./erizo-' + id + '.log', 'a');
+    var output = path.resolve(process.env.RUN_DIR || '', './erizo-' + id + '.log');
+    var out = fs.openSync(output, 'a');
+    var err = fs.openSync(output, 'a');
     var env = process.env;
     if (env.LD_LIBRARY_PATH) {
         env.LD_LIBRARY_PATH += ':'+LD_LIBRARY_PATH;

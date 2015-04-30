@@ -74,6 +74,7 @@ case $action in
         TARGET=${ROOT}/src/erizo/controller
         ;;
       agent )
+        export RUN_DIR=${RUN}
         TARGET=${ROOT}/src/erizo/agent
         ;;
       sample )
