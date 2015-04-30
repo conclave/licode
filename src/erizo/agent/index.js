@@ -11,6 +11,7 @@ GLOBAL.config.erizoAgent = require('../../../local/etc/erizoAgent');
 GLOBAL.config.rabbit = require('../../../local/etc/common').rabbit;
 
 var BINDED_INTERFACE_NAME = GLOBAL.config.erizoAgent.networkInterface;
+var LD_LIBRARY_PATH = path.resolve(__dirname, '../../../local/lib');
 
 // Parse command line arguments
 var getopt = new Getopt([
@@ -74,13 +75,23 @@ var guid = (function() {
     };
 })();
 
-var launchErizoJS = function() {
+var launchErizoJS = function () {
     log.info('Running process');
     var id = guid();
     var fs = require('fs');
     var out = fs.openSync('./erizo-' + id + '.log', 'a');
     var err = fs.openSync('./erizo-' + id + '.log', 'a');
-    var child = spawn(path.resolve(__dirname, './launch.sh'), [path.resolve(__dirname, '../node-erizo'), id, privateIP, publicIP], { detached: true, stdio: [ 'ignore', out, err ] });
+    var env = process.env;
+    if (env.LD_LIBRARY_PATH) {
+        env.LD_LIBRARY_PATH += ':'+LD_LIBRARY_PATH;
+    } else {
+        env.LD_LIBRARY_PATH = LD_LIBRARY_PATH;
+    }
+    var child = spawn('node', [path.resolve(__dirname, '../node-erizo'), id, privateIP, publicIP], {
+        detached: true,
+        stdio: [ 'ignore', out, err ],
+        env: env
+    });
     child.unref();
     child.on('close', function () {
         var index = idle_erizos.indexOf(id);
@@ -99,13 +110,15 @@ var launchErizoJS = function() {
     idle_erizos.push(id);
 };
 
-var dropErizoJS = function(erizo_id, callback) {
-   if (children.hasOwnProperty(erizo_id)) {
-      var process = children[erizo_id];
-      process.kill();
-      delete children[erizo_id];
-      callback('ok');
-   }
+var dropErizoJS = function (erizo_id, callback) {
+    if (children.hasOwnProperty(erizo_id)) {
+        var process = children[erizo_id];
+        process.kill();
+        delete children[erizo_id];
+        callback('callback', 'ok');
+    } else {
+        callback('callback', 'none');
+    }
 };
 
 var fillErizos = function () {
@@ -131,7 +144,7 @@ var getErizo = function () {
 };
 
 var rpcPublic = {
-    createErizoJS: function(callback) {
+    createErizoJS: function (callback) {
         try {
             var erizo_id = getErizo(); 
             callback('callback', erizo_id);
@@ -141,11 +154,11 @@ var rpcPublic = {
             log.error('Error in ErizoAgent:', error);
         }
     },
-    deleteErizoJS: function(id, callback) {
+    deleteErizoJS: function (id, callback) {
         try {
             dropErizoJS(id, callback);
-        } catch(err) {
-            log.error('Error stopping ErizoJS');
+        } catch (err) {
+            log.error('Error stopping Erizo.node');
         }
     }
 };
@@ -165,9 +178,10 @@ rpc.connect(function () {
 });
 
 process.on('exit', function () {
+    log.info('Killing', Object.keys(children));
     Object.keys(children).map(function (k) {
-        dropErizoJS(k, function(status){
-            log.info('Terminate ErizoJS', k, status);
-        });
+        children[k].kill();
+        delete children[k];
+        log.info('Erizo.node', k, 'terminated.');
     });
 });
