@@ -5,6 +5,7 @@ var Getopt = require('node-getopt');
 
 GLOBAL.config = {};
 GLOBAL.config.erizo = require('../../../local/etc/erizo');
+GLOBAL.config.erizoController = require('../../../local/etc/erizoController');
 GLOBAL.config.rabbit = require('../../../local/etc/common').rabbit;
 
 // Parse command line arguments
