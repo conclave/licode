@@ -3,7 +3,6 @@
  */
 
 #include <srtp/srtp.h>
-#include <srtp/datatypes.h>
 #include <nice/nice.h>
 
 #include "SrtpChannel.h"

@@ -264,13 +264,10 @@ var listen = function () {
                                         sendMsgToRoom(room, 'onRemoveStream', {id: streamId});
                                         room.controller.removePublisher(streamId);
 
-                                        for (var s in room.sockets) {
-                                            var streams = io.sockets.to(room.sockets[s]).streams;
-                                            var index = streams.indexOf(streamId);
-                                            if (index !== -1) {
-                                                streams.splice(index, 1);
-                                            }
-                                        }
+                                        var index = socket.streams.indexOf(streamId);
+                                        if (index !== -1) {
+                                            socket.streams.splice(index, 1);
+                                        } // FIXME: is it necessary to traverse io.sockets?
 
                                         if (room.streams[streamId]) {
                                             delete room.streams[streamId];
@@ -713,7 +710,7 @@ exports.getUsersInRoom = function (room, callback) {
     for (id in sockets) {
         if (sockets.hasOwnProperty(id)) {
             users.push(io.sockets.to(sockets[id]).user);
-        }
+        } // FIXME: socket.user
     }
 
     callback(users);
@@ -733,9 +730,9 @@ exports.deleteUser = function (user, room, callback) {
 
     for (var id in sockets) {
         if (sockets.hasOwnProperty(id)) {
-            if (io.sockets.to(sockets[id]).user.name === user){
+            if (io.sockets.to(sockets[id]).user.name === user) {
                 sockets_to_delete.push(sockets[id]);
-            }
+            } // FIXME: socket.user
         }
     }
 

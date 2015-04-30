@@ -6,10 +6,11 @@ var express = require('express'),
     errorhandler = require('errorhandler'),
     morgan = require('morgan'),
     fs = require('fs'),
+    path = require('path'),
     https = require('https');
 
 
-var nuve = require('./nuve').create({
+var nuve = require('../../src/client/nuve/nodejs').create({
     service: '__auto_generated_service_id__',
     key: '__auto_generated_service_key__',
     url: 'http://localhost:3000/'
@@ -27,8 +28,8 @@ nuve.getRooms(function(roomlist) {
         }
     }
     if (!myRoomId) {
-        nuve.createRoom({name: 'basicExampleRoom'}, function(roomID) {
-            myRoomId = roomID._id;
+        nuve.createRoom({name: 'basicExampleRoom'}, function(room) {
+            myRoomId = JSON.parse(room)._id;
             console.log('Created room ', myRoomId);
         });
     } else {
@@ -89,6 +90,6 @@ app.post('/createToken/', function(req, res) {
 
 app.listen(3001);
 https.createServer({
-    key: fs.readFileSync('cert/key.pem').toString(),
-    cert: fs.readFileSync('cert/cert.pem').toString()
+    key: fs.readFileSync(path.resolve(__dirname, 'cert/key.pem')).toString(),
+    cert: fs.readFileSync(path.resolve(__dirname, 'cert/cert.pem')).toString()
 }, app).listen(3004);

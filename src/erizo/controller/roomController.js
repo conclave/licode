@@ -46,7 +46,7 @@ module.exports  = function (spec) {
 
     var sendKeepAlive = function() {
         for (var e in erizos) {
-            rpc.callRpc('ErizoJS_' + e, 'keepAlive', [], {callback: callbackFor(e)});
+            rpc.callRpc('Erizo.node_' + e, 'keepAlive', [], {callback: callbackFor(e)});
         }
     };
 
@@ -63,7 +63,7 @@ module.exports  = function (spec) {
     };
 
     var getErizoQueue = function(publisher_id) {
-        return 'ErizoJS_' + publishers[publisher_id];
+        return 'Erizo.node_' + publishers[publisher_id];
     };
 
     var dispatchEvent = function(type, event) {

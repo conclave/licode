@@ -71,7 +71,7 @@ Erizo.Room = function (spec) {
 
     // It removes the stream from HTML and close the PeerConnection associated
     removeStream = function (stream) {
-        if (stream.stream !== undefined) {
+        if (stream && stream.stream !== undefined) {
 
             // Remove HTML element
             stream.hide();
