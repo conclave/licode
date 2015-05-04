@@ -60,6 +60,8 @@ node scripts/initdb.js
 │   ├── include
 │   ├── lib
 │   ├── run                 - HOME for licode runtime.
+│   ├── sbin                - binaries from this project.
+│   └── xbin                - third party binaries not built from source code.
 ├── scripts                 - helper scripts.
 ├── src
 │   ├── client
@@ -77,4 +79,9 @@ node scripts/initdb.js
 
 ## Road Map
 
-## TODOs
+- [ ] Nuve rewritten.
+- [ ] Support NSQ for message exchanging.
+- [ ] Better modularity in Node.js land.
+- [ ] Better deployment.
+- [ ] Distributed Erizo-Network.
+- [ ] Pluggable Erizo controller.
