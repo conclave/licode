@@ -11,11 +11,11 @@ install_opus(){
 }
 
 install_libav(){
-  local VERSION="11.1"
+  local VERSION="11.3"
   local DIR="libav-${VERSION}"
   local SRC="${DIR}.tar.gz"
   local URL="https://www.libav.org/releases/${SRC}"
-  local MD5SUM="ce788f04693d63ae168b696eac8ca888"
+  local MD5SUM="1a2eb461b98e0f1d1d6c4d892d51ac9b"
   mkdir -p ${BUILD_DIR} && pushd ${BUILD_DIR}
   [[ ! -s ${SRC} ]] && curl -O ${URL}
   if ! (echo "${MD5SUM} ${SRC}" | md5sum --check) ; then
