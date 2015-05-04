@@ -50,7 +50,7 @@ node scripts/initdb.js
 ```
 .
 ├── build                   - build dir for third parties and liberizo.so (excluded in git).
-├── etc                     - original configuration files.
+├── contrib                 - configuration templates, patches, etc.
 ├── extras                  - sample.
 │   ├── basic_example
 │   └── vagrant

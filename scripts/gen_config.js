@@ -5,8 +5,8 @@
 var fs = require('fs');
 var path = require('path');
 var homeDir = path.resolve(__dirname, '../local');
-var config = require('../etc/licode_default');
-config.logger = require('../etc/log4js_configuration');
+var config = require('../contrib/licode_default');
+config.logger = require('../contrib/log4js_configuration');
 
 fs.writeFileSync(path.join(homeDir, 'etc/common.json'), JSON.stringify({
   rabbit: config.rabbit,

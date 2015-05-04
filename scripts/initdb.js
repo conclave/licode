@@ -4,7 +4,7 @@
 var fs = require('fs');
 var path = require('path');
 var crypto = require('crypto');
-var defaultConfigFile = path.resolve(__dirname, '../etc/licode_default.js');
+var defaultConfigFile = path.resolve(__dirname, '../contrib/licode_default.js');
 var nuveConfigFile = path.resolve(__dirname, '../local/etc/nuve.json');
 var nuveConfig = require(defaultConfigFile).nuve;
 try {
