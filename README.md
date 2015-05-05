@@ -51,6 +51,7 @@ node scripts/initdb.js
 .
 ├── build                   - build dir for third parties and liberizo.so (excluded in git).
 ├── contrib                 - configuration templates, patches, etc.
+├── doc                     - documentation for architecture, usage, design, etc.
 ├── extras                  - sample.
 │   ├── basic_example
 │   └── vagrant
@@ -81,6 +82,7 @@ node scripts/initdb.js
 
 - [ ] Nuve rewritten.
 - [ ] Support NSQ for message exchanging.
+- [ ] Better documentation.
 - [ ] Better modularity in Node.js land.
 - [ ] Better deployment.
 - [ ] Distributed Erizo-Network.
