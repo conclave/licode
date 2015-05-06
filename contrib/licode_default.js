@@ -17,7 +17,7 @@ config.nats = {};
 config.nats.host = 'localhost'; //default value: 'localhost'
 config.nats.port = 4222; //default value: 4222
 config.logger = {};
-config.rpc = 'amqp';
+config.rpc = 'nats';
 
 /*********************************************************
  CLOUD PROVIDER CONFIGURATION
