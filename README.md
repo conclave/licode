@@ -29,7 +29,7 @@ npm install --production
 make sure `mongodb` is running.
 
 ```
-node scripts/gen_config.js
+node scripts/gen_config.js # edit local/etc/nuve.json before running below line if needed.
 node scripts/initdb.js
 ```
 
@@ -44,6 +44,8 @@ node scripts/initdb.js
 - stop all components:
 
   `scripts/kill-all.sh`
+
+NOTE: ensure selected message exchanging server, `rabbitmq-server`, `gnatsd`, or `nsqd` is running before launching these licode services.
 
 ## Structure
 
