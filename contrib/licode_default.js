@@ -9,25 +9,15 @@ var config = {};
 config.rabbit = {};
 config.rabbit.host = 'localhost'; //default value: 'localhost'
 config.rabbit.port = 5672; //default value: 5672
-config.logger = {
-  appenders: [
-    {
-      type: 'console',
-      layout: {
-        type: 'pattern',
-        pattern: '%d  - %p: %c - %m',
-        replaceConsole: true
-      }
-    }
-  ],
-  levels: {
-    ErizoController: 'INFO',
-    RPC: 'INFO',
-    AMQPER: 'INFO',
-    ErizoJS: 'DEBUG',
-    ErizoJSController: 'DEBUG'
-  }
-};
+config.nsq = {};
+config.nsq.host = 'localhost'; //default value: 'localhost'
+config.nsq.port = 4150; //default value: 4150
+config.nsq.lookupd = '';
+config.nats = {};
+config.nats.host = 'localhost'; //default value: 'localhost'
+config.nats.port = 4222; //default value: 4222
+config.logger = {};
+config.rpc = 'amqp';
 
 /*********************************************************
  CLOUD PROVIDER CONFIGURATION

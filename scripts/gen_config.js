@@ -10,6 +10,9 @@ config.logger = require('../contrib/log4js_configuration');
 
 fs.writeFileSync(path.join(homeDir, 'etc/common.json'), JSON.stringify({
   rabbit: config.rabbit,
+  nats: config.nats,
+  nsq: config.nsq,
+  rpc: config.rpc,
   cloudProvider: config.cloudProvider
 }, null, '  '));
 fs.writeFileSync(path.join(homeDir, 'etc/log4js_configuration.json'), JSON.stringify(config.logger, null, '  '));

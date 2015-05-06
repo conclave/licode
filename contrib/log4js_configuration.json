@@ -11,7 +11,9 @@
   ],
   "levels": {
     "ErizoController": "INFO",
-    "RPC": "INFO",
+    "RPC-AMQP": "INFO",
+    "RPC-NATS": "INFO",
+    "RPC-NSQ": "INFO",
     "AMQPER": "INFO",
     "ErizoJS": "DEBUG",
     "ErizoJSController": "DEBUG"
