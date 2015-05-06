@@ -23,7 +23,9 @@ var apis = {
 rpc.bind('dictator', apis, function (){
   var rpc2 = new RPC();
   setInterval(function () {
-    rpc2.callRpc('dictator', 'sdp', null, {
+    var random = parseInt(require('crypto').randomBytes(1).toString('hex'), 16) % (Object.keys(apis).length);
+    var method = Object.keys(apis)[random];
+    rpc2.callRpc('dictator', method, null, {
       callback: function (result) {
         console.log(result);
       }
