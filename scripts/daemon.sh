@@ -64,10 +64,6 @@ case $action in
     echo "starting $component, stdout -> $stdout"
     case ${component} in
       nuve )
-        if ! pgrep -f rabbitmq; then
-          sudo echo
-          sudo rabbitmq-server > ${RUN}/rabbit.log &
-        fi
         TARGET=${ROOT}/src/nuve
         ;;
       controller )
