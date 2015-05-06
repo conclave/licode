@@ -81,7 +81,7 @@ node scripts/initdb.js
 ## Road Map
 
 - [ ] Nuve rewritten.
-- [ ] Support NSQ for message exchanging.
+- [x] Support NATS/NSQ for message exchanging.
 - [ ] Better documentation.
 - [ ] Better modularity in Node.js land.
 - [ ] Better deployment.
