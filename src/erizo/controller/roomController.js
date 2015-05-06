@@ -146,7 +146,9 @@ module.exports  = function (spec) {
 
             var args = [streamId, peerId, msg];
 
-            rpc.callRpc(getErizoQueue(streamId), 'processSignaling', args, {});
+            rpc.callRpc(getErizoQueue(streamId), 'processSignaling', args, {callback: function (resp) {
+                log.debug('processSignaling rpc:', resp);
+            }});
 
         }
     };

@@ -182,7 +182,7 @@ module.exports = function (spec) {
       }
     };
 
-    that.processSignaling = function (streamId, peerId, msg) {
+    that.processSignaling = function (streamId, peerId, msg, callback) {
         log.info('Process Signaling message: ', streamId, peerId, msg);
         if (publishers[streamId] !== undefined) {
 
@@ -199,7 +199,9 @@ module.exports = function (spec) {
                     publishers[streamId].wrtc.addRemoteCandidate(msg.candidate.sdpMid, msg.candidate.sdpMLineIndex, msg.candidate.candidate);
                 } 
             }
-            
+            callback('callback', 'ok');
+        } else {
+            callback('callback', 'error');
         }
     };
 
