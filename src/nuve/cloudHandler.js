@@ -1,6 +1,6 @@
 /*global require, setInterval, clearInterval, exports*/
 'use strict';
-var rpc = require('./').rpc;
+var rpc = require('../common/rpc');
 var config = require('../../local/etc/common');
 
 // Logger
@@ -52,7 +52,7 @@ var recalculatePriority = function () {
     ecQueue = newEcQueue;
 
     if (ecQueue.length === 0 || (available === 0 && warnings < 2)) {
-        log.info('[CLOUD HANDLER]: Warning! No erizoController is available.');
+        log.info('Warning! No erizoController is available.');
     }
 
 };
@@ -77,7 +77,7 @@ setInterval(function checkKA () {
     }
 }, INTERVAL_TIME_CHECK_KA);
 
-exports.addNewErizoController = function (msg, callback) {
+var addNewErizoController = function (msg, callback) {
     if (msg.cloudProvider === '') {
         addNewPrivateErizoController(msg.ip, msg.hostname, msg.port, msg.ssl, callback);
     } else if (msg.cloudProvider === 'amazon') {
@@ -127,30 +127,6 @@ var addNewPrivateErizoController = function (ip, hostname, port, ssl, callback) 
     log.info('New erizocontroller (', id, ') in: ', erizoControllers[id].ip);
     recalculatePriority();
     callback({id: id, publicIP: ip, hostname: hostname, port: port, ssl: ssl});
-};
-
-exports.keepAlive = function (id, callback) {
-    var result;
-
-    if (erizoControllers[id] === undefined) {
-        result = 'whoareyou';
-        log.info('I received a keepAlive mess from a removed erizoController');
-    } else {
-        erizoControllers[id].keepAlive = 0;
-        result = 'ok';
-        //log.info('KA: ', id);
-    }
-    callback(result);
-};
-
-exports.setInfo = function (params) {
-    log.info('Received info ', params,    '.Recalculating erizoControllers priority');
-    erizoControllers[params.id].state = params.state;
-    recalculatePriority();
-};
-
-exports.killMe = function (ip) {
-    log.info('[CLOUD HANDLER]: ErizoController in host ', ip, 'does not respond.');
 };
 
 exports.getErizoControllerForRoom = function (roomId, callback) {
@@ -206,9 +182,64 @@ exports.deleteUser = function (user, roomId, callback) {
     }});
 };
 
-exports.getKey = function getKey (id) {
-    if (erizoControllers[id]) {
-        return nuveKey;
-    }
-    return 'error';
+var rpcPublic = function rpcPublic () {
+    var tokenRegistry = require('./mdb/tokenRegistry');
+    var log = require('../common/logger')('RPCPublic');
+    var that = {};
+    that.deleteToken = function (id, callback) {
+        tokenRegistry.removeOldTokens();
+        tokenRegistry.removeToken(id, function (err, token) {
+            if (!err) {
+                log.info('Consumed token', token._id, 'from room', token.room, 'of service', token.service);
+                callback('callback', token);
+            } else {
+                log.info('Consume token error:', err, id);
+                callback('callback', 'error');
+            }
+        });
+    };
+
+    that.addNewErizoController = function (msg, callback) {
+        addNewErizoController(msg, function (id) {
+            callback('callback', id);   
+        });
+    };
+
+    that.keepAlive = function (id, callback) {
+        var result;
+        if (erizoControllers[id] === undefined) {
+            result = 'whoareyou';
+            log.info('I received a keepAlive mess from a removed erizoController');
+        } else {
+            erizoControllers[id].keepAlive = 0;
+            result = 'ok';
+        }
+        callback('callback', result);
+    };
+
+    that.setInfo = function (params, callback) {
+        log.info('Received info ', params,    '.Recalculating erizoControllers priority');
+        erizoControllers[params.id].state = params.state;
+        recalculatePriority();
+        callback('callback');
+    };
+
+    that.killMe = function (ip, callback) {
+        log.info('[CLOUD HANDLER]: ErizoController in host ', ip, 'does not respond.');
+        callback('callback');
+    };
+
+    that.getKey = function (id, callback) {
+        if (erizoControllers[id]) {
+            return callback('callback', nuveKey);
+        }
+        callback('callback', 'error');
+    };
+    return that;
+};
+
+exports.setupRpc = function setupRpc () {
+    rpc.connect(function () {
+        rpc.bind('nuve', rpcPublic(), function () {});
+    });
 };

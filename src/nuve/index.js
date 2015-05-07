@@ -1,15 +1,10 @@
-/*global require, exports*/
+/*global require*/
 'use strict';
 
 var express = require('express');
 var bodyParser = require('body-parser');
 
-var rpc = require('../common/rpc');
-rpc.connect(function () {
-    rpc.bind('nuve', require('./rpcPublic'), function () {
-      exports.rpc = rpc;
-    });
-});
+require('./cloudHandler').setupRpc();
 
 var nuveAuthenticator = require('./auth/nuveAuthenticator');
 var roomsResource = require('./resource/roomsResource');
