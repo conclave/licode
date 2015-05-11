@@ -8,15 +8,12 @@ var path = require('path');
 // Configuration default values
 GLOBAL.config = {};
 GLOBAL.config.erizoAgent = require('../../../local/etc/erizoAgent');
-GLOBAL.config.rabbit = require('../../../local/etc/common').rabbit;
 
 var BINDED_INTERFACE_NAME = GLOBAL.config.erizoAgent.networkInterface;
 var LD_LIBRARY_PATH = path.resolve(__dirname, '../../../local/lib');
 
 // Parse command line arguments
 var getopt = new Getopt([
-  ['r' , 'rabbit-host=ARG'            , 'RabbitMQ Host'],
-  ['g' , 'rabbit-port=ARG'            , 'RabbitMQ Port'],
   ['M' , 'maxProcesses=ARG'          , 'Stun Server URL'],
   ['P' , 'prerunProcesses=ARG'         , 'Default video Bandwidth'],
   ['h' , 'help'                       , 'display this help']
@@ -31,14 +28,6 @@ for (var prop in opt.options) {
             case 'help':
                 getopt.showHelp();
                 process.exit(0);
-                break;
-            case 'rabbit-host':
-                GLOBAL.config.rabbit = GLOBAL.config.rabbit || {};
-                GLOBAL.config.rabbit.host = value;
-                break;
-            case 'rabbit-port':
-                GLOBAL.config.rabbit = GLOBAL.config.rabbit || {};
-                GLOBAL.config.rabbit.port = value;
                 break;
             default:
                 GLOBAL.config.erizoAgent[prop] = value;

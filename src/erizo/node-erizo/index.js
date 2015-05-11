@@ -6,12 +6,9 @@ var Getopt = require('node-getopt');
 GLOBAL.config = {};
 GLOBAL.config.erizo = require('../../../local/etc/erizo');
 GLOBAL.config.erizoController = require('../../../local/etc/erizoController');
-GLOBAL.config.rabbit = require('../../../local/etc/common').rabbit;
 
 // Parse command line arguments
 var getopt = new Getopt([
-  ['r' , 'rabbit-host=ARG'            , 'RabbitMQ Host'],
-  ['g' , 'rabbit-port=ARG'            , 'RabbitMQ Port'],
   ['s' , 'stunserver=ARG'             , 'Stun Server hostname'],
   ['p' , 'stunport=ARG'               , 'Stun Server port'],
   ['m' , 'minport=ARG'                , 'Minimum port'],
@@ -28,14 +25,6 @@ for (var prop in opt.options) {
             case 'help':
                 getopt.showHelp();
                 process.exit(0);
-                break;
-            case 'rabbit-host':
-                GLOBAL.config.rabbit = GLOBAL.config.rabbit || {};
-                GLOBAL.config.rabbit.host = value;
-                break;
-            case 'rabbit-port':
-                GLOBAL.config.rabbit = GLOBAL.config.rabbit || {};
-                GLOBAL.config.rabbit.port = value;
                 break;
             default:
                 GLOBAL.config.erizo[prop] = value;
