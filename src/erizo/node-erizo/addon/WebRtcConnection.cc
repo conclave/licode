@@ -196,7 +196,8 @@ void WebRtcConnection::setFeedbackReports(const v8::FunctionCallbackInfo<v8::Val
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
   erizo::WebRtcConnection *me = obj->me;
   bool v = (args[0]->ToBoolean())->BooleanValue();
-  me->setFeedbackReports(v);
+  int fbreps = args[1]->IntegerValue(); // From bps to Kbps
+  me->setFeedbackReports(v, fbreps);
 }
 
 void WebRtcConnection::notifyEvent(erizo::WebRTCEvent event, const std::string& message) {
