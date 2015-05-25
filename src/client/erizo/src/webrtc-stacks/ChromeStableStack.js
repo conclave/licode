@@ -135,7 +135,7 @@ Erizo.ChromeStableStack = function (spec) {
         });
         localDesc = sessionDescription;
         //that.peerConnection.setLocalDescription(sessionDescription);
-    }
+    };
 
     var setLocalDescp2p = function (sessionDescription) {
         sessionDescription.sdp = setMaxBW(sessionDescription.sdp);
@@ -146,7 +146,7 @@ Erizo.ChromeStableStack = function (spec) {
         });
         localDesc = sessionDescription;
         that.peerConnection.setLocalDescription(sessionDescription);
-    }
+    };
 
     that.updateSpec = function (config, callback) {
         if (config.maxVideoBW || config.maxAudioBW) {
@@ -170,6 +170,7 @@ Erizo.ChromeStableStack = function (spec) {
                 remoteDesc.sdp = setMaxBW(remoteDesc.sdp);
                 that.peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc), function () {
                     spec.remoteDescriptionSet = true;
+                    spec.callback({type:'updatesdp', sdp: localDesc.sdp});
                     if (callback)
                         callback("success");
 
