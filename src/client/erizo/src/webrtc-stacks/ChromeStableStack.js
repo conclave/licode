@@ -91,7 +91,6 @@ Erizo.ChromeStableStack = function (spec) {
             if (!event.candidate.candidate.match(/a=/)) {
                 event.candidate.candidate = "a=" + event.candidate.candidate;
             }
-            ;
 
             var candidateObject = {
                 sdpMLineIndex: event.candidate.sdpMLineIndex,
@@ -170,14 +169,19 @@ Erizo.ChromeStableStack = function (spec) {
                 remoteDesc.sdp = setMaxBW(remoteDesc.sdp);
                 that.peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc), function () {
                     spec.remoteDescriptionSet = true;
-                    spec.callback({type:'updatesdp', sdp: localDesc.sdp});
-                    if (callback)
-                        callback("success");
-
+                    spec.callback({type:'updatestream', sdp: localDesc.sdp});
                 });
+            }, function (error){
+                console.error("Error updating configuration", error);
+                callback('error');
             });
         }
 
+        if (config.minVideoBW){
+            console.log("MinVideo Changed to ", config.minVideoBW);
+            spec.callback({type:'updatestream', minVideoBW: config.minVideoBW});
+        }
+        
     };
 
     that.createOffer = function (isSubscribe) {
@@ -203,11 +207,11 @@ Erizo.ChromeStableStack = function (spec) {
             msg.sdp = setMaxBW(msg.sdp);
             that.peerConnection.setRemoteDescription(new RTCSessionDescription(msg), function () {
                 that.peerConnection.createAnswer(setLocalDescp2p, function (error) {
-                    L.Logger.error("Error: ", error);
+                    console.error("Error: ", error);
                 }, that.mediaConstraints);
                 spec.remoteDescriptionSet = true;
             }, function (error) {
-                L.Logger.error("Error setting Remote Description", error)
+                console.error("Error setting Remote Description", error);
             });
 
 
@@ -260,7 +264,7 @@ Erizo.ChromeStableStack = function (spec) {
 //                    console.log("Candidates stored: ", spec.remoteCandidates.length, spec.remoteCandidates);
                 }
             } catch (e) {
-                L.Logger.error("Error parsing candidate", msg.candidate);
+                console.error("Error parsing candidate", msg.candidate);
             }
         }
     }
