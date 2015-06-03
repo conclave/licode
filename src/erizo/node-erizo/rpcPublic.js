@@ -89,7 +89,7 @@ module.exports = function (spec) {
                             average = calculateAverage(wrtc.bwValues);
                         }
                     }
-                    toRecover = (average/4)<80000?(average/4):80000;
+                    toRecover = (average/4)<50000?(average/4):50000;
                     switch (wrtc.bwStatus){
                         case BW_STABLE:
                             if(average <= lastAverage && (average < wrtc.lowerThres)){
@@ -108,7 +108,6 @@ module.exports = function (spec) {
                                 ticks = 0;
                                 nextRetry = 0;
                                 retries = 0;
-                                isTrying = false;
                                 wrtc.bwStatus = BW_STABLE;
                                 wrtc.setFeedbackReports(true, 0);
                                 callback('callback', {type:'bandwidthAlert', message:'recovered', bandwidth: average});
@@ -147,7 +146,7 @@ module.exports = function (spec) {
                                 log.debug("BW_RECOVERING State: Finished this retry", retries, average, "lowerThres", wrtc.lowerThres);
                                 ticksToTry = 0;
                                 nextRetry = 0;
-                                retries ++;
+                                retries++;
                                 wrtc.bwStatus = BW_INSUFFICIENT;
                                 wrtc.setFeedbackReports (false, toRecover);
                             }
@@ -157,6 +156,8 @@ module.exports = function (spec) {
                             ticks = 0;
                             nextRetry = 0;
                             retries = 0;
+                            average = 0;
+                            lastAverage = 0;
                             wrtc.bwStatus = BW_STABLE;
                             wrtc.minVideoBW = false;                      
                             wrtc.setFeedbackReports (false, 1);
