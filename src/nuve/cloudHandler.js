@@ -54,7 +54,6 @@ var recalculatePriority = function () {
     if (ecQueue.length === 0 || (available === 0 && warnings < 2)) {
         log.info('Warning! No erizoController is available.');
     }
-
 };
 
 setInterval(function checkKA () {
@@ -76,6 +75,12 @@ setInterval(function checkKA () {
         }
     }
 }, INTERVAL_TIME_CHECK_KA);
+
+var getErizoController;
+
+if (config.nuve.cloudHandlerPolicy) {
+    getErizoController = require('./ch_policies/' + config.nuve.cloudHandlerPolicy).getErizoController;
+}
 
 var addNewErizoController = function (msg, callback) {
     if (msg.cloudProvider === '') {
@@ -137,7 +142,11 @@ exports.getErizoControllerForRoom = function (roomId, callback) {
 
     var id,
         intervarId = setInterval(function () {
-            id = ecQueue[0];
+            if (getErizoController) {
+                id = getErizoController(roomId, erizoControllers, ecQueue);
+            } else {
+                id = ecQueue[0];
+            }
             if (id !== undefined) {
                 rooms[roomId] = id;
                 callback(erizoControllers[id]);

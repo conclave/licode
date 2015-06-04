@@ -430,7 +430,7 @@ var listen = function () {
                         if (!socket.room.p2p) {
                             socket.room.controller.removePublisher(id);
                             if (GLOBAL.config.erizoController.report.session_events) {
-                                rpc.broadcast('event', {room: socket.room.id, user: socket.id, type: 'failed', stream: id, timestamp: (new Date()).getTime()});
+                                rpc.broadcast('event', {room: socket.room.id, user: socket.id, type: 'failed', stream: id, sdp: signMess.sdp, timestamp: (new Date()).getTime()});
                             }
                         }
 

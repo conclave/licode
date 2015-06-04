@@ -36,6 +36,8 @@ config.cloudProvider.secretAccessKey = '';
 config.nuve = {};
 config.nuve.dataBaseURL = 'localhost/nuvedb'; // default value: 'localhost/nuvedb'
 config.nuve.superserviceID = '_auto_generated_ID_'; // default value: ''
+// Cloud Handler policies are in nuve/nuveAPI/ch_policies/ folder
+config.nuve.cloudHandlerPolicy = 'default_policy.js'; // default value: 'default_policy.js'
 
 /*********************************************************
  ERIZO CONTROLLER CONFIGURATION
