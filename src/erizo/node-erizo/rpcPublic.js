@@ -20,6 +20,7 @@ module.exports = function (spec) {
         INTERVAL_TIME_SDP = 100,
         INTERVAL_TIME_KILL = 30*60*1000, // Timeout to kill itself after a timeout since the publisher leaves room.
         INTERVAL_STATS = 1000,
+        MIN_RECOVER_BW = 50000,
         initWebRtcConnection,
         getSdp,
         calculateAverage,
@@ -60,7 +61,8 @@ module.exports = function (spec) {
         var ticksToTry = 0;
         var lastAverage, average, lastBWValue, toRecover;
         var nextRetry = 0;
-        wrtc.bwStatus = BW_STABLE; 
+        wrtc.bwStatus = BW_STABLE;
+        
 
         if (wrtc.minVideoBW || GLOBAL.config.erizoController.report.rtcp_stats){
             if (wrtc.minVideoBW){
@@ -71,7 +73,7 @@ module.exports = function (spec) {
             var intervalId = setInterval(function () {
                 var newStats = wrtc.getStats();
                 if (newStats == null){
-                    console.log("Stopping stats");
+                    log.debug("Stopping stats");
                     clearInterval(intervalId);
                     return;
                 }
@@ -89,7 +91,7 @@ module.exports = function (spec) {
                             average = calculateAverage(wrtc.bwValues);
                         }
                     }
-                    toRecover = (average/4)<50000?(average/4):50000;
+                    toRecover = (average/4)<MIN_RECOVER_BW?(average/4):MIN_RECOVER_BW;
                     switch (wrtc.bwStatus){
                         case BW_STABLE:
                             if(average <= lastAverage && (average < wrtc.lowerThres)){
