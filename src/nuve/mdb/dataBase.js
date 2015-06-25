@@ -15,7 +15,7 @@ var databaseUrl = config.dataBaseURL;
  *
  */
 var collections = ['rooms', 'tokens', 'services'];
-exports.db = require('mongojs').connect(databaseUrl, collections);
+exports.db = require('mongojs')(databaseUrl, collections);
 
 // Superservice ID
 exports.superService = config.superserviceID;
