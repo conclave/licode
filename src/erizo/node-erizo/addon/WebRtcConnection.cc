@@ -53,9 +53,6 @@ void WebRtcConnection::New(const v8::FunctionCallbackInfo<v8::Value>& args) {
   obj->Wrap(args.This());
   uv_async_init(uv_default_loop(), &obj->async_, &WebRtcConnection::eventsCallback); 
   uv_async_init(uv_default_loop(), &obj->asyncStats_, &WebRtcConnection::statsCallback); 
-  //obj->eventMsg = "";
-  //obj->eventSt = 0;
-  obj->statsMsg = "";
   args.GetReturnValue().Set(args.This());
 }
 
@@ -65,6 +62,7 @@ void WebRtcConnection::close(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
   obj->me = nullptr;
+  obj->hasCallback_ = false;
   uv_close((uv_handle_t*)&obj->async_, nullptr);
   uv_close((uv_handle_t*)&obj->asyncStats_, nullptr);
 
@@ -209,9 +207,10 @@ void WebRtcConnection::notifyEvent(erizo::WebRTCEvent event, const std::string& 
 }
 
 void WebRtcConnection::notifyStats(const std::string& message) {
+  if (!this->hasCallback_)
+    return;
   boost::mutex::scoped_lock lock(mutex);
-  // TODO: Add message queue
-  this->statsMsg=message;
+  this->statsMsgs.push(message);
   asyncStats_.data = this;
   uv_async_send (&asyncStats_);
 }
@@ -220,7 +219,7 @@ void WebRtcConnection::eventsCallback(uv_async_t *handle) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
   WebRtcConnection* obj = (WebRtcConnection*)handle->data;
-  if (!obj)
+  if (!obj || obj->me == nullptr)
     return;
   boost::mutex::scoped_lock lock(obj->mutex);
   while (!obj->eventSts.empty()) {
@@ -236,12 +235,15 @@ void WebRtcConnection::statsCallback(uv_async_t *handle) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
   WebRtcConnection* obj = (WebRtcConnection*)handle->data;
-  if (!obj)
+  if (!obj || obj->me == nullptr)
     return;
   boost::mutex::scoped_lock lock(obj->mutex);
-  Local<Value> args[] = {String::NewFromUtf8(isolate, obj->statsMsg.c_str())};
   if (obj->hasCallback_) {
-    Local<Function> callback = Local<Function>::New(isolate, obj->statsCallback_);
-    callback->Call(isolate->GetCurrentContext()->Global(), 1, args);
+    while (!obj->statsMsgs.empty()) {
+      Local<Value> args[] = {String::NewFromUtf8(isolate, obj->statsMsgs.front().c_str())};
+      Local<Function> callback = Local<Function>::New(isolate, obj->statsCallback_);
+      callback->Call(isolate->GetCurrentContext()->Global(), 1, args);
+      obj->statsMsgs.pop();
+    }
   }
 }
