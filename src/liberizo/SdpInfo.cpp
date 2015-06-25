@@ -850,7 +850,7 @@ namespace erizo {
           rtp.feedbackTypes.push_back(feedback);
         }
       }
-    }    
+    }
 
     return true;
   }

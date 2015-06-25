@@ -73,7 +73,7 @@ window.onload = function () {
           document.body.removeChild(element);
         }
       });
-      
+
       room.addEventListener("stream-failed", function (streamEvent){
           console.log("STREAM FAILED, DISCONNECTION");
           printText('STREAM FAILED, DISCONNECTION');
