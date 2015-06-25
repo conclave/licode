@@ -13,8 +13,7 @@ try {
   console.log(e);
 }
 var dbURL = process.env.DB_URL || nuveConfig.dataBaseURL;
-var mongojs = require('mongojs');
-var db = mongojs.connect(dbURL, ['services']);
+var db = require('mongojs')(dbURL, ['services']);
 
 function prepareService (serviceName, next) {
   db.services.findOne({name: serviceName}, function cb (err, service) {

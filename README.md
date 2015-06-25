@@ -82,9 +82,9 @@ NOTE: ensure selected message exchanging server, `rabbitmq-server`, `gnatsd`, or
 
 ## Road Map
 
-- [ ] Nuve rewritten.
+- [ ] Nuve rewritten, with `nuveadmin` and `nuveclient`.
 - [x] Support NATS/NSQ for message exchanging.
-- [ ] Better documentation.
+- [ ] Better documentation and sample app.
 - [ ] Better modularity in Node.js land.
 - [ ] Better deployment.
 - [ ] Distributed Erizo-Network.
