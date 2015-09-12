@@ -27,10 +27,8 @@ namespace erizo {
       boost::shared_ptr<NiceConnection> nice_;
       MediaType mediaType;
       std::string transport_name;
-      Transport(MediaType med, const std::string &transport_name, bool bundle, bool rtcp_mux, TransportListener *transportListener, const std::string &stunServer, int stunPort, int minPort, int maxPort) :
-        mediaType(med), transport_name(transport_name),rtcp_mux_(rtcp_mux), transpListener_(transportListener), state_(TRANSPORT_INITIAL), stunPort_(stunPort), minPort_(minPort), maxPort_(maxPort), stunServer_(stunServer), bundle_(bundle)
-      {
-      }
+      Transport(MediaType med, const std::string &transport_name, bool bundle, bool rtcp_mux, TransportListener *transportListener, const std::string &stunServer, int stunPort, int minPort, int maxPort)
+        : mediaType(med), transport_name(transport_name),rtcp_mux_(rtcp_mux), transpListener_(transportListener), state_(TRANSPORT_INITIAL), stunPort_(stunPort), minPort_(minPort), maxPort_(maxPort), stunServer_(stunServer), bundle_(bundle) { }
       virtual ~Transport(){}
       virtual void updateIceState(IceState state, NiceConnection *conn) = 0;
       virtual void onNiceData(unsigned int component_id, char* data, int len, NiceConnection* nice) = 0;

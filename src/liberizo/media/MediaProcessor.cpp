@@ -45,9 +45,11 @@ namespace erizo {
       decodedBuffer_ = (unsigned char*) malloc(
           info.videoCodec.width * info.videoCodec.height * 3 / 2);
       unpackagedBufferPtr_ = unpackagedBuffer_ = (unsigned char*) malloc(UNPACKAGED_BUFFER_SIZE);
-      if(!vDecoder.initDecoder(mediaInfo.videoCodec));
+      if(!vDecoder.initDecoder(mediaInfo.videoCodec))
+        ;
       videoDecoder = 1; 
-      if(!this->initVideoUnpackager());
+      if(!this->initVideoUnpackager())
+        ;
     }
     if (mediaInfo.hasAudio) {
       ELOG_DEBUG("Init AUDIO processor");

@@ -14,8 +14,6 @@
 using namespace std;
 using namespace dtls;
 
-const int SRTP_MASTER_KEY_BASE64_LEN = SRTP_MASTER_KEY_LEN * 4 / 3;
-
 DEFINE_LOGGER(DtlsSocket, "dtls.DtlsSocket");
 
 // Our local timers

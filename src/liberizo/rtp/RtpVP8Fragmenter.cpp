@@ -8,14 +8,10 @@ namespace erizo {
 
 DEFINE_LOGGER(RtpVP8Fragmenter, "rtp.RtpVP8Fragmenter");
 
-RtpVP8Fragmenter::RtpVP8Fragmenter(unsigned char* data, unsigned int length,
-		unsigned int maxLength) :
-		totalData_(data), totalLenth_(length), maxlength_(maxLength) {
-	calculatePackets();
-}
+RtpVP8Fragmenter::RtpVP8Fragmenter(unsigned char* data, unsigned int length, unsigned int maxLength)
+		: totalData_(data), totalLenth_(length), maxlength_(maxLength) { calculatePackets(); }
 
-RtpVP8Fragmenter::~RtpVP8Fragmenter() {
-}
+RtpVP8Fragmenter::~RtpVP8Fragmenter() { }
 
 int RtpVP8Fragmenter::getPacket(unsigned char* data, unsigned int* length,
 		bool* lastPacket) {
