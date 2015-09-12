@@ -2,6 +2,7 @@
 #define EXTERNALOUTPUT_H
 
 #include <node.h>
+#include <node_object_wrap.h>
 #include <media/ExternalOutput.h>
 #include "MediaDefinitions.h"
 #include "WebRtcConnection.h"
@@ -15,28 +16,29 @@
  */
 class ExternalOutput: public node::ObjectWrap {
  public:
-  static void Init(v8::Handle<v8::Object> target);
+  static void Init(v8::Handle<v8::Object> exports);
   erizo::ExternalOutput* me;
 
  private:
   ExternalOutput();
   ~ExternalOutput();
+  static v8::Persistent<v8::Function> constructor;
 
   /*
    * Constructor.
    * Constructs a ExternalOutput
    */
-  static v8::Handle<v8::Value> New(const v8::Arguments& args);
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   /*
    * Closes the ExternalOutput.
    * The object cannot be used after this call
    */
-  static v8::Handle<v8::Value> close(const v8::Arguments& args);
+  static void close(const v8::FunctionCallbackInfo<v8::Value>& args);
   /*
    * Inits the ExternalOutput 
    * Returns true ready
    */
-  static v8::Handle<v8::Value> init(const v8::Arguments& args);  
+  static void init(const v8::FunctionCallbackInfo<v8::Value>& args);  
 };
 
 #endif

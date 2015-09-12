@@ -10,12 +10,12 @@
 
 using namespace v8;
 
-void InitAll(Handle<Object> target) {
-  WebRtcConnection::Init(target);
-  OneToManyProcessor::Init(target);
-  OneToManyTranscoder::Init(target);
-  ExternalInput::Init(target);
-  ExternalOutput::Init(target);
+void InitAll(Handle<Object> exports) {
+  WebRtcConnection::Init(exports);
+  OneToManyProcessor::Init(exports);
+  OneToManyTranscoder::Init(exports);
+  ExternalInput::Init(exports);
+  ExternalOutput::Init(exports);
 }
 
 NODE_MODULE(addon, InitAll)

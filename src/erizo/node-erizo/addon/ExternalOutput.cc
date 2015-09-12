@@ -7,55 +7,58 @@
 
 using namespace v8;
 
+Persistent<Function> ExternalOutput::constructor;
 ExternalOutput::ExternalOutput() {};
 ExternalOutput::~ExternalOutput() {};
 
-void ExternalOutput::Init(Handle<Object> target) {
+void ExternalOutput::Init(Handle<Object> exports) {
+  Isolate* isolate = Isolate::GetCurrent();
   // Prepare constructor template
-  Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
-  tpl->SetClassName(String::NewSymbol("ExternalOutput"));
+  Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
+  tpl->SetClassName(String::NewFromUtf8(isolate, "ExternalOutput"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   // Prototype
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("close"), FunctionTemplate::New(close)->GetFunction());
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("init"), FunctionTemplate::New(init)->GetFunction());
+  NODE_SET_PROTOTYPE_METHOD(tpl, "close", close);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "init", init);
 
-  Persistent<Function> constructor = Persistent<Function>::New(tpl->GetFunction());
-  target->Set(String::NewSymbol("ExternalOutput"), constructor);
+  constructor.Reset(isolate, tpl->GetFunction());
+  exports->Set(String::NewFromUtf8(isolate, "ExternalOutput"), tpl->GetFunction());
 }
 
-Handle<Value> ExternalOutput::New(const Arguments& args) {
-  HandleScope scope;
+void ExternalOutput::New(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
 
-  v8::String::Utf8Value param(args[0]->ToString());
-  std::string url = std::string(*param);
-
-  ExternalOutput* obj = new ExternalOutput();
-  obj->me = new erizo::ExternalOutput(url);
-
-  obj->Wrap(args.This());
-
-  return args.This();
+  if (args.IsConstructCall()) {
+    v8::String::Utf8Value param(args[0]->ToString());
+    std::string url = std::string(*param);
+    ExternalOutput* obj = new ExternalOutput();
+    obj->me = new erizo::ExternalOutput(url);
+    obj->Wrap(args.This());
+    args.GetReturnValue().Set(args.This());
+  } else {
+    const int argc = 1;
+    Local<Value> argv[argc] = { args[0] };
+    args.GetReturnValue().Set((Local<Function>::New(isolate, constructor))->NewInstance(argc, argv));
+  }
 }
 
-Handle<Value> ExternalOutput::close(const Arguments& args) {
-  HandleScope scope;
+void ExternalOutput::close(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
 
-  ExternalOutput* obj = ObjectWrap::Unwrap<ExternalOutput>(args.This());
+  ExternalOutput* obj = ObjectWrap::Unwrap<ExternalOutput>(args.Holder());
   erizo::ExternalOutput *me = (erizo::ExternalOutput*)obj->me;
-
   delete me;
-
-  return scope.Close(Null());
 }
 
-Handle<Value> ExternalOutput::init(const Arguments& args) {
-  HandleScope scope;
+void ExternalOutput::init(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
 
-  ExternalOutput* obj = ObjectWrap::Unwrap<ExternalOutput>(args.This());
+  ExternalOutput* obj = ObjectWrap::Unwrap<ExternalOutput>(args.Holder());
   erizo::ExternalOutput *me = (erizo::ExternalOutput*) obj->me;
-
   int r = me->init();
-
-  return scope.Close(Integer::New(r));
+  args.GetReturnValue().Set(Integer::New(isolate, r));
 }
 

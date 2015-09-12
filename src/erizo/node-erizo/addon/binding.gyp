@@ -2,7 +2,12 @@
   'targets': [
   {
     'target_name': 'addon',
-      'sources': [ 'addon.cc', 'WebRtcConnection.cc', 'OneToManyProcessor.cc', 'ExternalInput.cc', 'ExternalOutput.cc', 'OneToManyTranscoder.cc' ],
+      'sources': [ 'addon.cc',
+        'OneToManyProcessor.cc',
+        'OneToManyTranscoder.cc',
+        'ExternalInput.cc',
+        'ExternalOutput.cc',
+        'WebRtcConnection.cc' ],
       'include_dirs' : ['../../../liberizo', '$(PREFIX_DIR)/include'],
       'libraries': ['-L$(PREFIX_DIR)/lib', '-lerizo'],
       'conditions': [
@@ -13,6 +18,7 @@
               'MACOSX_DEPLOYMENT_TARGET' : '10.7',      #from MAC OS 10.7
               'OTHER_CFLAGS': [
               '-g -O3 -stdlib=libc++',
+              '-Wno-unused-private-field',
             ]
           },
         }, { # OS!="mac"
