@@ -17,8 +17,13 @@ if(DOXYGEN_FOUND)
 endif(DOXYGEN_FOUND)
 
 #global variable
-set(THIRD_PARTY_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../../local/include/")
-set(THIRD_PARTY_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../../local/lib/")
+if(APPLE)
+  set(THIRD_PARTY_INCLUDE "/usr/local/include/")
+  set(THIRD_PARTY_LIB "/usr/local/lib/")
+else()
+  set(THIRD_PARTY_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../../local/include/")
+  set(THIRD_PARTY_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../../local/lib/")
+endif()
 
 find_package(PkgConfig)
 #functions
@@ -31,7 +36,7 @@ endfunction(test_lib)
 
 set(ERIZO_VERSION_MAJOR 0)
 set(ERIZO_VERSION_MINOR 1)
-set(CMAKE_CXX_FLAGS "-g -Wall -std=c++0x")
+set(CMAKE_CXX_FLAGS "-g -Wall -std=c++11")
 
 include_directories("${ERIZO_SOURCE_DIR}" "${THIRD_PARTY_INCLUDE}")
 
@@ -94,12 +99,18 @@ find_library(NICE nice HINTS "${THIRD_PARTY_LIB}")
 test_lib(${NICE})
 
 # OPENSSL
-find_library(SSL ssl HINTS "${THIRD_PARTY_LIB}")
+if(APPLE)
+  find_library(SSL ssl HINTS "/usr/local/opt/openssl/lib")
+  find_library(CRYPTO crypto HINTS "/usr/local/opt/openssl/lib")
+  include_directories("/usr/local/opt/openssl/include")
+else()
+  find_library(SSL ssl HINTS "${THIRD_PARTY_LIB}")
+  find_library(CRYPTO crypto HINTS "${THIRD_PARTY_LIB}")
+endif()
 test_lib(${SSL})
-find_library(CRYPTO crypto HINTS "${THIRD_PARTY_LIB}")
 test_lib(${CRYPTO})
 
-# Libav
+# FFMepg/Libav
 find_library(AVUTIL avutil HINTS "${THIRD_PARTY_LIB}")
 test_lib(${AVUTIL})
 set (LIBS ${AVUTIL})

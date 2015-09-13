@@ -8,7 +8,6 @@
       'ExternalOutput.cc',
       'WebRtcConnection.cc' ],
     'include_dirs' : ['../../../liberizo', '$(PREFIX_DIR)/include'],
-    'libraries': ['-L$(PREFIX_DIR)/lib', '-lerizo'],
     'conditions': [
       [ 'OS=="mac"', {
         'xcode_settings': {
@@ -20,12 +19,14 @@
             '-Wno-unused-private-field',
           ]
         },
+        'libraries': ['-L../../../../../build/liberizo', '-lerizo'],
       }, { # OS!="mac"
         'cflags!':    ['-fno-exceptions'],
         'cflags':     ['-D__STDC_CONSTANT_MACROS'],
         'cflags_cc':  ['-Wall', '-O3', '-g' , '-std=c++11', '-fexceptions'],
         'cflags_cc!': ['-fno-exceptions'],
-        'cflags_cc!': ['-fno-rtti']
+        'cflags_cc!': ['-fno-rtti'],
+        'libraries':  ['-L$(PREFIX_DIR)/lib', '-lerizo'],
       }],
     ]
   }]
