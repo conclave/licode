@@ -77,20 +77,3 @@ install_libsrtp(){
   popd
   popd
 }
-
-install_libuv(){
-  local UV_VERSION="0.10.36"
-  local UV_SRC="https://github.com/libuv/libuv/archive/v${UV_VERSION}.tar.gz"
-  local UV_DST="libuv-${UV_VERSION}.tar.gz"
-  mkdir -p ${BUILD_DIR} && pushd ${BUILD_DIR}
-  [[ ! -s ${UV_DST} ]] && wget -c ${UV_SRC} -O ${UV_DST}
-  tar xf ${UV_DST}
-  pushd libuv-${UV_VERSION} && make
-  ##make_install:
-  cp -av include/* ${PREFIX_DIR}/include
-  local symbol=$(readelf -d ./libuv.so | grep soname | sed 's/.*\[\(.*\)\]/\1/g')
-  ln -s libuv.so ${symbol}
-  cp -dv libuv.so ${symbol} ${PREFIX_DIR}/lib
-  popd
-  popd
-}

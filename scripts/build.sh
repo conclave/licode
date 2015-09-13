@@ -4,8 +4,8 @@ usage(){
   echo "
 Building helper
   Usage:
-      --liberizo                          build liberizo.so
-      --addon                             build erizo addon for nodejs
+      --liberizo                          build liberizo
+      --addon                             build addon for node-erizo
       --help                              print this help
 "
   exit $1
@@ -13,8 +13,13 @@ Building helper
 
 [[ $# -eq 0 ]] && usage 1
 
-this=$(readlink -f $0)
-this_dir=$(dirname $this)
+OS=$(uname -s)
+if [[ ${OS} == 'Darwin' ]]; then
+  this_dir=$(cd $(dirname $0); pwd)
+else
+  this_dir=$(dirname $(readlink -f $0))
+fi
+
 source ${this_dir}/env.sh
 BUILD_LIBERIZO=false
 BUILD_ADDON=false
@@ -23,8 +28,7 @@ build_liberizo(){
   local DIR="${BUILD_DIR}/liberizo"
   local SRC_DIR="${ROOT_DIR}/src/liberizo"
   mkdir -p ${DIR} && pushd ${DIR}
-  cmake ${SRC_DIR} && make
-  [[ -s liberizo.so ]] && cp -av liberizo.so ${PREFIX_DIR}/lib || echo "Failed to produce liberizo.so"
+  cmake ${SRC_DIR} -DCMAKE_INSTALL_PREFIX=${PREFIX_DIR} && make && make install || echo "Failed to produce liberizo"
   popd
 }
 

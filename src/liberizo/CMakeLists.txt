@@ -127,6 +127,12 @@ test_lib(${LOG})
 
 target_link_libraries(erizo ${SRTP} ${NICE} ${GTHREAD} ${SSL} ${CRYPTO} ${LIBS} ${LOG})
 
+install(
+  TARGETS
+    erizo
+  LIBRARY DESTINATION
+    "${CMAKE_INSTALL_PREFIX}/${CMAKE_SHARED_LIBRARY_PREFIX}"
+)
 
 #examples
 if(COMPILE_EXAMPLES)

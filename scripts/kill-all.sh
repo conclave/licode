@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-this=$(readlink -f $0)
-bin=$(dirname $this)
+OS=$(uname -s)
+if [[ ${OS} == 'Darwin' ]]; then
+  bin=$(cd $(dirname $0); pwd)
+else
+  bin=$(dirname $(readlink -f $0))
+fi
 
 ${bin}/daemon.sh stop sample
 ${bin}/daemon.sh stop agent

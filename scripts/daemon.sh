@@ -8,8 +8,12 @@ if [ $# -le 1 ]; then
   exit 1
 fi
 
-this=$(readlink -f $0)
-bin=$(dirname $this)
+OS=$(uname -s)
+if [[ ${OS} == 'Darwin' ]]; then
+  bin=$(cd $(dirname $0); pwd)
+else
+  bin=$(dirname $(readlink -f $0))
+fi
 ROOT=$(dirname ${bin})
 RUN="${ROOT}/local/run"
 
