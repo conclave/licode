@@ -2,10 +2,8 @@
  * VideoUtils.h
  */
 
-#ifndef VIDEOUTILS_H__
+#ifndef VIDEOUTILS_H_
 #define VIDEOUTILS_H_
-
-#include <boost/cstdint.hpp>
 
 #include "logger.h"
 
@@ -19,10 +17,10 @@ class VideoUtils{
     BGR24_FORMAT
   };
 
-  static  int
+  static int
     vRescale(unsigned char *inBuff,
-        unsigned int  inBuffLen,
-        unsigned char *outBuff,
+        unsigned int   inBuffLen,
+        unsigned char* outBuff,
         unsigned int   outBuffLen,
         unsigned int   inW,
         unsigned int   inH,
@@ -31,10 +29,10 @@ class VideoUtils{
         uint32_t       format
         );
 
- static int
+  static int
     vPutImage(unsigned char *inBuff,
         unsigned int   inBuffLen,
-        unsigned char *outBuff,
+        unsigned char* outBuff,
         unsigned int   outBuffLen,
         unsigned int   inW,
         unsigned int   inH,
@@ -44,12 +42,12 @@ class VideoUtils{
         unsigned int   posY,
         unsigned int   totalW,
         unsigned int   totalH,
-        uint32_t            format,
-        unsigned char *mask = NULL,
+        uint32_t       format,
+        unsigned char* mask = NULL,
         bool           invertMask = false
         );
 
- static void
+  static void
     vSetMaskRect(unsigned char *mask,
         unsigned int   W,
         unsigned int   H,
@@ -58,21 +56,21 @@ class VideoUtils{
         unsigned int   totalW,
         unsigned int   totalH,
         bool           val,
-        uint32_t            format
+        uint32_t       format
         );
 
- static int
+  static int
     vSetMask(unsigned char *outBuff,
         unsigned       outBuffLen,
-        unsigned char *mask,
+        unsigned char* mask,
         unsigned       W,
         unsigned       H,
         unsigned       totalW,
         unsigned       totalH,
         bool           val,
-        uint32_t            format
+        uint32_t       format
         );
 };
 
-#endif //_VIDEOUTILS_H_
+#endif // VIDEOUTILS_H_
 

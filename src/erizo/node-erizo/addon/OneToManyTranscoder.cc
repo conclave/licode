@@ -1,58 +1,60 @@
-#ifndef BUILDING_NODE_EXTENSION
-#define BUILDING_NODE_EXTENSION
-#endif
-#include <node.h>
 #include "OneToManyTranscoder.h"
-
+#include "WebRtcConnection.h"
 
 using namespace v8;
 
+Persistent<Function> OneToManyTranscoder::constructor;
 OneToManyTranscoder::OneToManyTranscoder() {};
 OneToManyTranscoder::~OneToManyTranscoder() {};
 
-void OneToManyTranscoder::Init(Handle<Object> target) {
+void OneToManyTranscoder::Init(Handle<Object> exports) {
+  Isolate* isolate = Isolate::GetCurrent();
   // Prepare constructor template
-  Local<FunctionTemplate> tpl = FunctionTemplate::New(New);
-  tpl->SetClassName(String::NewSymbol("OneToManyTranscoder"));
+  Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
+  tpl->SetClassName(String::NewFromUtf8(isolate, "OneToManyTranscoder"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   // Prototype
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("close"), FunctionTemplate::New(close)->GetFunction());
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("setPublisher"), FunctionTemplate::New(setPublisher)->GetFunction());
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("hasPublisher"), FunctionTemplate::New(hasPublisher)->GetFunction());
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("addSubscriber"), FunctionTemplate::New(addSubscriber)->GetFunction());
-  tpl->PrototypeTemplate()->Set(String::NewSymbol("removeSubscriber"), FunctionTemplate::New(removeSubscriber)->GetFunction());
+  NODE_SET_PROTOTYPE_METHOD(tpl, "close", close);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "setPublisher", setPublisher);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "hasPublisher", hasPublisher);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "addSubscriber", addSubscriber);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "removeSubscriber", removeSubscriber);
 
-  Persistent<Function> constructor = Persistent<Function>::New(tpl->GetFunction());
-  target->Set(String::NewSymbol("OneToManyTranscoder"), constructor);
+  constructor.Reset(isolate, tpl->GetFunction());
+  exports->Set(String::NewFromUtf8(isolate, "OneToManyTranscoder"), tpl->GetFunction());
 }
 
-Handle<Value> OneToManyTranscoder::New(const Arguments& args) {
-  HandleScope scope;
+void OneToManyTranscoder::New(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
 
-  OneToManyTranscoder* obj = new OneToManyTranscoder();
-  obj->me = new erizo::OneToManyTranscoder();
-  obj->msink = obj->me;
-
-  obj->Wrap(args.This());
-
-  return args.This();
+  if (args.IsConstructCall()) {
+    OneToManyTranscoder* obj = new OneToManyTranscoder();
+    obj->me = new erizo::OneToManyTranscoder();
+    obj->msink = obj->me;
+    obj->Wrap(args.This());
+    args.GetReturnValue().Set(args.This());
+  } else {
+    const int argc = 1;
+    Local<Value> argv[argc] = { args[0] };
+    args.GetReturnValue().Set((Local<Function>::New(isolate, constructor))->NewInstance(argc, argv));
+  }
 }
 
-Handle<Value> OneToManyTranscoder::close(const Arguments& args) {
-  HandleScope scope;
+void OneToManyTranscoder::close(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
 
-  OneToManyTranscoder* obj = ObjectWrap::Unwrap<OneToManyTranscoder>(args.This());
+  OneToManyTranscoder* obj = ObjectWrap::Unwrap<OneToManyTranscoder>(args.Holder());
   erizo::OneToManyTranscoder *me = (erizo::OneToManyTranscoder*)obj->me;
-
   delete me;
-
-  return scope.Close(Null());
 }
 
-Handle<Value> OneToManyTranscoder::setPublisher(const Arguments& args) {
-  HandleScope scope;
+void OneToManyTranscoder::setPublisher(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
 
-  OneToManyTranscoder* obj = ObjectWrap::Unwrap<OneToManyTranscoder>(args.This());
+  OneToManyTranscoder* obj = ObjectWrap::Unwrap<OneToManyTranscoder>(args.Holder());
   erizo::OneToManyTranscoder *me = (erizo::OneToManyTranscoder*)obj->me;
 
   WebRtcConnection* param = ObjectWrap::Unwrap<WebRtcConnection>(args[0]->ToObject());
@@ -60,58 +62,41 @@ Handle<Value> OneToManyTranscoder::setPublisher(const Arguments& args) {
 
   erizo::MediaSource* ms = dynamic_cast<erizo::MediaSource*>(wr);
   me->setPublisher(ms);
-
-
-  return scope.Close(Null());
 }
 
-Handle<Value> OneToManyTranscoder::hasPublisher(const Arguments& args) {
-  HandleScope scope;
+void OneToManyTranscoder::hasPublisher(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
 
-  OneToManyTranscoder* obj = ObjectWrap::Unwrap<OneToManyTranscoder>(args.This());
+  OneToManyTranscoder* obj = ObjectWrap::Unwrap<OneToManyTranscoder>(args.Holder());
   erizo::OneToManyTranscoder *me = (erizo::OneToManyTranscoder*)obj->me;
-
-  bool p = true;
-
-  if(me->publisher == NULL) {
-    p = false;
-  }
-  
-  return scope.Close(Boolean::New(p));
+  args.GetReturnValue().Set(Boolean::New(isolate, (me->publisher != nullptr)));
 }
 
-Handle<Value> OneToManyTranscoder::addSubscriber(const Arguments& args) {
-  HandleScope scope;
+void OneToManyTranscoder::addSubscriber(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
 
-  OneToManyTranscoder* obj = ObjectWrap::Unwrap<OneToManyTranscoder>(args.This());
+  OneToManyTranscoder* obj = ObjectWrap::Unwrap<OneToManyTranscoder>(args.Holder());
   erizo::OneToManyTranscoder *me = (erizo::OneToManyTranscoder*)obj->me;
 
   WebRtcConnection* param = ObjectWrap::Unwrap<WebRtcConnection>(args[0]->ToObject());
   erizo::WebRtcConnection* wr = param->me;
 
-// get the param
   v8::String::Utf8Value param1(args[1]->ToString());
-
-// convert it to string
   std::string peerId = std::string(*param1);
   me->addSubscriber(wr, peerId);
-
-  return scope.Close(Null());
 }
 
-Handle<Value> OneToManyTranscoder::removeSubscriber(const Arguments& args) {
-  HandleScope scope;
+void OneToManyTranscoder::removeSubscriber(const v8::FunctionCallbackInfo<v8::Value>& args) {
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
 
-  OneToManyTranscoder* obj = ObjectWrap::Unwrap<OneToManyTranscoder>(args.This());
+  OneToManyTranscoder* obj = ObjectWrap::Unwrap<OneToManyTranscoder>(args.Holder());
   erizo::OneToManyTranscoder *me = (erizo::OneToManyTranscoder*)obj->me;
 
-// get the param
   v8::String::Utf8Value param1(args[0]->ToString());
-
-// convert it to string
   std::string peerId = std::string(*param1);
   me->removeSubscriber(peerId);
-
-  return scope.Close(Null());
 }
 

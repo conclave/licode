@@ -3,12 +3,7 @@
 
 #include <node.h>
 #include <OneToManyProcessor.h>
-#include <WebRtcConnection.h>
 #include "MediaDefinitions.h"
-#include "WebRtcConnection.h"
-#include "ExternalInput.h"
-#include "ExternalOutput.h"
-
 
 /*
  * Wrapper class of erizo::OneToManyProcessor
@@ -24,52 +19,53 @@ class OneToManyProcessor : public MediaSink {
  private:
   OneToManyProcessor();
   ~OneToManyProcessor();
+  static v8::Persistent<v8::Function> constructor;
 
   /*
    * Constructor.
    * Constructs a OneToManyProcessor
    */
-  static v8::Handle<v8::Value> New(const v8::Arguments& args);
+  static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   /*
    * Closes the OneToManyProcessor.
    * The object cannot be used after this call
    */
-  static v8::Handle<v8::Value> close(const v8::Arguments& args);
+  static void close(const v8::FunctionCallbackInfo<v8::Value>& args);
   /*
    * Sets the Publisher
    * Param: the WebRtcConnection of the Publisher
    */
-  static v8::Handle<v8::Value> setPublisher(const v8::Arguments& args);
+  static void setPublisher(const v8::FunctionCallbackInfo<v8::Value>& args);
   /*
    * Adds an ExternalOutput
    * Param: The ExternalOutput   
    */
-  static v8::Handle<v8::Value> addExternalOutput(const v8::Arguments& args);
+  static void addExternalOutput(const v8::FunctionCallbackInfo<v8::Value>& args);
   /*
    * Sets an External Publisher
    * Param: the ExternalInput of the Publisher
    */
-  static v8::Handle<v8::Value> setExternalPublisher(const v8::Arguments& args);
+  static void setExternalPublisher(const v8::FunctionCallbackInfo<v8::Value>& args);
   /*
    * Gets the Publisher state
    * Param: none
    */
-  static v8::Handle<v8::Value> getPublisherState(const v8::Arguments& args);
+  static void getPublisherState(const v8::FunctionCallbackInfo<v8::Value>& args);
    /*
    * Returns true if OneToManyProcessor has a publisher
    */
-  static v8::Handle<v8::Value> hasPublisher(const v8::Arguments& args);
+  static void hasPublisher(const v8::FunctionCallbackInfo<v8::Value>& args);
   /*
    * Sets the subscriber
    * Param1: the WebRtcConnection of the subscriber
    * Param2: an unique Id for the subscriber
    */
-  static v8::Handle<v8::Value> addSubscriber(const v8::Arguments& args);
+  static void addSubscriber(const v8::FunctionCallbackInfo<v8::Value>& args);
   /*
    * Removes a subscriber given its peer id
    * Param: the peerId
    */
-  static v8::Handle<v8::Value> removeSubscriber(const v8::Arguments& args);
+  static void removeSubscriber(const v8::FunctionCallbackInfo<v8::Value>& args);
 };
 
 #endif

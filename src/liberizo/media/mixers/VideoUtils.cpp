@@ -1,11 +1,7 @@
-/**
- * VideoUtils.cpp
- */
+#include "VideoUtils.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-#include "VideoUtils.h"
 
 //
 // MIN macro
@@ -14,20 +10,18 @@
 #define MAX_WIDTH  4096
 #define MAX_HEIGHT 4096
 
- DEFINE_LOGGER(VideoUtils, "erizo.media.mixers.VideoUtils");
-
+DEFINE_LOGGER(VideoUtils, "erizo.media.mixers.VideoUtils");
 
 inline void
-vRescaleP(unsigned char *inBuff,
+vRescaleP(unsigned char* inBuff,
           unsigned int   inBuffLen,
-          unsigned char *outBuff,
+          unsigned char* outBuff,
           unsigned int   outBuffLen,
           unsigned int   inW,
           unsigned int   inH,
           unsigned int   outW,
           unsigned int   outH,
-          unsigned int   BPP
-         )
+          unsigned int   BPP)
 {
     if(!outW || !outH) return;
 
@@ -85,16 +79,15 @@ vRescaleP(unsigned char *inBuff,
 }
 
 int
-VideoUtils::vRescale(unsigned char *inBuff,
-         unsigned int   inBuffLen,
-         unsigned char *outBuff,
-         unsigned int   outBuffLen,
-         unsigned int   inW,
-         unsigned int   inH,
-         unsigned int   outW,
-         unsigned int   outH,
-         uint32_t     format
-        )
+VideoUtils::vRescale(unsigned char* inBuff,
+                     unsigned int   inBuffLen,
+                     unsigned char* outBuff,
+                     unsigned int   outBuffLen,
+                     unsigned int   inW,
+                     unsigned int   inH,
+                     unsigned int   outW,
+                     unsigned int   outH,
+                     uint32_t       format)
 {
     switch (static_cast<ImgFormat>(format))
     {
@@ -179,9 +172,9 @@ VideoUtils::vRescale(unsigned char *inBuff,
 }
 
 inline void
-vPutImageP(unsigned char *inBuff,
+vPutImageP(unsigned char* inBuff,
            unsigned int   inBuffLen,
-           unsigned char *outBuff,
+           unsigned char* outBuff,
            unsigned int   W,
            unsigned int   H,
            unsigned int   X,
@@ -189,9 +182,8 @@ vPutImageP(unsigned char *inBuff,
            unsigned int   totalW,
            unsigned int   totalH,
            unsigned int   BPP,
-           unsigned char *mask,
-           bool           invert
-          )
+           unsigned char* mask,
+           bool           invert)
 {
     unsigned lineSize1 = W*BPP;
     unsigned lineSize2 = totalW*BPP;
@@ -227,22 +219,21 @@ vPutImageP(unsigned char *inBuff,
 }
 
 int
-VideoUtils::vPutImage(unsigned char *inBuff,
-          unsigned int   inBuffLen,
-          unsigned char *outBuff,
-          unsigned int   outBuffLen,
-          unsigned int   inW,
-          unsigned int   inH,
-          unsigned int   outW,
-          unsigned int   outH,
-          unsigned int   posX,
-          unsigned int   posY,
-          unsigned int   totalW,
-          unsigned int   totalH,
-          uint32_t            format,
-          unsigned char *mask,
-          bool           invert
-         )
+VideoUtils::vPutImage(unsigned char* inBuff,
+                      unsigned int   inBuffLen,
+                      unsigned char* outBuff,
+                      unsigned int   outBuffLen,
+                      unsigned int   inW,
+                      unsigned int   inH,
+                      unsigned int   outW,
+                      unsigned int   outH,
+                      unsigned int   posX,
+                      unsigned int   posY,
+                      unsigned int   totalW,
+                      unsigned int   totalH,
+                      uint32_t       format,
+                      unsigned char* mask,
+                      bool           invert)
 {
     if ((outW > totalW) || (outH > totalH))
     {
@@ -392,7 +383,7 @@ VideoUtils::vPutImage(unsigned char *inBuff,
 }
 
 inline void
-vSetMaskRectP(unsigned char *mask,
+vSetMaskRectP(unsigned char* mask,
               unsigned int   W,
               unsigned int   H,
               unsigned int   posX,
@@ -400,19 +391,17 @@ vSetMaskRectP(unsigned char *mask,
               unsigned int   totalW,
               unsigned int   totalH,
               bool           val,
-              int            BPP
-             )
+              int            BPP)
 {
     unsigned lineSize1 = W*BPP;
     unsigned lineSize2 = totalW*BPP;
 //    unsigned initRectPos1 = 0;
     unsigned initRectPos2 = lineSize2*posY + posX*BPP;
 //    unsigned position1 = 0;
-    unsigned position2 = 0;
     for(unsigned i = 0; i < H; i++)
     {
 //        position1 = initRectPos1 + lineSize1*i; //save image1 position
-        position2 = initRectPos2 + lineSize2*i; //save image2 position
+        unsigned position2 = initRectPos2 + lineSize2*i; //save image2 position
         for (unsigned j = 0; j < lineSize1; j+=BPP)
         {
             for (int k = 0;k<BPP;k++)
@@ -424,16 +413,15 @@ vSetMaskRectP(unsigned char *mask,
 }
 
 void
-VideoUtils::vSetMaskRect(unsigned char *mask,
-             unsigned int   W,
-             unsigned int   H,
-             unsigned int   posX,
-             unsigned int   posY,
-             unsigned int   totalW,
-             unsigned int   totalH,
-             bool           val,
-             uint32_t            format
-            )
+VideoUtils::vSetMaskRect(unsigned char* mask,
+                         unsigned int   W,
+                         unsigned int   H,
+                         unsigned int   posX,
+                         unsigned int   posY,
+                         unsigned int   totalW,
+                         unsigned int   totalH,
+                         bool           val,
+                         uint32_t       format)
 {
     int BPP;
 
@@ -497,16 +485,15 @@ VideoUtils::vSetMaskRect(unsigned char *mask,
 }
 
 int
-VideoUtils::vSetMask(unsigned char *outBuff,
-         unsigned int   outBuffLen,
-         unsigned char *mask,
-         unsigned int   W,
-         unsigned int   H,
-         unsigned int   totalW,
-         unsigned int   totalH,
-         bool           val,
-         uint32_t            format
-        )
+VideoUtils::vSetMask(unsigned char* outBuff,
+                     unsigned int   outBuffLen,
+                     unsigned char* mask,
+                     unsigned int   W,
+                     unsigned int   H,
+                     unsigned int   totalW,
+                     unsigned int   totalH,
+                     bool           val,
+                     uint32_t       format)
 {
     double factor = 0;
     int BPP = 0;

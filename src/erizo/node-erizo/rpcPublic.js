@@ -1,7 +1,7 @@
 /*global require, module, process, setInterval, clearInterval*/
 'use strict';
 
-var addon = require('./addon/build/Release/addon');
+var addon = require('./addon');
 var rpc = require('../../common/rpc');
 
 // Logger

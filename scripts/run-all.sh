@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-this=$(readlink -f $0)
-bin=$(dirname $this)
+OS=$(uname -s)
+if [[ ${OS} == 'Darwin' ]]; then
+  bin=$(cd $(dirname $0); pwd)
+else
+  bin=$(dirname $(readlink -f $0))
+fi
 
 ${bin}/daemon.sh start nuve && sleep 4
 ${bin}/daemon.sh start controller
