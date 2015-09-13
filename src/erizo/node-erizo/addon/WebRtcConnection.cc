@@ -1,9 +1,5 @@
-#ifndef BUILDING_NODE_EXTENSION
-#define BUILDING_NODE_EXTENSION
-#endif
-
 #include "WebRtcConnection.h"
-
+#include "MediaDefinitions.h"
 
 using namespace v8;
 
@@ -67,15 +63,15 @@ void WebRtcConnection::close(const v8::FunctionCallbackInfo<v8::Value>& args) {
   HandleScope scope(isolate);
 
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
-  obj->me = NULL;
-  uv_close((uv_handle_t*)&obj->async_, NULL);
-  uv_close((uv_handle_t*)&obj->asyncStats_, NULL);
+  obj->me = nullptr;
+  uv_close((uv_handle_t*)&obj->async_, nullptr);
+  uv_close((uv_handle_t*)&obj->asyncStats_, nullptr);
 
   if(!uv_is_closing((uv_handle_t*)&obj->async_)) {
-    uv_close((uv_handle_t*)&obj->async_, NULL);
+    uv_close((uv_handle_t*)&obj->async_, nullptr);
   }
   if(!uv_is_closing((uv_handle_t*)&obj->asyncStats_)) {
-   	uv_close((uv_handle_t*)&obj->asyncStats_, NULL);
+   	uv_close((uv_handle_t*)&obj->asyncStats_, nullptr);
   }
 }
 
@@ -170,7 +166,7 @@ void WebRtcConnection::getStats(const v8::FunctionCallbackInfo<v8::Value>& args)
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
-  if (obj->me == NULL){ //Requesting stats when WebrtcConnection not available
+  if (obj->me == nullptr){ //Requesting stats when WebrtcConnection not available
 
   }
   if (args.Length()==0){

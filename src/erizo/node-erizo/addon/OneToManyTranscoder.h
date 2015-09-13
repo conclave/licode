@@ -2,10 +2,8 @@
 #define ONETOMANYTRANSCODER_H
 
 #include <node.h>
-#include <node_object_wrap.h>
 #include <media/OneToManyTranscoder.h>
 #include "MediaDefinitions.h"
-#include "WebRtcConnection.h"
 
 
 /*

@@ -2,10 +2,9 @@
 #define WEBRTCCONNECTION_H
 
 #include <node.h>
+#include <node_object_wrap.h>
 #include <uv.h>
 #include <WebRtcConnection.h>
-#include "MediaDefinitions.h"
-#include "OneToManyProcessor.h"
 
 
 /*

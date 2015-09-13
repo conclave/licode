@@ -1,9 +1,5 @@
-#ifndef BUILDING_NODE_EXTENSION
-#define BUILDING_NODE_EXTENSION
-#endif
-#include <node.h>
 #include "OneToManyTranscoder.h"
-
+#include "WebRtcConnection.h"
 
 using namespace v8;
 
@@ -74,7 +70,7 @@ void OneToManyTranscoder::hasPublisher(const v8::FunctionCallbackInfo<v8::Value>
 
   OneToManyTranscoder* obj = ObjectWrap::Unwrap<OneToManyTranscoder>(args.Holder());
   erizo::OneToManyTranscoder *me = (erizo::OneToManyTranscoder*)obj->me;
-  args.GetReturnValue().Set(Boolean::New(isolate, (me->publisher != NULL)));
+  args.GetReturnValue().Set(Boolean::New(isolate, (me->publisher != nullptr)));
 }
 
 void OneToManyTranscoder::addSubscriber(const v8::FunctionCallbackInfo<v8::Value>& args) {

@@ -1,9 +1,5 @@
-#ifndef BUILDING_NODE_EXTENSION
-#define BUILDING_NODE_EXTENSION
-#endif
-#include <node.h>
 #include "ExternalInput.h"
-
+#include "MediaDefinitions.h"
 
 using namespace v8;
 

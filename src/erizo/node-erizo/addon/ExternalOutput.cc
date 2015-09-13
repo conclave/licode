@@ -1,9 +1,4 @@
-#ifndef BUILDING_NODE_EXTENSION
-#define BUILDING_NODE_EXTENSION
-#endif
-#include <node.h>
 #include "ExternalOutput.h"
-
 
 using namespace v8;
 

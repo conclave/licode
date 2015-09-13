@@ -4,9 +4,6 @@
 #include <node.h>
 #include <node_object_wrap.h>
 #include <media/ExternalInput.h>
-#include "MediaDefinitions.h"
-#include "WebRtcConnection.h"
-
 
 /*
  * Wrapper class of erizo::ExternalInput

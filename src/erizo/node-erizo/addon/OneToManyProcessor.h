@@ -2,14 +2,8 @@
 #define ONETOMANYPROCESSOR_H
 
 #include <node.h>
-#include <node_object_wrap.h>
 #include <OneToManyProcessor.h>
-#include <WebRtcConnection.h>
 #include "MediaDefinitions.h"
-#include "WebRtcConnection.h"
-#include "ExternalInput.h"
-#include "ExternalOutput.h"
-
 
 /*
  * Wrapper class of erizo::OneToManyProcessor

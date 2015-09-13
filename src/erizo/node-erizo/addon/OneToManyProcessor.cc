@@ -1,9 +1,7 @@
-#ifndef BUILDING_NODE_EXTENSION
-#define BUILDING_NODE_EXTENSION
-#endif
-
 #include "OneToManyProcessor.h"
-
+#include "WebRtcConnection.h"
+#include "ExternalInput.h"
+#include "ExternalOutput.h"
 
 using namespace v8;
 
@@ -107,7 +105,7 @@ void OneToManyProcessor::hasPublisher(const v8::FunctionCallbackInfo<v8::Value>&
   OneToManyProcessor* obj = ObjectWrap::Unwrap<OneToManyProcessor>(args.Holder());
   erizo::OneToManyProcessor *me = (erizo::OneToManyProcessor*)obj->me;
 
-  args.GetReturnValue().Set(Boolean::New(isolate, (me->publisher != NULL)));
+  args.GetReturnValue().Set(Boolean::New(isolate, (me->publisher != nullptr)));
 }
 
 void OneToManyProcessor::addSubscriber(const v8::FunctionCallbackInfo<v8::Value>& args) {
