@@ -1,0 +1,9 @@
+{
+  "name": "node-erizo-addon",
+  "version": "0.1.0",
+  "description": "Addon for node-erizo",
+  "main": "build/Release/addon.node",
+  "engines": {
+    "node": ">=0.12.x"
+  }
+}
