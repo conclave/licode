@@ -12,6 +12,7 @@
 #include "Transport.h"
 #include "Stats.h"
 #include "rtp/webrtc/fec_receiver_impl.h"
+#include "rtp/RtcpProcessor.h"
 
 namespace erizo {
 
@@ -42,6 +43,11 @@ public:
     ;
     virtual void notifyStats(const std::string& message)=0;
 };
+
+
+
+
+
 /**
  * A WebRTC Connection. This class represents a WebRTC Connection that can be established with other peers via a SDP negotiation
  * it comprises all the necessary Transport components.
@@ -53,7 +59,7 @@ public:
      * Constructor.
      * Constructs an empty WebRTCConnection without any configuration.
      */
-    WebRtcConnection(bool audioEnabled, bool videoEnabled, const std::string &stunServer, int stunPort, int minPort, int maxPort,bool trickleEnabled,WebRtcConnectionEventListener* listener);
+    WebRtcConnection(bool audioEnabled, bool videoEnabled, const std::string &stunServer, int stunPort, int minPort, int maxPort,bool trickleEnabled, WebRtcConnectionEventListener* listener);
     /**
      * Destructor.
      */
@@ -97,8 +103,7 @@ public:
      * Sends a PLI Packet 
      * @return the size of the data sent
      */
-    int sendPLI();
-  
+    int sendPLI();  
   /**
    * Sets the Event Listener for this WebRtcConnection
    */
@@ -131,6 +136,11 @@ public:
 
     void onCandidate(const CandidateInfo& cand, Transport *transport);
 
+    void setFeedbackReports(bool shouldSendFb, uint32_t rateControl=0){
+      this->shouldSendFeedback_ = shouldSendFb;
+      this->rateControl_ = rateControl;
+    };
+
 
     // webrtc::RtpHeader overrides.
     int32_t OnReceivedPayloadData(const uint8_t* payloadData, const uint16_t payloadSize,const webrtc::WebRtcRTPHeader* rtpHeader);
@@ -138,15 +148,18 @@ public:
 
 private:
   static const int STATS_INTERVAL = 5000;
-    SdpInfo remoteSdp_;
-    SdpInfo localSdp_;
+  
+  SdpInfo remoteSdp_;
+  SdpInfo localSdp_;
+
+  boost::shared_ptr<RtcpProcessor> rtcpProcessor_;
 
   Stats thisStats_;
 
 	WebRTCEvent globalState_;
 
   int bundle_, sequenceNumberFIR_;
-  boost::mutex receiveVideoMutex_, updateStateMutex_;
+  boost::mutex receiveVideoMutex_, updateStateMutex_, feedbackMutex_;
   boost::thread send_Thread_;
 	std::queue<dataPacket> sendQueue_;
 	WebRtcConnectionEventListener* connEventListener_;
@@ -161,15 +174,20 @@ private:
   std::string getJSONCandidate(const std::string& mid, const std::string& sdp);
 
   
-    bool audioEnabled_;
-    bool videoEnabled_;
-    bool trickleEnabled_;
+  bool audioEnabled_;
+  bool videoEnabled_;
+  bool trickleEnabled_;
+  bool shouldSendFeedback_;
+  uint32_t rateControl_; //Target bitrate for hacky rate control in BPS 
 
-    int stunPort_, minPort_, maxPort_;
-    std::string stunServer_;
+  int stunPort_, minPort_, maxPort_;
+  std::string stunServer_;
 
-	boost::condition_variable cond_;
   webrtc::FecReceiverImpl fec_receiver_;
+	boost::condition_variable cond_;
+
+
+  struct timeval now_, mark_;
 };
 
 } /* namespace erizo */

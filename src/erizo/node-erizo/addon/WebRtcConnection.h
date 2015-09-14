@@ -20,8 +20,8 @@ class WebRtcConnection : public node::ObjectWrap, erizo::WebRtcConnectionEventLi
   erizo::WebRtcConnection *me;
   int eventSt;
   std::queue<int> eventSts;
-  std::queue<std::string> eventMsgs;
-  std::string statsMsg;
+  std::queue<std::string> eventMsgs, statsMsgs;
+
   boost::mutex mutex;
 
  private:
@@ -82,9 +82,12 @@ class WebRtcConnection : public node::ObjectWrap, erizo::WebRtcConnectionEventLi
    * Returns the state.
    */
   static void getCurrentState(const v8::FunctionCallbackInfo<v8::Value>& args);
-
+  /*
+   * Request a PLI packet from this WRTCConn
+   */
   static void generatePLIPacket(const v8::FunctionCallbackInfo<v8::Value>& args);
 
+  static void setFeedbackReports(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   static void getStats(const v8::FunctionCallbackInfo<v8::Value>& args);  
 

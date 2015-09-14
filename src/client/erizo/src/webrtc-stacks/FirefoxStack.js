@@ -38,14 +38,16 @@ Erizo.FirefoxStack = function (spec) {
         mozDontOfferDataChannel: true
     };
 
-    that.roapSessionId = 103;
-
+    var errorCallback = function (message) {
+        L.Logger.error("Error in Stack ", message);
+    }
+    var gotCandidate = false;
     that.peerConnection = new WebkitRTCPeerConnection(that.pc_config, that.con);
-
     spec.localCandidates = [];
 
     that.peerConnection.onicecandidate =  function (event) {
         if (event.candidate) {
+            gotCandidate = true;
 
             if (!event.candidate.candidate.match(/a=/)) {
                 event.candidate.candidate ="a="+event.candidate.candidate;
@@ -107,8 +109,22 @@ Erizo.FirefoxStack = function (spec) {
     var setLocalDesc = function (sessionDescription) {
         sessionDescription.sdp = setMaxBW(sessionDescription.sdp);
         sessionDescription.sdp = sessionDescription.sdp.replace(/a=ice-options:google-ice\r\n/g, "");
+        sessionDescription = changeOrder(sessionDescription);
         spec.callback(sessionDescription);
         localDesc = sessionDescription;
+    }
+
+    var changeOrder = function(sessionDescription) {
+        console.log("Before change", sessionDescription.sdp);
+        var matches = sessionDescription.sdp.match(/^.*(rtcp-fb).*$/gm);
+        var lines = "";
+        for (var i in matches){
+            if (i == 0) lines += matches[i];
+            else lines += "\n\r" + matches[i];
+        }
+        sessionDescription.sdp = sessionDescription.sdp.replace(/^.*(rtcp-fb).*$\r\n/gm, "");
+        sessionDescription.sdp += lines;
+        return sessionDescription;
     }
 
     var setLocalDescp2p = function (sessionDescription) {
@@ -119,11 +135,12 @@ Erizo.FirefoxStack = function (spec) {
         that.peerConnection.setLocalDescription(localDesc);
     }
 
-    that.createOffer = function () {
-        that.peerConnection.createOffer(setLocalDesc, function(error){
-          L.Logger.error("Error", error);
-        
-        }, that.mediaConstraints);
+    that.createOffer = function (isSubscribe) {
+        if (isSubscribe === true) {            
+            that.peerConnection.createOffer(setLocalDesc, errorCallback, that.mediaConstraints);
+        } else {
+            that.peerConnection.createOffer(setLocalDesc, errorCallback);
+        }
     };
 
     that.addStream = function (stream) {
@@ -142,7 +159,7 @@ Erizo.FirefoxStack = function (spec) {
 
     that.processSignalingMessage = function (msg) {
         
-        //console.log("Process Signaling Message", msg);
+//        L.Logger.debug("Process Signaling Message", msg);
 
         if (msg.type === 'offer') {
             msg.sdp = setMaxBW(msg.sdp);
@@ -169,12 +186,14 @@ Erizo.FirefoxStack = function (spec) {
             that.peerConnection.setLocalDescription(localDesc, function(){
                 that.peerConnection.setRemoteDescription(new RTCSessionDescription(msg), function() {
                     spec.remoteDescriptionSet = true;
-                    while (spec.remoteCandidates.length > 0) {
+                    L.Logger.info("Remote Description successfully set");
+                    while (spec.remoteCandidates.length > 0 && gotCandidate) {
+                        L.Logger.info("Setting stored remote candidates")
                         // IMPORTANT: preserve ordering of candidates
                         that.peerConnection.addIceCandidate(spec.remoteCandidates.shift());
                     }
                     while(spec.localCandidates.length > 0) {
-                        L.Logger.info("Sending Candidate");
+                        L.Logger.info("Sending Candidate from list");
                         // IMPORTANT: preserve ordering of candidates
                         spec.callback({type:'candidate', candidate: spec.localCandidates.shift()});
                     }
@@ -196,12 +215,18 @@ Erizo.FirefoxStack = function (spec) {
                 }
                 obj.candidate = obj.candidate.replace(/ generation 0/g, "");
                 obj.candidate = obj.candidate.replace(/ udp /g, " UDP ");
+               
                 obj.sdpMLineIndex = parseInt(obj.sdpMLineIndex);
                 var candidate = new RTCIceCandidate(obj);
-                //console.log("Remote Candidate",candidate);
+//                L.logger.debug("Remote Candidate",candidate);
 
-                if (spec.remoteDescriptionSet) {
+                if (spec.remoteDescriptionSet && gotCandidate) {
                     that.peerConnection.addIceCandidate(candidate);
+                    while (spec.remoteCandidates.length > 0) {
+                        L.Logger.info("Setting stored remote candidates")
+                        // IMPORTANT: preserve ordering of candidates
+                        that.peerConnection.addIceCandidate(spec.remoteCandidates.shift());
+                    }
                 } else {
                     spec.remoteCandidates.push(candidate);
                 }

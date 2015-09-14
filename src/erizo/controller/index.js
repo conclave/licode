@@ -410,7 +410,7 @@ var listen = function () {
             } else if (options.state === 'erizo') {
                 log.info('New publisher');
                 
-                socket.room.controller.addPublisher(id, function (signMess) {
+                socket.room.controller.addPublisher(id, options, function (signMess) {
 
                     if (signMess.type === 'initializing') {
                         callback(id);
@@ -503,6 +503,9 @@ var listen = function () {
                                 rpc.broadcast('event', {room: socket.room.id, user: socket.id, name: socket.user.name, type: 'subscribe', stream: options.streamId, timestamp: timeStamp.getTime()});
                             }
                             return;
+                        }
+                        if(signMess.type==='bandwidthAlert'){
+                          socket.emit('onBandwidthAlert', {streamID:options.streamId, message:signMess.message, bandwidth: signMess.bandwidth});
                         }
 
                         // if (signMess.type === 'candidate') {
