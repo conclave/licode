@@ -78,8 +78,8 @@ setInterval(function checkKA () {
 
 var getErizoController;
 
-if (config.nuve.cloudHandlerPolicy) {
-    getErizoController = require('./ch_policies/' + config.nuve.cloudHandlerPolicy).getErizoController;
+if (config.cloudHandlerPolicy) {
+    getErizoController = require('./ch_policies/' + config.cloudHandlerPolicy).getErizoController;
 }
 
 var addNewErizoController = function (msg, callback) {
