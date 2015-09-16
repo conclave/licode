@@ -39,6 +39,7 @@ install_libnice(){
   tar xf libnice-0.1.4.tar.gz
   pushd libnice-0.1.4
   patch -R ./agent/conncheck.c < ${ROOT_DIR}/contrib/libnice-014.patch0
+  patch ./agent/conncheck.c < ${ROOT_DIR}/contrib/libnice-014.patch2
   PKG_CONFIG_PATH=${PREFIX_DIR}/lib/pkgconfig:${PREFIX_DIR}/lib64/pkgconfig:${PKG_CONFIG_PATH} ./configure --prefix=${PREFIX_DIR} && \
   make -s V= && make install
   popd

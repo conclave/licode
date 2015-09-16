@@ -4,7 +4,8 @@ OS=$(uname -s)
 if [[ ${OS} == 'Darwin' ]]; then
   this_dir=$(cd $(dirname $0); pwd)
   source ${this_dir}/env.sh
-  brew install libnice
+  source ${SCRIPT_DIR}/install_funcs.sh
+  install_libnice
   brew install srtp
   brew install openssl
   brew install opus
