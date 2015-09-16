@@ -68,7 +68,8 @@ var launchErizoJS = function () {
     log.info('Running process');
     var id = guid();
     var fs = require('fs');
-    var output = path.resolve(process.env.RUN_DIR || '', './erizo-' + id + '.log');
+    var rundir = process.env.RUN_DIR || '.';
+    var output = path.resolve(rundir, './erizo-' + id + '.log');
     var out = fs.openSync(output, 'a');
     var err = fs.openSync(output, 'a');
     var env = process.env;
@@ -80,6 +81,7 @@ var launchErizoJS = function () {
     var child = spawn('node', [path.resolve(__dirname, '../node-erizo'), id, privateIP, publicIP], {
         detached: true,
         stdio: [ 'ignore', out, err ],
+        cwd: __dirname,
         env: env
     });
     child.unref();
