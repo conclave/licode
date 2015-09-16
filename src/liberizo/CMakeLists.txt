@@ -25,6 +25,8 @@ else()
   set(THIRD_PARTY_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../../local/lib/")
 endif()
 
+set(LIBNICE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../local/lib/")
+
 find_package(PkgConfig)
 #functions
 function(test_lib LIB_NAME)
@@ -96,7 +98,7 @@ find_library(SRTP srtp HINTS "${THIRD_PARTY_LIB}")
 test_lib(${SRTP})
 
 # NICE
-find_library(NICE nice HINTS "${THIRD_PARTY_LIB}")
+find_library(NICE nice HINTS "${LIBNICE_PATH}")
 test_lib(${NICE})
 
 # OPENSSL
