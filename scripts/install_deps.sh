@@ -18,5 +18,5 @@ else
   install_libnice
   install_openssl
   install_libsrtp
-  install_libav
+  install_ffmpeg
 fi

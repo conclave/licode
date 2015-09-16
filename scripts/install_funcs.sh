@@ -10,12 +10,12 @@ install_opus(){
   popd
 }
 
-install_libav(){
-  local VERSION="11.3"
-  local DIR="libav-${VERSION}"
-  local SRC="${DIR}.tar.gz"
-  local URL="https://www.libav.org/releases/${SRC}"
-  local MD5SUM="1a2eb461b98e0f1d1d6c4d892d51ac9b"
+install_ffmpeg(){
+  local VERSION="2.7.2"
+  local DIR="ffmpeg-${VERSION}"
+  local SRC="${DIR}.tar.bz2"
+  local URL="http://ffmpeg.org/releases/${SRC}"
+  local MD5SUM="7eb2140bab9f0a8669b65b50c8e4cfb5"
   mkdir -p ${BUILD_DIR} && pushd ${BUILD_DIR}
   [[ ! -s ${SRC} ]] && curl -O ${URL}
   if ! (echo "${MD5SUM} ${SRC}" | md5sum --check) ; then
@@ -26,8 +26,8 @@ install_libav(){
   tar xf ${SRC}
   pushd ${DIR}
   [[ "${ENABLE_GPL}" == "true" ]] && \
-  PKG_CONFIG_PATH=${PREFIX_DIR}/lib/pkgconfig ./configure --prefix=${PREFIX_DIR} --enable-shared --enable-libvpx --enable-libopus --enable-gpl --enable-libx264 || \
-  PKG_CONFIG_PATH=${PREFIX_DIR}/lib/pkgconfig ./configure --prefix=${PREFIX_DIR} --enable-shared --enable-libvpx --enable-libopus && \
+  PKG_CONFIG_PATH=${PREFIX_DIR}/lib/pkgconfig CFLAGS=-fPIC ./configure --prefix=${PREFIX_DIR} --enable-shared --enable-libvpx --disable-vaapi --enable-libopus --enable-gpl --enable-libx264 || \
+  PKG_CONFIG_PATH=${PREFIX_DIR}/lib/pkgconfig CFLAGS=-fPIC ./configure --prefix=${PREFIX_DIR} --enable-shared --enable-libvpx --disable-vaapi --enable-libopus && \
   make -j4 -s V=0 && make install
   popd
   popd
