@@ -47,7 +47,7 @@ install_libnice(){
 }
 
 install_openssl(){
-  local SSL_VERSION="1.0.2a"
+  local SSL_VERSION="1.0.2d"
   mkdir -p ${BUILD_DIR} && pushd ${BUILD_DIR}
   curl -O http://www.openssl.org/source/openssl-${SSL_VERSION}.tar.gz
   tar xf openssl-${SSL_VERSION}.tar.gz
