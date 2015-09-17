@@ -9,10 +9,14 @@ GLOBAL.config.erizoController = require('../../../local/etc/erizoController');
 
 // Parse command line arguments
 var getopt = new Getopt([
-  ['s' , 'stunserver=ARG'             , 'Stun Server hostname'],
+  ['s' , 'stunserver=ARG'             , 'Stun Server IP'],
   ['p' , 'stunport=ARG'               , 'Stun Server port'],
   ['m' , 'minport=ARG'                , 'Minimum port'],
   ['M' , 'maxport=ARG'                , 'Maximum port'],
+  ['t' , 'turnserver=ARG'             , 'TURN server IP'],
+  ['T' , 'turnport=ARG'               , 'TURN server Port'],
+  ['c' , 'turnusername=ARG'           , 'TURN username'],
+  ['C' , 'turnpass=ARG'               , 'TURN password'],
   ['h' , 'help'                       , 'display this help']
 ]);
 
