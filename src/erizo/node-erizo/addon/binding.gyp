@@ -2,11 +2,11 @@
   'targets': [{
     'target_name': 'addon',
     'sources': [ 'addon.cc',
+      'WebRtcConnection.cc',
       'OneToManyProcessor.cc',
       'OneToManyTranscoder.cc',
       'ExternalInput.cc',
-      'ExternalOutput.cc',
-      'WebRtcConnection.cc' ],
+      'ExternalOutput.cc' ],
     'include_dirs' : ['../../../liberizo', '$(PREFIX_DIR)/include'],
     'conditions': [
       [ 'OS=="mac"', {

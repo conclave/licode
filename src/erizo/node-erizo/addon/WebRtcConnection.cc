@@ -243,9 +243,9 @@ void WebRtcConnection::eventsCallback(uv_async_t *handle) {
   if (!obj || obj->me == nullptr)
     return;
   boost::mutex::scoped_lock lock(obj->mutex);
+  Local<Function> callback = Local<Function>::New(isolate, obj->eventCallback_);
   while (!obj->eventSts.empty()) {
     Local<Value> args[] = {Integer::New(isolate, obj->eventSts.front()), String::NewFromUtf8(isolate, obj->eventMsgs.front().c_str())};
-    Local<Function> callback = Local<Function>::New(isolate, obj->eventCallback_);
     callback->Call(isolate->GetCurrentContext()->Global(), 2, args);
     obj->eventMsgs.pop();
     obj->eventSts.pop();
@@ -260,9 +260,9 @@ void WebRtcConnection::statsCallback(uv_async_t *handle) {
     return;
   boost::mutex::scoped_lock lock(obj->mutex);
   if (obj->hasCallback_) {
+    Local<Function> callback = Local<Function>::New(isolate, obj->statsCallback_);
     while (!obj->statsMsgs.empty()) {
       Local<Value> args[] = {String::NewFromUtf8(isolate, obj->statsMsgs.front().c_str())};
-      Local<Function> callback = Local<Function>::New(isolate, obj->statsCallback_);
       callback->Call(isolate->GetCurrentContext()->Global(), 1, args);
       obj->statsMsgs.pop();
     }
