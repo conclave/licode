@@ -34,8 +34,8 @@ bool SDPReceiver::createPublisher(int peer_id) {
 		printf("Adding publisher peer_id %d\n", peer_id);
 		WebRtcConnection *newConn = new WebRtcConnection;
 		newConn->init();
-		newConn->setAudioReceiver(muxer);
-		newConn->setVideoReceiver(muxer);
+		newConn->setAudioSink(muxer);
+		newConn->setVideoSink(muxer);
 		muxer->setPublisher(newConn);
 		publisherid = peer_id;
 	} else {
@@ -46,14 +46,14 @@ bool SDPReceiver::createPublisher(int peer_id) {
 }
 bool SDPReceiver::createSubscriber(int peer_id) {
 	printf("Adding Subscriber peerid %d\n", peer_id);
-	if (muxer->subscribers.find(peer_id) != muxer->subscribers.end()) {
+	if (muxer->subscribers.find(std::to_string(peer_id)) != muxer->subscribers.end()) {
 		printf("OFFER AGAIN\n");
 		return false;
 	}
 
 	WebRtcConnection *newConn = new WebRtcConnection;
 	newConn->init();
-	muxer->addSubscriber(newConn, peer_id);
+	muxer->addSubscriber(newConn, std::to_string(peer_id));
 	return true;
 }
 void SDPReceiver::setRemoteSDP(int peer_id, const std::string &sdp) {
@@ -61,7 +61,7 @@ void SDPReceiver::setRemoteSDP(int peer_id, const std::string &sdp) {
 		muxer->publisher->setRemoteSdp(sdp);
 
 	} else {
-		muxer->subscribers[peer_id]->setRemoteSdp(sdp);
+		muxer->subscribers[std::to_string(peer_id)]->setRemoteSdp(sdp);
 	}
 }
 std::string SDPReceiver::getLocalSDP(int peer_id) {
@@ -69,7 +69,7 @@ std::string SDPReceiver::getLocalSDP(int peer_id) {
 	if (peer_id == publisherid) {
 		sdp = muxer->publisher->getLocalSdp();
 	} else {
-		sdp = muxer->subscribers[peer_id]->getLocalSdp();
+		sdp = muxer->subscribers[std::to_string(peer_id)]->getLocalSdp();
 	}
 	printf("Getting localSDP %s\n", sdp.c_str());
 	return sdp;
@@ -77,7 +77,7 @@ std::string SDPReceiver::getLocalSDP(int peer_id) {
 void SDPReceiver::peerDisconnected(int peer_id) {
 	if (peer_id != publisherid) {
 		printf("removing peer %d\n", peer_id);
-		muxer->removeSubscriber(peer_id);
+		muxer->removeSubscriber(std::to_string(peer_id));
 	}
 }
 

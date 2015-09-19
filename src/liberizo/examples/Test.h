@@ -1,5 +1,5 @@
 #include <media/MediaProcessor.h>
-#include <media/utils/RtpUtils.h>
+#include <rtp/RtpVP8Parser.h>
 #include <boost/asio.hpp>
 
 #ifndef TEST_H_
@@ -9,7 +9,7 @@ class Test: public RawDataReceiver {
 public:
 	Test();
 	virtual ~Test();
-	void receiveRawData(unsigned char*data, int len);
+	void receiveRawData(RawDataPacket& packet);
 
 	void rec();
 	void send(char *buff, int buffSize);
@@ -21,7 +21,7 @@ private:
 	boost::asio::ip::udp::resolver::query* query_;
 	boost::asio::io_service* ioservice_;
 	InputProcessor* ip;
-	erizo::RtpParser pars;
+	erizo::RtpVP8Parser pars;
 
 };
 

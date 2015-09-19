@@ -166,7 +166,6 @@ BOOST_AUTO_TEST_CASE(rtpPacketQueueRespectsMax)
     unsigned int max = 10, depth = 5;
     erizo::RtpPacketQueue queue(depth, max);  // max and depth.
     queue.setTimebase(1);   // dummy timebase.
-    uint16_t x = 0;
 
     // let's push ten times the max.
     for(uint16_t x = 0; x < (max * 10); x++) {

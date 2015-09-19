@@ -8,10 +8,17 @@ function(test_lib LIB_NAME)
 endfunction(test_lib)
 
 project (ERIZO_EXAMPLES)
-file(GLOB_RECURSE ERIZO_EXAMPLES_SOURCES ${ERIZO_EXAMPLES_SOURCE_DIR}/*.cpp ${ERIZO_EXAMPLES_SOURCE_DIR}/*.h)
+
+set(ERIZO_EXAMPLES_SOURCES
+  "${ERIZO_EXAMPLES_SOURCE_DIR}/pc/Observer.cpp"
+  "${ERIZO_EXAMPLES_SOURCE_DIR}/pc/PCSocket.cpp"
+  "${ERIZO_EXAMPLES_SOURCE_DIR}/Test.cpp"
+  "${ERIZO_EXAMPLES_SOURCE_DIR}/hsam.cpp"
+)
+
 add_executable(hsam ${ERIZO_EXAMPLES_SOURCES})
-include_directories("${ERIZO_EXAMPLES_SOURCE_DIR}/..")
-link_directories(${ERIZO_EXAMPLES_SOURCE_DIR}/../../build)
+include_directories("${ERIZO_SOURCE_DIR}" "${THIRD_PARTY_INCLUDE}")
+target_link_libraries(hsam erizo)
 
 set (BOOST_LIBS thread regex system)
 find_package(Boost COMPONENTS ${BOOST_LIBS} REQUIRED)

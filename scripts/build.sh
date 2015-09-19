@@ -5,7 +5,9 @@ usage(){
 Building helper
   Usage:
       --liberizo                          build liberizo
+      ,  --test                           build liberizo test
       --addon                             build addon for node-erizo
+      --essential                         --liberizo --addon
       --help                              print this help
 "
   exit $1
@@ -22,13 +24,19 @@ fi
 
 source ${this_dir}/env.sh
 BUILD_LIBERIZO=false
+# BUILD_LIBERIZO_EXAMPLE=false
+BUILD_LIBERIZO_TEST=false
 BUILD_ADDON=false
 
 build_liberizo(){
   local DIR="${BUILD_DIR}/liberizo"
   local SRC_DIR="${ROOT_DIR}/src/liberizo"
+  local EXAMPLE="OFF"
+  local TEST="OFF"
   mkdir -p ${DIR} && pushd ${DIR}
-  cmake ${SRC_DIR} -DCMAKE_INSTALL_PREFIX=${PREFIX_DIR} && make && make install || echo "Failed to produce liberizo"
+  # ${BUILD_LIBERIZO_EXAMPLE} && EXAMPLE="ON"
+  ${BUILD_LIBERIZO_TEST} && TEST="ON"
+  cmake ${SRC_DIR} -DCMAKE_INSTALL_PREFIX=${PREFIX_DIR} -DCOMPILE_EXAMPLES=${EXAMPLE} -DCOMPILE_TEST=${TEST} && make && make install || echo "Failed to produce liberizo"
   popd
 }
 
@@ -53,7 +61,17 @@ while [[ $# -gt 0 ]]; do
     *(-)liberizo )
       BUILD_LIBERIZO=true
       ;;
+    # *(-)example )
+    #   BUILD_LIBERIZO_EXAMPLE=true
+    #   ;;
+    *(-)test )
+      BUILD_LIBERIZO_TEST=true
+      ;;
     *(-)addon )
+      BUILD_ADDON=true
+      ;;
+    *(-)essential )
+      BUILD_LIBERIZO=true
       BUILD_ADDON=true
       ;;
     *(-)help )
