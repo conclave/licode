@@ -2,6 +2,7 @@
   'targets': [{
     'target_name': 'addon',
     'sources': [ 'addon.cc',
+      'CrossCallback.cc',
       'WebRtcConnection.cc',
       'OneToManyProcessor.cc',
       'OneToManyTranscoder.cc',
