@@ -3,7 +3,10 @@
 using namespace v8;
 
 Persistent<Function> CrossEvent::constructor;
-CrossEvent::CrossEvent() {}
+CrossEvent::CrossEvent(const Persistent<Function>& f)
+    : NodeAsyncCallback{ f }
+{
+}
 CrossEvent::~CrossEvent() {}
 
 void CrossEvent::Init(Handle<Object> exports)
@@ -16,9 +19,7 @@ void CrossEvent::Init(Handle<Object> exports)
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Prototype
-  // NODE_SET_PROTOTYPE_METHOD(tpl, "on", On);
-  // NODE_SET_PROTOTYPE_METHOD(tpl, "off", Off);
-  // NODE_SET_PROTOTYPE_METHOD(tpl, "emit", Emit);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "emit", Emit);
 
   constructor.Reset(isolate, tpl->GetFunction());
   exports->Set(String::NewFromUtf8(isolate, "CrossEvent"), tpl->GetFunction());
@@ -29,8 +30,12 @@ void CrossEvent::New(const FunctionCallbackInfo<Value>& args)
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
+  if (args.Length() == 0 || !args[0]->IsFunction())
+    return;
+
   if (args.IsConstructCall()) {
-    CrossEvent* evt = new CrossEvent();
+    Persistent<Function> cb(isolate, Local<Function>::Cast(args[0]));
+    CrossEvent* evt = new CrossEvent(cb);
     evt->Wrap(args.This());
     args.GetReturnValue().Set(args.This());
   }
@@ -40,6 +45,17 @@ void CrossEvent::New(const FunctionCallbackInfo<Value>& args)
     Local<Function> cons = Local<Function>::New(isolate, constructor);
     args.GetReturnValue().Set(cons->NewInstance(argc, argv));
   }
+}
+
+void CrossEvent::Emit(const FunctionCallbackInfo<Value>& args)
+{
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
+  if (args.Length() == 0 || !args[0]->IsString())
+    return;
+  CrossEvent* event = ObjectWrap::Unwrap<CrossEvent>(args.Holder());
+  std::string data = std::string(*String::Utf8Value(args[0]->ToString()));
+  event->notify(data);
 }
 
 NodeAsyncCallback::NodeAsyncCallback(const Persistent<Function>& f)

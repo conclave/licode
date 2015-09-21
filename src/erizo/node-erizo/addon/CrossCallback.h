@@ -38,19 +38,16 @@ class NodeAsyncCallback : public UvAsyncCallback {
   v8::Persistent<v8::Function> mFunc;
 };
 
-class CrossEvent : public node::ObjectWrap {
+class CrossEvent : public node::ObjectWrap, NodeAsyncCallback {
   public:
   static void Init(v8::Handle<v8::Object> exports);
-  // static void NewInstance(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   private:
-  explicit CrossEvent();
+  explicit CrossEvent(const v8::Persistent<v8::Function>& f);
   ~CrossEvent();
 
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
-  // static void On(const v8::FunctionCallbackInfo<v8::Value>& args);
-  // static void Off(const v8::FunctionCallbackInfo<v8::Value>& args);
-  // static void Emit(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void Emit(const v8::FunctionCallbackInfo<v8::Value>& args);
   static v8::Persistent<v8::Function> constructor;
 };
 
