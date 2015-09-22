@@ -35,15 +35,6 @@ enum WebRTCEvent {
   CONN_FAILED = 500
 };
 
-class WebRtcConnectionEventListener {
-public:
-    virtual ~WebRtcConnectionEventListener() {
-    }
-    ;
-    virtual void notifyEvent(WebRTCEvent newEvent, const std::string& message)=0;
-
-};
-
 /**
  * A WebRTC Connection. This class represents a WebRTC Connection that can be established with other peers via a SDP negotiation
  * it comprises all the necessary Transport components.
@@ -55,7 +46,7 @@ public:
      * Constructor.
      * Constructs an empty WebRTCConnection without any configuration.
      */
-    WebRtcConnection(bool audioEnabled, bool videoEnabled, const IceConfig& iceConfig,bool trickleEnabled, WebRtcConnectionEventListener* listener);
+    WebRtcConnection(bool audioEnabled, bool videoEnabled, const IceConfig& iceConfig, bool trickleEnabled, AsyncCallback* listener);
     /**
      * Destructor.
      */
@@ -143,7 +134,7 @@ private:
   boost::mutex receiveVideoMutex_, updateStateMutex_, feedbackMutex_;
   boost::thread send_Thread_;
   std::queue<dataPacket> sendQueue_;
-  WebRtcConnectionEventListener* connEventListener_;
+  AsyncCallback* connEventListener_;
   Transport *videoTransport_, *audioTransport_;
 
   bool sending_;
@@ -153,7 +144,7 @@ private:
   int deliverVideoData_(char* buf, int len);
   int deliverFeedback_(char* buf, int len);
   std::string getJSONCandidate(const std::string& mid, const std::string& sdp);
-
+  void notifyEvent(WebRTCEvent newEvent, const std::string& message);
   
   bool audioEnabled_;
   bool videoEnabled_;

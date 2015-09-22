@@ -179,7 +179,10 @@ module.exports = function (spec) {
             }, INTERVAL_STATS);
         }
 
-        wrtc.init( function (newStatus, mess){
+        wrtc.init(function (resp) {
+            var data = JSON.parse(resp);
+            var newStatus = data.status;
+            var mess = data.message;
             log.info('webrtc Addon status ', newStatus, mess, 'id pub', id_pub, 'id_sub', id_sub );
 
             if (GLOBAL.config.erizoController.report.connection_events) {

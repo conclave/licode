@@ -13,7 +13,7 @@ namespace erizo {
   DEFINE_LOGGER(WebRtcConnection, "WebRtcConnection");
   
   WebRtcConnection::WebRtcConnection(bool audioEnabled, bool videoEnabled, 
-      const IceConfig& iceConfig, bool trickleEnabled, WebRtcConnectionEventListener* listener)
+      const IceConfig& iceConfig, bool trickleEnabled, AsyncCallback* listener)
       : connEventListener_(listener), iceConfig_(iceConfig), fec_receiver_(this){
     ELOG_WARN("WebRtcConnection constructor stunserver %s stunPort %d minPort %d maxPort %d\n", iceConfig.stunServer.c_str(), iceConfig.stunPort, iceConfig.minPort, iceConfig.maxPort);
     sequenceNumberFIR_ = 0;
@@ -51,10 +51,8 @@ namespace erizo {
     cond_.notify_one();
     send_Thread_.join();
     globalState_ = CONN_FINISHED;
-    if (connEventListener_ != NULL){
-      connEventListener_->notifyEvent(globalState_, "");
-      connEventListener_ = NULL;
-    }
+    notifyEvent(globalState_, "");
+    connEventListener_ = NULL;
     globalState_ = CONN_FINISHED;
     videoSink_ = NULL;
     audioSink_ = NULL;
@@ -110,9 +108,7 @@ namespace erizo {
     
     if(trickleEnabled_){
       std::string object = this->getLocalSdp();
-      if (connEventListener_){
-        connEventListener_->notifyEvent(CONN_SDP, object);
-      }
+      notifyEvent(CONN_SDP, object);
     }
 
     if (!remoteSdp_.getCandidateInfos().empty()){
@@ -208,15 +204,15 @@ namespace erizo {
       if (connEventListener_ != NULL) {
         if (!bundle_) {
           std::string object = this->getJSONCandidate(transport->transport_name, sdp);
-          connEventListener_->notifyEvent(CONN_CANDIDATE, object);
+          notifyEvent(CONN_CANDIDATE, object);
         } else {
           if (remoteSdp_.hasAudio){
             std::string object = this->getJSONCandidate("audio", sdp);
-            connEventListener_->notifyEvent(CONN_CANDIDATE, object);
+            notifyEvent(CONN_CANDIDATE, object);
           }
           if (remoteSdp_.hasVideo){
             std::string object2 = this->getJSONCandidate("video", sdp);
-            connEventListener_->notifyEvent(CONN_CANDIDATE, object2);
+            notifyEvent(CONN_CANDIDATE, object2);
           }
         }
         
@@ -494,10 +490,7 @@ namespace erizo {
       return;
 
     globalState_ = temp;
-
-    if (connEventListener_ != NULL) {
-      connEventListener_->notifyEvent(globalState_, msg);
-    }
+    notifyEvent(globalState_, msg);
   }
    // changes the outgoing payload type for in the given data packet
   void WebRtcConnection::changeDeliverPayloadType(dataPacket *dp, packetType type) {
@@ -576,6 +569,15 @@ namespace erizo {
 
   std::string WebRtcConnection::getJSONStats(){
     return thisStats_.getStats();
+  }
+
+  void WebRtcConnection::notifyEvent(WebRTCEvent newEvent, const std::string& message)
+  {
+    if (connEventListener_ != nullptr){
+      std::ostringstream data;
+      data << "{\"status\":" << newEvent << ",\"message\":" << message << "}";
+      connEventListener_->notify("connection", data.str());
+    }
   }
 
   void WebRtcConnection::sendLoop() {
