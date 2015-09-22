@@ -13,6 +13,6 @@ class AsyncCallback {
   virtual bool notify(const std::string& event, const std::string& data) = 0;
 };
 
-#endif // AsyncCallback_h
-
 } // namespace erizo
+
+#endif // AsyncCallback_h
