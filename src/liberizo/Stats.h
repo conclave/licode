@@ -10,12 +10,11 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread.hpp>
 
+#include "AsyncCallback.h"
 #include "logger.h"
 #include "rtp/RtpHeaders.h"
 
 namespace erizo{
-
-  class WebRtcConnectionStatsListener;
 
   class Stats{
     DECLARE_LOGGER();
@@ -33,8 +32,8 @@ namespace erizo{
     void setAudioSourceSSRC(unsigned int ssrc){
       audioSSRC_ = ssrc;
     };
-    inline void setStatsListener(WebRtcConnectionStatsListener* listener){
-      this->theListener_ = listener;
+    inline void onStats(AsyncCallback* cb){
+      this->callback_ = cb;
     }
     
     private:
@@ -42,7 +41,7 @@ namespace erizo{
     typedef std::map <uint32_t, singleSSRCstatsMap_t> fullStatsMap_t;
     fullStatsMap_t statsPacket_;
     boost::recursive_mutex mapMutex_;
-    WebRtcConnectionStatsListener* theListener_;
+    AsyncCallback* callback_;
     unsigned int videoSSRC_, audioSSRC_;
 
     void processRtcpPacket(RtcpHeader* chead);

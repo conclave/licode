@@ -1,6 +1,7 @@
 #ifndef WEBRTCCONNECTION_H
 #define WEBRTCCONNECTION_H
 
+#include "CrossCallback.h"
 #include <node.h>
 #include <node_object_wrap.h>
 #include <uv.h>
@@ -13,14 +14,14 @@
  * A WebRTC Connection. This class represents a WebRtcConnection that can be established with other peers via a SDP negotiation
  * it comprises all the necessary ICE and SRTP components.
  */
-class WebRtcConnection : public node::ObjectWrap, erizo::WebRtcConnectionEventListener, erizo::WebRtcConnectionStatsListener  {
+class WebRtcConnection : public node::ObjectWrap, erizo::WebRtcConnectionEventListener, NodeAsyncCallback {
  public:
   static void Init(v8::Handle<v8::Object> exports);
 
   erizo::WebRtcConnection *me;
   int eventSt;
   std::queue<int> eventSts;
-  std::queue<std::string> eventMsgs, statsMsgs;
+  std::queue<std::string> eventMsgs;
 
   boost::mutex mutex;
 
@@ -30,11 +31,8 @@ class WebRtcConnection : public node::ObjectWrap, erizo::WebRtcConnectionEventLi
   static v8::Persistent<v8::Function> constructor;
   
   v8::Persistent<v8::Function> eventCallback_;
-  v8::Persistent<v8::Function> statsCallback_;
-
   uv_async_t async_;
-  uv_async_t asyncStats_;
-  bool hasCallback_;
+
   /*
    * Constructor.
    * Constructs an empty WebRtcConnection without any configuration.
@@ -92,10 +90,7 @@ class WebRtcConnection : public node::ObjectWrap, erizo::WebRtcConnectionEventLi
   static void getStats(const v8::FunctionCallbackInfo<v8::Value>& args);  
 
   static void eventsCallback(uv_async_t *handle);
-  static void statsCallback(uv_async_t *handle);
- 
 	virtual void notifyEvent(erizo::WebRTCEvent event, const std::string& message="");
-	virtual void notifyStats(const std::string& message);
 };
 
 #endif

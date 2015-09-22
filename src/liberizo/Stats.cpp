@@ -11,12 +11,14 @@
 namespace erizo {
 
   DEFINE_LOGGER(Stats, "Stats");
-  
-  Stats::Stats(){ 
+
+  Stats::Stats()
+      : callback_{ nullptr }
+  {
     ELOG_DEBUG("Constructor Stats");
-    theListener_ = NULL;
   }
-  Stats::~Stats(){
+  Stats::~Stats()
+  {
     ELOG_DEBUG("Destructor Stats");
   }
 
@@ -124,10 +126,11 @@ namespace erizo {
     theString << "]";
     return theString.str(); 
   }
-  
-  void Stats::sendStats() {
-    if(theListener_!=NULL)
-      theListener_->notifyStats(this->getStats());
+
+  void Stats::sendStats()
+  {
+    if (callback_ != nullptr)
+      callback_->notify("stats", this->getStats());
   }
 }
 

@@ -6,6 +6,7 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/thread.hpp>
 
+#include "AsyncCallback.h"
 #include "logger.h"
 #include "SdpInfo.h"
 #include "MediaDefinitions.h"
@@ -24,7 +25,13 @@ class IceConfig;
  * WebRTC Events
  */
 enum WebRTCEvent {
-  CONN_INITIAL = 101, CONN_STARTED = 102,CONN_GATHERED = 103, CONN_READY = 104, CONN_FINISHED = 105, CONN_CANDIDATE = 201, CONN_SDP = 202,
+  CONN_INITIAL = 101,
+  CONN_STARTED = 102,
+  CONN_GATHERED = 103,
+  CONN_READY = 104,
+  CONN_FINISHED = 105,
+  CONN_CANDIDATE = 201,
+  CONN_SDP = 202,
   CONN_FAILED = 500
 };
 
@@ -37,24 +44,12 @@ public:
 
 };
 
-class WebRtcConnectionStatsListener {
-public:
-    virtual ~WebRtcConnectionStatsListener() {
-    }
-    ;
-    virtual void notifyStats(const std::string& message)=0;
-};
-
-
-
-
-
 /**
  * A WebRTC Connection. This class represents a WebRTC Connection that can be established with other peers via a SDP negotiation
  * it comprises all the necessary Transport components.
  */
 class WebRtcConnection: public MediaSink, public MediaSource, public FeedbackSink, public FeedbackSource, public TransportListener, public webrtc::RtpData {
-	DECLARE_LOGGER();
+  DECLARE_LOGGER();
 public:
     /**
      * Constructor.
@@ -105,22 +100,7 @@ public:
      * @return the size of the data sent
      */
     int sendPLI();  
-  /**
-   * Sets the Event Listener for this WebRtcConnection
-   */
 
-    inline void setWebRtcConnectionEventListener(
-            WebRtcConnectionEventListener* listener){
-    this->connEventListener_ = listener;
-  }
-    
-  /**
-   * Sets the Stats Listener for this WebRtcConnection
-   */
-  inline void setWebRtcConnectionStatsListener(
-            WebRtcConnectionStatsListener* listener){
-    this->thisStats_.setStatsListener(listener);
-  }
     /**
      * Gets the current state of the Ice Connection
      * @return
@@ -157,20 +137,20 @@ private:
 
   Stats thisStats_;
 
-	WebRTCEvent globalState_;
+  WebRTCEvent globalState_;
 
   int bundle_, sequenceNumberFIR_;
   boost::mutex receiveVideoMutex_, updateStateMutex_, feedbackMutex_;
   boost::thread send_Thread_;
-	std::queue<dataPacket> sendQueue_;
-	WebRtcConnectionEventListener* connEventListener_;
-	Transport *videoTransport_, *audioTransport_;
+  std::queue<dataPacket> sendQueue_;
+  WebRtcConnectionEventListener* connEventListener_;
+  Transport *videoTransport_, *audioTransport_;
 
   bool sending_;
-	void sendLoop();
-	void writeSsrc(char* buf, int len, unsigned int ssrc);
-	int deliverAudioData_(char* buf, int len);
-	int deliverVideoData_(char* buf, int len);
+  void sendLoop();
+  void writeSsrc(char* buf, int len, unsigned int ssrc);
+  int deliverAudioData_(char* buf, int len);
+  int deliverVideoData_(char* buf, int len);
   int deliverFeedback_(char* buf, int len);
   std::string getJSONCandidate(const std::string& mid, const std::string& sdp);
 
@@ -186,7 +166,7 @@ private:
   std::string stunServer_;
 
   webrtc::FecReceiverImpl fec_receiver_;
-	boost::condition_variable cond_;
+  boost::condition_variable cond_;
 
 
   struct timeval now_, mark_;

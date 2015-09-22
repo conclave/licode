@@ -42,6 +42,7 @@ namespace erizo {
     sending_ = true;
     rtcpProcessor_ = boost::shared_ptr<RtcpProcessor> (new RtcpProcessor((MediaSink*)this, (MediaSource*) this));
     send_Thread_ = boost::thread(&WebRtcConnection::sendLoop, this);
+    thisStats_.onStats(listener);
   }
 
   WebRtcConnection::~WebRtcConnection() {
