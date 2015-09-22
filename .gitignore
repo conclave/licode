@@ -10,3 +10,4 @@ extras/vagrant/licode/
 local/
 etc/default
 run/
+.tags*
