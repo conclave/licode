@@ -2,41 +2,38 @@
 
 using namespace v8;
 
-Persistent<Function> CrossEvent::constructor;
-CrossEvent::CrossEvent(const Persistent<Function>& f)
-    : NodeAsyncCallback{ f }
+Persistent<Function> CrossNotification::constructor;
+CrossNotification::CrossNotification()
+    : NodeAsyncCallback{}
 {
 }
-CrossEvent::~CrossEvent() {}
+CrossNotification::~CrossNotification() {}
 
-void CrossEvent::Init(Handle<Object> exports)
+void CrossNotification::Init(Handle<Object> exports)
 {
   Isolate* isolate = Isolate::GetCurrent();
 
   // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
-  tpl->SetClassName(String::NewFromUtf8(isolate, "CrossEvent"));
+  tpl->SetClassName(String::NewFromUtf8(isolate, "CrossNotification"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Prototype
   NODE_SET_PROTOTYPE_METHOD(tpl, "emit", Emit);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "on", On);
 
   constructor.Reset(isolate, tpl->GetFunction());
-  exports->Set(String::NewFromUtf8(isolate, "CrossEvent"), tpl->GetFunction());
+  exports->Set(String::NewFromUtf8(isolate, "CrossNotification"), tpl->GetFunction());
 }
 
-void CrossEvent::New(const FunctionCallbackInfo<Value>& args)
+void CrossNotification::New(const FunctionCallbackInfo<Value>& args)
 {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
-  if (args.Length() == 0 || !args[0]->IsFunction())
-    return;
-
   if (args.IsConstructCall()) {
-    Persistent<Function> cb(isolate, Local<Function>::Cast(args[0]));
-    CrossEvent* evt = new CrossEvent(cb);
-    evt->Wrap(args.This());
+    CrossNotification* n = new CrossNotification();
+    n->Wrap(args.This());
     args.GetReturnValue().Set(args.This());
   }
   else {
@@ -47,39 +44,61 @@ void CrossEvent::New(const FunctionCallbackInfo<Value>& args)
   }
 }
 
-void CrossEvent::Emit(const FunctionCallbackInfo<Value>& args)
+void CrossNotification::Emit(const FunctionCallbackInfo<Value>& args)
 {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  if (args.Length() == 0 || !args[0]->IsString())
+  if (args.Length() < 2 || !args[0]->IsString())
     return;
-  CrossEvent* event = ObjectWrap::Unwrap<CrossEvent>(args.Holder());
-  std::string data = std::string(*String::Utf8Value(args[0]->ToString()));
-  event->notify(data);
+  CrossNotification* n = ObjectWrap::Unwrap<CrossNotification>(args.Holder());
+  std::string event = std::string(*String::Utf8Value(args[0]->ToString()));
+  std::string data = std::string(*String::Utf8Value(args[1]->ToString()));
+  n->notify(event, data);
 }
 
-NodeAsyncCallback::NodeAsyncCallback(const Persistent<Function>& f)
-    : UvAsyncCallback(uv_default_loop())
-{
-  mFunc.Reset(Isolate::GetCurrent(), f);
-}
-
-NodeAsyncCallback::~NodeAsyncCallback(){};
-
-void NodeAsyncCallback::operator()(const std::string& data)
+void CrossNotification::On(const FunctionCallbackInfo<Value>& args)
 {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
+  if (args.Length() < 2 || !args[0]->IsString() || !args[1]->IsFunction())
+    return;
+  CrossNotification* n = ObjectWrap::Unwrap<CrossNotification>(args.Holder());
+  Local<Object>::New(isolate, n->mStore)->Set(args[0], args[1]);
+}
+
+// ------------------------NodeAsyncCallback-----------------------------------
+
+void NodeAsyncCallback::operator()(const Data& data)
+{
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
+  auto store = Local<Object>::New(isolate, mStore);
+  if (store.IsEmpty())
+    return;
+
+  auto val = store->Get(String::NewFromUtf8(isolate, data.event.c_str()));
+  if (!val->IsFunction())
+    return;
   const unsigned argc = 1;
   Local<Value> argv[argc] = {
-    String::NewFromUtf8(isolate, data.c_str())
+    String::NewFromUtf8(isolate, data.message.c_str())
   };
   TryCatch try_catch;
-  Local<Function>::New(isolate, mFunc)->Call(isolate->GetCurrentContext()->Global(), argc, argv);
+  Local<Function>::Cast(val)->Call(isolate->GetCurrentContext()->Global(), argc, argv);
   if (try_catch.HasCaught()) {
     node::FatalException(isolate, try_catch);
   }
 }
+
+NodeAsyncCallback::NodeAsyncCallback()
+    : UvAsyncCallback{ uv_default_loop() }
+    , mStore{ Isolate::GetCurrent(), Object::New(Isolate::GetCurrent()) }
+{
+}
+
+NodeAsyncCallback::~NodeAsyncCallback(){};
+
+// ------------------------UvAsyncCallback-------------------------------------
 
 UvAsyncCallback::UvAsyncCallback()
 {
@@ -119,12 +138,12 @@ size_t UvAsyncCallback::size()
 }
 
 // other thread
-bool UvAsyncCallback::notify(const std::string& data)
+bool UvAsyncCallback::notify(const std::string& event, const std::string& data)
 {
   if (uv_is_active(reinterpret_cast<uv_handle_t*>(mUvHandle))) {
     {
       std::lock_guard<std::mutex> lock(mLock);
-      mBuffer.push(data);
+      mBuffer.push(Data{ event, data });
     }
     uv_async_send(mUvHandle);
     return true;

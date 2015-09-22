@@ -21,12 +21,13 @@ var conn = new addon.WebRtcConnection(
 conn.init();
 console.log(conn.getLocalSdp());
 
-var evt = new addon.CrossEvent(function(v) {
+var evt = new addon.CrossNotification();
+evt.on('abc', function(v) {
   console.log(v);
 });
 
 setInterval(function() {
-  evt.emit(''+Math.random());
+  evt.emit('abc', Math.random());
 }, 100);
 
 setTimeout(function() {

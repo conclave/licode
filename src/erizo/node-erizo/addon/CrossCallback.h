@@ -14,40 +14,49 @@ class UvAsyncCallback : public erizo::AsyncCallback {
   explicit UvAsyncCallback();
   explicit UvAsyncCallback(uv_loop_t*);
   virtual ~UvAsyncCallback();
-  virtual bool notify(const std::string& data);
-  virtual void operator()();
-  virtual void operator()(const std::string& data) = 0;
+  virtual bool notify(const std::string& event, const std::string& data);
   virtual size_t size();
+
+  protected:
+  typedef struct {
+    std::string event, message;
+  } Data;
+  virtual void operator()(const Data& data) = 0;
 
   private:
   uv_async_t* mUvHandle;
   std::mutex mLock;
-  std::queue<std::string> mBuffer;
-  std::string mData;
+  std::queue<Data> mBuffer;
+  Data mData;
+
+  void operator()();
   static void closeCallback(uv_handle_t*);
   static void callback(uv_async_t*);
 };
 
 class NodeAsyncCallback : public UvAsyncCallback {
   public:
-  explicit NodeAsyncCallback(const v8::Persistent<v8::Function>& f);
-  ~NodeAsyncCallback();
-  void operator()(const std::string& data);
+  explicit NodeAsyncCallback();
+  virtual ~NodeAsyncCallback();
 
-  private:
-  v8::Persistent<v8::Function> mFunc;
+  protected:
+  void operator()(const Data& data);
+  v8::Persistent<v8::Object> mStore;
 };
 
-class CrossEvent : public node::ObjectWrap, NodeAsyncCallback {
+class CrossNotification : public node::ObjectWrap, NodeAsyncCallback {
   public:
   static void Init(v8::Handle<v8::Object> exports);
 
   private:
-  explicit CrossEvent(const v8::Persistent<v8::Function>& f);
-  ~CrossEvent();
+  explicit CrossNotification();
+  ~CrossNotification();
 
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void Emit(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void On(const v8::FunctionCallbackInfo<v8::Value>& args);
+  // static void Once(const v8::FunctionCallbackInfo<v8::Value>& args);
+  // static void Off(const v8::FunctionCallbackInfo<v8::Value>& args);
   static v8::Persistent<v8::Function> constructor;
 };
 
