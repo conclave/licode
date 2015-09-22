@@ -7,7 +7,10 @@ CrossNotification::CrossNotification()
     : NodeAsyncCallback{}
 {
 }
-CrossNotification::~CrossNotification() {}
+
+CrossNotification::~CrossNotification()
+{
+}
 
 void CrossNotification::Init(Handle<Object> exports)
 {
@@ -96,7 +99,10 @@ NodeAsyncCallback::NodeAsyncCallback()
 {
 }
 
-NodeAsyncCallback::~NodeAsyncCallback(){};
+NodeAsyncCallback::~NodeAsyncCallback()
+{
+  mStore.Reset();
+};
 
 // ------------------------UvAsyncCallback-------------------------------------
 
