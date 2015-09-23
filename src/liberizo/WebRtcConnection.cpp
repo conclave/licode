@@ -575,7 +575,16 @@ namespace erizo {
   {
     if (connEventListener_ != nullptr){
       std::ostringstream data;
-      data << "{\"status\":" << newEvent << ",\"message\":" << message << "}";
+      data << "{\"status\":" << newEvent << ",\"message\":\"";
+      for (auto it = message.begin(); it != message.end(); ++it) { // escape newlines for JSON.parse
+        if (*it == '\r')
+          data << "\\r";
+        else if (*it == '\n')
+          data << "\\n";
+        else
+          data << *it;
+      }
+      data << "\"}";
       connEventListener_->notify("connection", data.str());
     }
   }
