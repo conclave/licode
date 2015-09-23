@@ -12,11 +12,11 @@
  * Receives media from one publisher and retransmits it to every subscriber.
  */
 class OneToManyProcessor : public MediaSink {
- public:
+  public:
   static void Init(v8::Handle<v8::Object> target);
   erizo::OneToManyProcessor* me;
 
- private:
+  private:
   OneToManyProcessor();
   ~OneToManyProcessor();
   static v8::Persistent<v8::Function> constructor;
@@ -51,7 +51,7 @@ class OneToManyProcessor : public MediaSink {
    * Param: none
    */
   static void getPublisherState(const v8::FunctionCallbackInfo<v8::Value>& args);
-   /*
+  /*
    * Returns true if OneToManyProcessor has a publisher
    */
   static void hasPublisher(const v8::FunctionCallbackInfo<v8::Value>& args);

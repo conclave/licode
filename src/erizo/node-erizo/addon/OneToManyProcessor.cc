@@ -6,10 +6,11 @@
 using namespace v8;
 
 Persistent<Function> OneToManyProcessor::constructor;
-OneToManyProcessor::OneToManyProcessor() {};
-OneToManyProcessor::~OneToManyProcessor() {};
+OneToManyProcessor::OneToManyProcessor(){};
+OneToManyProcessor::~OneToManyProcessor(){};
 
-void OneToManyProcessor::Init(Handle<Object> exports) {
+void OneToManyProcessor::Init(Handle<Object> exports)
+{
   Isolate* isolate = Isolate::GetCurrent();
   // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
@@ -29,38 +30,42 @@ void OneToManyProcessor::Init(Handle<Object> exports) {
   exports->Set(String::NewFromUtf8(isolate, "OneToManyProcessor"), tpl->GetFunction());
 }
 
-void OneToManyProcessor::New(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void OneToManyProcessor::New(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  
+
   if (args.IsConstructCall()) {
     OneToManyProcessor* obj = new OneToManyProcessor();
     obj->me = new erizo::OneToManyProcessor();
     obj->msink = obj->me;
     obj->Wrap(args.This());
     args.GetReturnValue().Set(args.This());
-  } else {
+  }
+  else {
     const int argc = 1;
     Local<Value> argv[argc] = { args[0] };
     args.GetReturnValue().Set((Local<Function>::New(isolate, constructor))->NewInstance(argc, argv));
   }
 }
 
-void OneToManyProcessor::close(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void OneToManyProcessor::close(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  
+
   OneToManyProcessor* obj = ObjectWrap::Unwrap<OneToManyProcessor>(args.Holder());
-  erizo::OneToManyProcessor *me = (erizo::OneToManyProcessor*)obj->me;
+  erizo::OneToManyProcessor* me = (erizo::OneToManyProcessor*)obj->me;
   delete me;
 }
 
-void OneToManyProcessor::setPublisher(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void OneToManyProcessor::setPublisher(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  
+
   OneToManyProcessor* obj = ObjectWrap::Unwrap<OneToManyProcessor>(args.Holder());
-  erizo::OneToManyProcessor *me = (erizo::OneToManyProcessor*)obj->me;
+  erizo::OneToManyProcessor* me = (erizo::OneToManyProcessor*)obj->me;
 
   WebRtcConnection* param = ObjectWrap::Unwrap<WebRtcConnection>(args[0]->ToObject());
   erizo::WebRtcConnection* wr = (erizo::WebRtcConnection*)param->me;
@@ -68,12 +73,13 @@ void OneToManyProcessor::setPublisher(const v8::FunctionCallbackInfo<v8::Value>&
   erizo::MediaSource* ms = dynamic_cast<erizo::MediaSource*>(wr);
   me->setPublisher(ms);
 }
-void OneToManyProcessor::setExternalPublisher(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void OneToManyProcessor::setExternalPublisher(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  
+
   OneToManyProcessor* obj = ObjectWrap::Unwrap<OneToManyProcessor>(args.Holder());
-  erizo::OneToManyProcessor *me = (erizo::OneToManyProcessor*)obj->me;
+  erizo::OneToManyProcessor* me = (erizo::OneToManyProcessor*)obj->me;
 
   ExternalInput* param = ObjectWrap::Unwrap<ExternalInput>(args[0]->ToObject());
   erizo::ExternalInput* wr = (erizo::ExternalInput*)param->me;
@@ -82,14 +88,15 @@ void OneToManyProcessor::setExternalPublisher(const v8::FunctionCallbackInfo<v8:
   me->setPublisher(ms);
 }
 
-void OneToManyProcessor::getPublisherState(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void OneToManyProcessor::getPublisherState(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  
-  OneToManyProcessor* obj = ObjectWrap::Unwrap<OneToManyProcessor>(args.Holder());
-  erizo::OneToManyProcessor *me = (erizo::OneToManyProcessor*)obj->me;
 
-  erizo::MediaSource * ms = me->publisher.get();
+  OneToManyProcessor* obj = ObjectWrap::Unwrap<OneToManyProcessor>(args.Holder());
+  erizo::OneToManyProcessor* me = (erizo::OneToManyProcessor*)obj->me;
+
+  erizo::MediaSource* ms = me->publisher.get();
 
   erizo::WebRtcConnection* wr = (erizo::WebRtcConnection*)ms;
 
@@ -98,22 +105,24 @@ void OneToManyProcessor::getPublisherState(const v8::FunctionCallbackInfo<v8::Va
   args.GetReturnValue().Set(Number::New(isolate, state));
 }
 
-void OneToManyProcessor::hasPublisher(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void OneToManyProcessor::hasPublisher(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  
+
   OneToManyProcessor* obj = ObjectWrap::Unwrap<OneToManyProcessor>(args.Holder());
-  erizo::OneToManyProcessor *me = (erizo::OneToManyProcessor*)obj->me;
+  erizo::OneToManyProcessor* me = (erizo::OneToManyProcessor*)obj->me;
 
   args.GetReturnValue().Set(Boolean::New(isolate, (me->publisher != nullptr)));
 }
 
-void OneToManyProcessor::addSubscriber(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void OneToManyProcessor::addSubscriber(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  
+
   OneToManyProcessor* obj = ObjectWrap::Unwrap<OneToManyProcessor>(args.Holder());
-  erizo::OneToManyProcessor *me = (erizo::OneToManyProcessor*)obj->me;
+  erizo::OneToManyProcessor* me = (erizo::OneToManyProcessor*)obj->me;
 
   WebRtcConnection* param = ObjectWrap::Unwrap<WebRtcConnection>(args[0]->ToObject());
   erizo::WebRtcConnection* wr = param->me;
@@ -125,13 +134,13 @@ void OneToManyProcessor::addSubscriber(const v8::FunctionCallbackInfo<v8::Value>
   me->addSubscriber(ms, peerId);
 }
 
-void OneToManyProcessor::addExternalOutput(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void OneToManyProcessor::addExternalOutput(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  
 
   OneToManyProcessor* obj = ObjectWrap::Unwrap<OneToManyProcessor>(args.Holder());
-  erizo::OneToManyProcessor *me = (erizo::OneToManyProcessor*)obj->me;
+  erizo::OneToManyProcessor* me = (erizo::OneToManyProcessor*)obj->me;
 
   ExternalOutput* param = ObjectWrap::Unwrap<ExternalOutput>(args[0]->ToObject());
   erizo::ExternalOutput* wr = param->me;
@@ -143,12 +152,13 @@ void OneToManyProcessor::addExternalOutput(const v8::FunctionCallbackInfo<v8::Va
   me->addSubscriber(ms, peerId);
 }
 
-void OneToManyProcessor::removeSubscriber(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void OneToManyProcessor::removeSubscriber(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  
+
   OneToManyProcessor* obj = ObjectWrap::Unwrap<OneToManyProcessor>(args.Holder());
-  erizo::OneToManyProcessor *me = (erizo::OneToManyProcessor*)obj->me;
+  erizo::OneToManyProcessor* me = (erizo::OneToManyProcessor*)obj->me;
 
   v8::String::Utf8Value param1(args[0]->ToString());
 

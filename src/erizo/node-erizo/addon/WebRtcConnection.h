@@ -7,7 +7,6 @@
 #include <uv.h>
 #include <WebRtcConnection.h>
 
-
 /*
  * Wrapper class of erizo::WebRtcConnection
  *
@@ -15,15 +14,15 @@
  * it comprises all the necessary ICE and SRTP components.
  */
 class WebRtcConnection : public node::ObjectWrap, NodeAsyncCallback {
- public:
+  public:
   static void Init(v8::Handle<v8::Object> exports);
-  erizo::WebRtcConnection *me;
+  erizo::WebRtcConnection* me;
 
- private:
+  private:
   WebRtcConnection();
   ~WebRtcConnection();
   static v8::Persistent<v8::Function> constructor;
-  
+
   /*
    * Constructor.
    * Constructs an empty WebRtcConnection without any configuration.
@@ -38,7 +37,7 @@ class WebRtcConnection : public node::ObjectWrap, NodeAsyncCallback {
    * Inits the WebRtcConnection and passes the callback to get Events.
    * Returns true if the candidates are gathered.
    */
-  static void init(const v8::FunctionCallbackInfo<v8::Value>& args);  
+  static void init(const v8::FunctionCallbackInfo<v8::Value>& args);
   /*
    * Sets the SDP of the remote peer.
    * Param: the SDP.
@@ -50,7 +49,7 @@ class WebRtcConnection : public node::ObjectWrap, NodeAsyncCallback {
      * @param sdp The candidate in SDP format.
      * @return true if the SDP was received correctly.
      */
-  static void  addRemoteCandidate(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void addRemoteCandidate(const v8::FunctionCallbackInfo<v8::Value>& args);
   /*
    * Obtains the local SDP.
    * Returns the SDP as a string.
@@ -78,7 +77,7 @@ class WebRtcConnection : public node::ObjectWrap, NodeAsyncCallback {
 
   static void setFeedbackReports(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-  static void getStats(const v8::FunctionCallbackInfo<v8::Value>& args);  
+  static void getStats(const v8::FunctionCallbackInfo<v8::Value>& args);
 };
 
 #endif

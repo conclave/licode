@@ -11,12 +11,12 @@
  * Represents a OneToMany connection.
  * Receives media from one publisher and retransmits it to every subscriber.
  */
-class ExternalOutput: public node::ObjectWrap {
- public:
+class ExternalOutput : public node::ObjectWrap {
+  public:
   static void Init(v8::Handle<v8::Object> exports);
   erizo::ExternalOutput* me;
 
- private:
+  private:
   ExternalOutput();
   ~ExternalOutput();
   static v8::Persistent<v8::Function> constructor;
@@ -35,7 +35,7 @@ class ExternalOutput: public node::ObjectWrap {
    * Inits the ExternalOutput 
    * Returns true ready
    */
-  static void init(const v8::FunctionCallbackInfo<v8::Value>& args);  
+  static void init(const v8::FunctionCallbackInfo<v8::Value>& args);
 };
 
 #endif

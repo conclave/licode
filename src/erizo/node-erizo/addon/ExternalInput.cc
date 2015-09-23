@@ -4,10 +4,11 @@
 using namespace v8;
 
 Persistent<Function> ExternalInput::constructor;
-ExternalInput::ExternalInput() {};
-ExternalInput::~ExternalInput() {};
+ExternalInput::ExternalInput(){};
+ExternalInput::~ExternalInput(){};
 
-void ExternalInput::Init(Handle<Object> exports) {
+void ExternalInput::Init(Handle<Object> exports)
+{
   Isolate* isolate = Isolate::GetCurrent();
   // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
@@ -23,7 +24,8 @@ void ExternalInput::Init(Handle<Object> exports) {
   exports->Set(String::NewFromUtf8(isolate, "ExternalInput"), tpl->GetFunction());
 }
 
-void ExternalInput::New(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void ExternalInput::New(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
@@ -34,52 +36,57 @@ void ExternalInput::New(const v8::FunctionCallbackInfo<v8::Value>& args) {
     obj->me = new erizo::ExternalInput(url);
     obj->Wrap(args.This());
     args.GetReturnValue().Set(args.This());
-  }  else {
+  }
+  else {
     const int argc = 1;
     Local<Value> argv[argc] = { args[0] };
     args.GetReturnValue().Set((Local<Function>::New(isolate, constructor))->NewInstance(argc, argv));
   }
 }
 
-void ExternalInput::close(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void ExternalInput::close(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   ExternalInput* obj = ObjectWrap::Unwrap<ExternalInput>(args.Holder());
-  erizo::ExternalInput *me = (erizo::ExternalInput*)obj->me;
+  erizo::ExternalInput* me = (erizo::ExternalInput*)obj->me;
   delete me;
 }
 
-void ExternalInput::init(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void ExternalInput::init(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   ExternalInput* obj = ObjectWrap::Unwrap<ExternalInput>(args.Holder());
-  erizo::ExternalInput *me = (erizo::ExternalInput*) obj->me;
+  erizo::ExternalInput* me = (erizo::ExternalInput*)obj->me;
   int r = me->init();
   args.GetReturnValue().Set(Integer::New(isolate, r));
 }
 
-void ExternalInput::setAudioReceiver(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void ExternalInput::setAudioReceiver(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   ExternalInput* obj = ObjectWrap::Unwrap<ExternalInput>(args.Holder());
-  erizo::ExternalInput *me = (erizo::ExternalInput*)obj->me;
+  erizo::ExternalInput* me = (erizo::ExternalInput*)obj->me;
 
   MediaSink* param = ObjectWrap::Unwrap<MediaSink>(args[0]->ToObject());
-  erizo::MediaSink *mr = param->msink;
+  erizo::MediaSink* mr = param->msink;
   me->setAudioSink(mr);
 }
 
-void ExternalInput::setVideoReceiver(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void ExternalInput::setVideoReceiver(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   ExternalInput* obj = ObjectWrap::Unwrap<ExternalInput>(args.Holder());
-  erizo::ExternalInput *me = (erizo::ExternalInput*)obj->me;
+  erizo::ExternalInput* me = (erizo::ExternalInput*)obj->me;
 
   MediaSink* param = ObjectWrap::Unwrap<MediaSink>(args[0]->ToObject());
-  erizo::MediaSink *mr = param->msink;
+  erizo::MediaSink* mr = param->msink;
   me->setVideoSink(mr);
 }

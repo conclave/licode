@@ -3,10 +3,11 @@
 using namespace v8;
 
 Persistent<Function> ExternalOutput::constructor;
-ExternalOutput::ExternalOutput() {};
-ExternalOutput::~ExternalOutput() {};
+ExternalOutput::ExternalOutput(){};
+ExternalOutput::~ExternalOutput(){};
 
-void ExternalOutput::Init(Handle<Object> exports) {
+void ExternalOutput::Init(Handle<Object> exports)
+{
   Isolate* isolate = Isolate::GetCurrent();
   // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
@@ -20,7 +21,8 @@ void ExternalOutput::Init(Handle<Object> exports) {
   exports->Set(String::NewFromUtf8(isolate, "ExternalOutput"), tpl->GetFunction());
 }
 
-void ExternalOutput::New(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void ExternalOutput::New(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
@@ -31,29 +33,31 @@ void ExternalOutput::New(const v8::FunctionCallbackInfo<v8::Value>& args) {
     obj->me = new erizo::ExternalOutput(url);
     obj->Wrap(args.This());
     args.GetReturnValue().Set(args.This());
-  } else {
+  }
+  else {
     const int argc = 1;
     Local<Value> argv[argc] = { args[0] };
     args.GetReturnValue().Set((Local<Function>::New(isolate, constructor))->NewInstance(argc, argv));
   }
 }
 
-void ExternalOutput::close(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void ExternalOutput::close(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   ExternalOutput* obj = ObjectWrap::Unwrap<ExternalOutput>(args.Holder());
-  erizo::ExternalOutput *me = (erizo::ExternalOutput*)obj->me;
+  erizo::ExternalOutput* me = (erizo::ExternalOutput*)obj->me;
   delete me;
 }
 
-void ExternalOutput::init(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void ExternalOutput::init(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   ExternalOutput* obj = ObjectWrap::Unwrap<ExternalOutput>(args.Holder());
-  erizo::ExternalOutput *me = (erizo::ExternalOutput*) obj->me;
+  erizo::ExternalOutput* me = (erizo::ExternalOutput*)obj->me;
   int r = me->init();
   args.GetReturnValue().Set(Integer::New(isolate, r));
 }
-

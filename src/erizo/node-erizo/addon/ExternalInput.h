@@ -11,12 +11,12 @@
  * Represents a OneToMany connection.
  * Receives media from one publisher and retransmits it to every subscriber.
  */
-class ExternalInput: public node::ObjectWrap {
- public:
+class ExternalInput : public node::ObjectWrap {
+  public:
   static void Init(v8::Handle<v8::Object> exports);
   erizo::ExternalInput* me;
 
- private:
+  private:
   ExternalInput();
   ~ExternalInput();
   static v8::Persistent<v8::Function> constructor;
@@ -35,7 +35,7 @@ class ExternalInput: public node::ObjectWrap {
    * Inits the ExternalInput 
    * Returns true ready
    */
-  static void init(const v8::FunctionCallbackInfo<v8::Value>& args);  
+  static void init(const v8::FunctionCallbackInfo<v8::Value>& args);
   /*
    * Sets a MediaReceiver that is going to receive Audio Data
    * Param: the MediaReceiver to send audio to.

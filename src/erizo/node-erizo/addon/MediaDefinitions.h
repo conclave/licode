@@ -5,15 +5,12 @@
 #include <node_object_wrap.h>
 #include <MediaDefinitions.h>
 
-
 /*
  * Wrapper class of erizo::MediaReceiver
  */
 class MediaSink : public node::ObjectWrap {
-public:
-
+  public:
   erizo::MediaSink* msink;
 };
-
 
 #endif

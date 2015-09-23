@@ -5,7 +5,6 @@
 #include <media/OneToManyTranscoder.h>
 #include "MediaDefinitions.h"
 
-
 /*
  * Wrapper class of erizo::OneToManyTranscoder
  *
@@ -13,11 +12,11 @@
  * Receives media from one publisher and retransmits it to every subscriber.
  */
 class OneToManyTranscoder : public MediaSink {
- public:
+  public:
   static void Init(v8::Handle<v8::Object> exports);
   erizo::OneToManyTranscoder* me;
 
- private:
+  private:
   OneToManyTranscoder();
   ~OneToManyTranscoder();
   static v8::Persistent<v8::Function> constructor;
@@ -37,7 +36,7 @@ class OneToManyTranscoder : public MediaSink {
    * Param: the WebRtcConnection of the Publisher
    */
   static void setPublisher(const v8::FunctionCallbackInfo<v8::Value>& args);
-   /*
+  /*
    * Returns true if OneToManyTranscoder has a publisher
    */
   static void hasPublisher(const v8::FunctionCallbackInfo<v8::Value>& args);
