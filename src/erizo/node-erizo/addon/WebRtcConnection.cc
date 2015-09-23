@@ -16,7 +16,6 @@ void WebRtcConnection::Init(Handle<Object> exports)
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   // Prototype
   NODE_SET_PROTOTYPE_METHOD(tpl, "close", close);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "init", init);
   NODE_SET_PROTOTYPE_METHOD(tpl, "setRemoteSdp", setRemoteSdp);
   NODE_SET_PROTOTYPE_METHOD(tpl, "addRemoteCandidate", addRemoteCandidate);
   NODE_SET_PROTOTYPE_METHOD(tpl, "getLocalSdp", getLocalSdp);
@@ -88,15 +87,6 @@ void WebRtcConnection::close(const v8::FunctionCallbackInfo<v8::Value>& args)
 
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
   obj->me = nullptr;
-}
-
-void WebRtcConnection::init(const v8::FunctionCallbackInfo<v8::Value>& args)
-{
-  Isolate* isolate = Isolate::GetCurrent();
-  HandleScope scope(isolate);
-
-  WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
-  Local<Object>::New(isolate, obj->mStore)->Set(String::NewFromUtf8(isolate, "connection"), args[0]);
 }
 
 void WebRtcConnection::setRemoteSdp(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -187,14 +177,8 @@ void WebRtcConnection::getStats(const v8::FunctionCallbackInfo<v8::Value>& args)
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
   if (obj->me == nullptr) //Requesting stats when WebrtcConnection not available
     return;
-
-  if (args.Length() == 0) {
-    std::string lastStats = obj->me->getJSONStats();
-    args.GetReturnValue().Set(String::NewFromUtf8(isolate, lastStats.c_str()));
-  }
-  else {
-    Local<Object>::New(isolate, obj->mStore)->Set(String::NewFromUtf8(isolate, "stats"), args[1]);
-  }
+  std::string lastStats = obj->me->getJSONStats();
+  args.GetReturnValue().Set(String::NewFromUtf8(isolate, lastStats.c_str()));
 }
 
 void WebRtcConnection::addEventListener(const FunctionCallbackInfo<Value>& args)

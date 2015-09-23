@@ -171,7 +171,7 @@ module.exports = function (spec) {
                     lastAverage = average;
                 }
                 if (GLOBAL.config.erizoController.report.rtcp_stats) {
-                    wrtc.getStats(function (newStats){
+                    wrtc.addEventListener('stats', function (newStats){
                         var timeStamp = new Date();
                         rpc.broadcast('stats', {pub: id_pub, subs: id_sub, stats: theStats, timestamp:timeStamp.getTime()});
                     });
@@ -179,7 +179,7 @@ module.exports = function (spec) {
             }, INTERVAL_STATS);
         }
 
-        wrtc.init(function (resp) {
+        wrtc.addEventListener('connection', function (resp) {
             var data = JSON.parse(resp);
             var newStatus = data.status;
             var mess = data.message;

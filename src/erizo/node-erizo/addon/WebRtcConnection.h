@@ -33,11 +33,7 @@ class WebRtcConnection : public node::ObjectWrap, NodeAsyncCallback {
    * The object cannot be used after this call.
    */
   static void close(const v8::FunctionCallbackInfo<v8::Value>& args);
-  /*
-   * Inits the WebRtcConnection and passes the callback to get Events.
-   * Returns true if the candidates are gathered.
-   */
-  static void init(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   /*
    * Sets the SDP of the remote peer.
    * Param: the SDP.

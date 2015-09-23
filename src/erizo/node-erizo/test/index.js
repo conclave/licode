@@ -17,9 +17,15 @@ var conn = new addon.WebRtcConnection(
   0,
   '',
   '');
-conn.init(function (data) {
+
+conn.on('connection', function (data) {
+  console.log(JSON.parse(data).status);
+});
+
+conn.on('stats', function (data) {
   console.log(data);
 });
+
 console.log(conn.getLocalSdp());
 
 var evt = new addon.CrossNotification();
