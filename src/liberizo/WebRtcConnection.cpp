@@ -11,6 +11,8 @@ DEFINE_LOGGER(WebRtcConnection, "WebRtcConnection");
 WebRtcConnection::WebRtcConnection(bool audioEnabled, bool videoEnabled,
     const IceConfig& iceConfig, bool trickleEnabled, AsyncCallback* listener)
     : connEventListener_(listener)
+    , stats_(listener)
+    , rateControl_(0)
     , iceConfig_(iceConfig)
     , fec_receiver_(this)
 {
@@ -36,12 +38,9 @@ WebRtcConnection::WebRtcConnection(bool audioEnabled, bool videoEnabled,
 
   gettimeofday(&mark_, NULL);
 
-  rateControl_ = 0;
-
   sending_ = true;
   rtcpProcessor_ = boost::shared_ptr<RtcpProcessor>(new RtcpProcessor((MediaSink*)this, (MediaSource*)this));
   send_Thread_ = boost::thread(&WebRtcConnection::sendLoop, this);
-  thisStats_.onStats(listener);
 }
 
 WebRtcConnection::~WebRtcConnection()
@@ -85,9 +84,9 @@ bool WebRtcConnection::setRemoteSdp(const std::string& sdp)
   localSdp_.audioSsrc = this->getAudioSinkSSRC();
 
   this->setVideoSourceSSRC(remoteSdp_.videoSsrc);
-  this->thisStats_.setVideoSourceSSRC(this->getVideoSourceSSRC());
+  this->stats_.setVideoSourceSSRC(this->getVideoSourceSSRC());
   this->setAudioSourceSSRC(remoteSdp_.audioSsrc);
-  this->thisStats_.setAudioSourceSSRC(this->getAudioSourceSSRC());
+  this->stats_.setAudioSourceSSRC(this->getAudioSourceSSRC());
   rtcpProcessor_->addSourceSsrc(this->getAudioSourceSSRC());
   rtcpProcessor_->addSourceSsrc(this->getVideoSourceSSRC());
 
@@ -330,7 +329,7 @@ void WebRtcConnection::onTransportData(char* buf, int len, Transport* transport)
   // PROCESS RTCP
   RtcpHeader* chead = reinterpret_cast<RtcpHeader*>(buf);
   if (chead->isRtcp()) {
-    thisStats_.processRtcpPacket(buf, len);
+    stats_.processRtcpPacket(buf, len);
     if (chead->packettype == RTCP_Sender_PT) { //Sender Report
       rtcpProcessor_->analyzeSr(chead);
     }
@@ -598,7 +597,7 @@ WebRTCEvent WebRtcConnection::getCurrentState()
 
 std::string WebRtcConnection::getJSONStats()
 {
-  return thisStats_.getStats();
+  return stats_.getStats();
 }
 
 void WebRtcConnection::notifyEvent(WebRTCEvent newEvent, const std::string& message)

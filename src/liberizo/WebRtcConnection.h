@@ -125,13 +125,13 @@ class WebRtcConnection : public MediaSink, public MediaSource, public FeedbackSi
   SdpInfo remoteSdp_;
   SdpInfo localSdp_;
   boost::shared_ptr<RtcpProcessor> rtcpProcessor_;
-  Stats thisStats_;
   WebRTCEvent globalState_;
   int bundle_, sequenceNumberFIR_;
   boost::mutex receiveVideoMutex_, updateStateMutex_, feedbackMutex_;
   boost::thread send_Thread_;
   std::queue<dataPacket> sendQueue_;
   AsyncCallback* connEventListener_;
+  Stats stats_;
   Transport* videoTransport_, *audioTransport_;
 
   bool audioEnabled_;

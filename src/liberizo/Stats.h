@@ -19,7 +19,7 @@ class Stats {
   DECLARE_LOGGER();
 
   public:
-  Stats();
+  Stats(AsyncCallback*);
   virtual ~Stats();
 
   void processRtcpPacket(char* buf, int length);
@@ -33,10 +33,6 @@ class Stats {
   {
     audioSSRC_ = ssrc;
   };
-  inline void onStats(AsyncCallback* cb)
-  {
-    this->callback_ = cb;
-  }
 
   private:
   typedef std::map<std::string, uint64_t> singleSSRCstatsMap_t;
