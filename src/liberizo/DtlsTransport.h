@@ -30,20 +30,21 @@ class DtlsTransport : dtls::DtlsReceiver, public Transport {
   void writeDtls(dtls::DtlsSocketContext* ctx, const unsigned char* data, unsigned int len);
   void onHandshakeCompleted(dtls::DtlsSocketContext* ctx, std::string clientKey, std::string serverKey, std::string srtp_profile);
   void updateIceState(IceState state, NiceConnection* conn);
-  void processLocalSdp(SdpInfo* localSdp_);
+  void processLocalSdp(SdpInfo*);
 
   private:
   char protectBuf_[5000];
   char unprotectBuf_[5000];
-  boost::shared_ptr<dtls::DtlsSocketContext> dtlsRtp, dtlsRtcp;
+  boost::shared_ptr<dtls::DtlsSocketContext> dtlsRtp_, dtlsRtcp_;
   boost::mutex writeMutex_, sessionMutex_;
   boost::scoped_ptr<SrtpChannel> srtp_, srtcp_;
-  bool readyRtp, readyRtcp;
+  bool readyRtp_, readyRtcp_;
   bool running_;
-  boost::scoped_ptr<Resender> rtcpResender, rtpResender;
+  boost::scoped_ptr<Resender> rtcpResender_, rtpResender_;
   boost::thread getNice_Thread_;
-  void getNiceDataLoop();
   packetPtr p_;
+
+  void getNiceDataLoop();
 };
 
 class Resender {
@@ -65,7 +66,7 @@ class Resender {
   const unsigned char* data_;
   unsigned int len_;
   boost::asio::io_service service_;
-  boost::asio::deadline_timer timer;
+  boost::asio::deadline_timer timer_;
   boost::scoped_ptr<boost::thread> thread_;
 };
 }
