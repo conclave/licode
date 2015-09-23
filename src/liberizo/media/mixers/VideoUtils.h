@@ -5,72 +5,67 @@
 #ifndef VIDEOUTILS_H_
 #define VIDEOUTILS_H_
 
-#include "logger.h"
+#include "../../logger.h"
 
-class VideoUtils{
+class VideoUtils {
 
   DECLARE_LOGGER();
 
-  enum ImgFormat{
+  enum ImgFormat {
     I420P_FORMAT,
     RGB24_FORMAT,
     BGR24_FORMAT
   };
 
   static int
-    vRescale(unsigned char *inBuff,
-        unsigned int   inBuffLen,
-        unsigned char* outBuff,
-        unsigned int   outBuffLen,
-        unsigned int   inW,
-        unsigned int   inH,
-        unsigned int   outW,
-        unsigned int   outH,
-        uint32_t       format
-        );
+  vRescale(unsigned char* inBuff,
+      unsigned int inBuffLen,
+      unsigned char* outBuff,
+      unsigned int outBuffLen,
+      unsigned int inW,
+      unsigned int inH,
+      unsigned int outW,
+      unsigned int outH,
+      uint32_t format);
 
   static int
-    vPutImage(unsigned char *inBuff,
-        unsigned int   inBuffLen,
-        unsigned char* outBuff,
-        unsigned int   outBuffLen,
-        unsigned int   inW,
-        unsigned int   inH,
-        unsigned int   outW,
-        unsigned int   outH,
-        unsigned int   posX,
-        unsigned int   posY,
-        unsigned int   totalW,
-        unsigned int   totalH,
-        uint32_t       format,
-        unsigned char* mask = NULL,
-        bool           invertMask = false
-        );
+  vPutImage(unsigned char* inBuff,
+      unsigned int inBuffLen,
+      unsigned char* outBuff,
+      unsigned int outBuffLen,
+      unsigned int inW,
+      unsigned int inH,
+      unsigned int outW,
+      unsigned int outH,
+      unsigned int posX,
+      unsigned int posY,
+      unsigned int totalW,
+      unsigned int totalH,
+      uint32_t format,
+      unsigned char* mask = NULL,
+      bool invertMask = false);
 
   static void
-    vSetMaskRect(unsigned char *mask,
-        unsigned int   W,
-        unsigned int   H,
-        unsigned int   posX,
-        unsigned int   posY,
-        unsigned int   totalW,
-        unsigned int   totalH,
-        bool           val,
-        uint32_t       format
-        );
+  vSetMaskRect(unsigned char* mask,
+      unsigned int W,
+      unsigned int H,
+      unsigned int posX,
+      unsigned int posY,
+      unsigned int totalW,
+      unsigned int totalH,
+      bool val,
+      uint32_t format);
 
   static int
-    vSetMask(unsigned char *outBuff,
-        unsigned       outBuffLen,
-        unsigned char* mask,
-        unsigned       W,
-        unsigned       H,
-        unsigned       totalW,
-        unsigned       totalH,
-        bool           val,
-        uint32_t       format
-        );
+  vSetMask(unsigned char* outBuff,
+      unsigned outBuffLen,
+      unsigned char* mask,
+      unsigned W,
+      unsigned H,
+      unsigned totalW,
+      unsigned totalH,
+      bool val,
+      uint32_t format);
 };
 
 #endif // VIDEOUTILS_H_
-

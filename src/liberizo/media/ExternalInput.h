@@ -1,15 +1,15 @@
 #ifndef EXTERNALINPUT_H_
 #define EXTERNALINPUT_H_
 
-#include <boost/scoped_ptr.hpp>
-#include <string> 
-#include <map>
-#include <queue>
-#include "../MediaDefinitions.h"
 #include "codecs/VideoCodec.h"
+#include "../logger.h"
+#include "../MediaDefinitions.h"
 #include "MediaProcessor.h"
-#include "boost/thread.hpp"
-#include "logger.h"
+
+#include <boost/scoped_ptr.hpp>
+#include <boost/thread.hpp>
+#include <string>
+#include <queue>
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -18,44 +18,42 @@ extern "C" {
 #include <libavutil/time.h>
 }
 
-namespace erizo{
-  class WebRtcConnection;
+namespace erizo {
+class WebRtcConnection;
 
-  class ExternalInput : public MediaSource, public RTPDataReceiver {
-      DECLARE_LOGGER();
-    public:
-      ExternalInput (const std::string& inputUrl);
-      virtual ~ExternalInput();
-      int init();
-      void receiveRtpData(unsigned char* rtpdata, int len);
-      int sendPLI();
+class ExternalInput : public MediaSource, public RTPDataReceiver {
+  DECLARE_LOGGER();
 
+  public:
+  ExternalInput(const std::string& inputUrl);
+  virtual ~ExternalInput();
+  int init();
+  void receiveRtpData(unsigned char* rtpdata, int len);
+  int sendPLI();
 
-    private:
-      boost::scoped_ptr<OutputProcessor> op_;
-      VideoDecoder inCodec_;
-      boost::scoped_array<unsigned char> decodedBuffer_;
-      char sendVideoBuffer_[2000];
+  private:
+  boost::scoped_ptr<OutputProcessor> op_;
+  VideoDecoder inCodec_;
+  boost::scoped_array<unsigned char> decodedBuffer_;
+  char sendVideoBuffer_[2000];
 
-      std::string url_;
-      bool running_;
-      bool needTranscoding_;
-	    boost::mutex queueMutex_;
-      boost::thread thread_, encodeThread_;
-      std::queue<RawDataPacket> packetQueue_;
-      AVFormatContext* context_;
-      AVPacket avpacket_;
-      int video_stream_index_,video_time_base_;
-      int audio_stream_index_, audio_time_base_;
-      int bufflen_;
+  std::string url_;
+  bool running_;
+  bool needTranscoding_;
+  boost::mutex queueMutex_;
+  boost::thread thread_, encodeThread_;
+  std::queue<RawDataPacket> packetQueue_;
+  AVFormatContext* context_;
+  AVPacket avpacket_;
+  int video_stream_index_, video_time_base_;
+  int audio_stream_index_, audio_time_base_;
+  int bufflen_;
 
-      int64_t lastPts_,lastAudioPts_;
-      int64_t startTime_;
+  int64_t lastPts_, lastAudioPts_;
+  int64_t startTime_;
 
-
-      void receiveLoop();
-      void encodeLoop();
-
-  };
+  void receiveLoop();
+  void encodeLoop();
+};
 }
 #endif /* EXTERNALINPUT_H_ */
