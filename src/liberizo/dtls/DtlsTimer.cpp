@@ -1,103 +1,84 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "DtlsTimer.h"
 #include <sys/time.h>
-#include <iostream>
 
-using namespace dtls;
-using namespace std;
+namespace dtls {
 
 DtlsTimer::DtlsTimer(unsigned int seq)
+    : mValid{ true }
 {
-   mValid=true;
 }
 
 DtlsTimer::~DtlsTimer()
 {
 }
 
-void
-DtlsTimer::fire()
+void DtlsTimer::fire()
 {
-   if(mValid)
-   {
-      expired();
-   }
-   else
-   {
-      //memory mangement is overly tricky and possibly wrong...deleted by target
-      //if valid is the contract. weak pointers would help.
-      delete this;
-   }
+  if (mValid) {
+    expired();
+  }
+  else {
+    //memory mangement is overly tricky and possibly wrong...deleted by target
+    //if valid is the contract. weak pointers would help.
+    delete this;
+  }
 }
 
-void
-DtlsTimerContext::fire(DtlsTimer *timer)
+void DtlsTimerContext::fire(DtlsTimer* timer)
 {
-   timer->fire();
+  timer->fire();
 }
 
-long long getTimeMS() {
+long long getTimeMS()
+{
   struct timeval start;
-  gettimeofday(&start, NULL);
-  long timeMs = ((start.tv_sec) * 1000 + start.tv_usec/1000.0);
+  gettimeofday(&start, nullptr);
+  long timeMs = ((start.tv_sec) * 1000 + start.tv_usec / 1000.0);
   return timeMs;
 }
 
-void
-TestTimerContext::addTimer(DtlsTimer *timer, unsigned int lifetime)
+void TestTimerContext::addTimer(DtlsTimer* timer, unsigned int lifetime)
 {
-   delete mTimer;
-
-   mTimer=timer;
-
-   long timeMs = getTimeMS();
-
-   mExpiryTime=timeMs+lifetime;
-
+  delete mTimer;
+  mTimer = timer;
+  long timeMs = getTimeMS();
+  mExpiryTime = timeMs + lifetime;
 }
 
 long long
 TestTimerContext::getRemainingTime()
 {
-   long long timeMs = getTimeMS();
+  long long timeMs = getTimeMS();
 
-   if(mTimer)
-   {
-      if(mExpiryTime<timeMs)
-         return(0);
+  if (mTimer) {
+    if (mExpiryTime < timeMs)
+      return (0);
 
-      return(mExpiryTime-timeMs);
-   }
-   else
-   {
-      #if defined(WIN32) && !defined(__GNUC__)
-         return 18446744073709551615ui64;
-      #else
-         return 18446744073709551615ULL;
-      #endif
-   }
+    return (mExpiryTime - timeMs);
+  }
+  else {
+#if defined(WIN32) && !defined(__GNUC__)
+    return 18446744073709551615ui64;
+#else
+    return 18446744073709551615ULL;
+#endif
+  }
 }
 
-void
-TestTimerContext::updateTimer()
+void TestTimerContext::updateTimer()
 {
-   long long timeMs = getTimeMS();
+  long long timeMs = getTimeMS();
 
-   if(mTimer)
-   {
-      if(mExpiryTime<timeMs)
-      {
-         DtlsTimer *tmpTimer=mTimer;
-         mTimer=0;
+  if (mTimer) {
+    if (mExpiryTime < timeMs) {
+      DtlsTimer* tmpTimer = mTimer;
+      mTimer = 0;
 
-         fire(tmpTimer);
-      }
-   }
+      fire(tmpTimer);
+    }
+  }
 }
-
+}
 
 /* ====================================================================
 

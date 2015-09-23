@@ -1,84 +1,79 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #ifndef DtlsFactory_h
 #define DtlsFactory_h
 
-#include <memory>
+#include "logger.h"
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 #include "DtlsTimer.h"
 #include <openssl/evp.h>
-#include "logger.h"
 typedef struct x509_st X509;
 typedef struct ssl_ctx_st SSL_CTX;
 typedef struct evp_pkey_st EVP_PKEY;
 
-namespace dtls
-{
+namespace dtls {
 class DtlsSocket;
 class DtlsSocketContext;
 class DtlsTimerContext;
 
 //Not threadsafe. Timers must fire in the same thread as dtls processing.
-class DtlsFactory
-{
-   DECLARE_LOGGER();
-   public:
-     enum PacketType { rtp, dtls, stun, unknown};
+class DtlsFactory {
+  DECLARE_LOGGER();
 
-     DtlsFactory();
+  public:
+  enum PacketType { rtp,
+    dtls,
+    stun,
+    unknown };
 
-     // Note: this orphans any DtlsSockets you were stupid enough
-     // not to free
-     ~DtlsFactory();
+  DtlsFactory();
 
-     // Creates a new DtlsSocket to be used as a client
-     DtlsSocket* createClient(boost::shared_ptr<DtlsSocketContext> context);
+  // Note: this orphans any DtlsSockets you were stupid enough
+  // not to free
+  ~DtlsFactory();
 
-     // Creates a new DtlsSocket to be used as a server
-     DtlsSocket* createServer(boost::shared_ptr<DtlsSocketContext> context);
+  // Creates a new DtlsSocket to be used as a client
+  DtlsSocket* createClient(boost::shared_ptr<DtlsSocketContext> context);
 
-     // Returns the fingerprint of the user cert that was passed into the constructor
-     void getMyCertFingerprint(char *fingerprint);
+  // Creates a new DtlsSocket to be used as a server
+  DtlsSocket* createServer(boost::shared_ptr<DtlsSocketContext> context);
 
-     // Returns a reference to the timer context that was passed into the constructor
-     DtlsTimerContext& getTimerContext() {return *mTimerContext;}
+  // Returns the fingerprint of the user cert that was passed into the constructor
+  void getMyCertFingerprint(char* fingerprint);
 
-     // The default SrtpProfile used at construction time (default is: SRTP_AES128_CM_SHA1_80:SRTP_AES128_CM_SHA1_32)
-     static const char* DefaultSrtpProfile;
+  // Returns a reference to the timer context that was passed into the constructor
+  DtlsTimerContext& getTimerContext() { return *mTimerContext; }
 
-     // Changes the default SRTP profiles supported (default is: SRTP_AES128_CM_SHA1_80:SRTP_AES128_CM_SHA1_32)
-     void setSrtpProfiles(const char *policyStr);
+  // The default SrtpProfile used at construction time (default is: SRTP_AES128_CM_SHA1_80:SRTP_AES128_CM_SHA1_32)
+  static const char* DefaultSrtpProfile;
 
-     // Changes the default DTLS Cipher Suites supported
-     void setCipherSuites(const char *cipherSuites);
+  // Changes the default SRTP profiles supported (default is: SRTP_AES128_CM_SHA1_80:SRTP_AES128_CM_SHA1_32)
+  void setSrtpProfiles(const char* policyStr);
 
-     // Examines the first few bits of a packet to determine its type: rtp, dtls, stun or unknown
-     static PacketType demuxPacket(const unsigned char *buf, unsigned int len);
+  // Changes the default DTLS Cipher Suites supported
+  void setCipherSuites(const char* cipherSuites);
 
-     static DtlsFactory* GetInstance() {
-        static DtlsFactory INSTANCE;
-        return &INSTANCE;
-     }
+  // Examines the first few bits of a packet to determine its type: rtp, dtls, stun or unknown
+  static PacketType demuxPacket(const unsigned char* buf, unsigned int len);
 
-     static X509 *mCert;
-     static EVP_PKEY *privkey;
+  static DtlsFactory* GetInstance()
+  {
+    static DtlsFactory INSTANCE;
+    return &INSTANCE;
+  }
 
-     static void Init();
+  static X509* mCert;
+  static EVP_PKEY* privkey;
 
-private:
-     friend class DtlsSocket;
-     // Creates a DTLS SSL Context and enables srtp extension, also sets the private and public key cert
+  static void Init();
 
-     SSL_CTX* mContext;
-     EVP_MD_CTX* ctx_;
-     std::auto_ptr<DtlsTimerContext> mTimerContext;
+  private:
+  friend class DtlsSocket;
+  // Creates a DTLS SSL Context and enables srtp extension, also sets the private and public key cert
 
-
-
+  SSL_CTX* mContext;
+  EVP_MD_CTX* ctx_;
+  boost::scoped_ptr<DtlsTimerContext> mTimerContext;
 };
-
 }
 
 #endif

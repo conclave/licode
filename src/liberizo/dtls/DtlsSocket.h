@@ -1,14 +1,10 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #ifndef DtlsSocket_h
 #define DtlsSocket_h
 
-#include <memory>
-#include <string.h>
-extern "C"
-{
+#include "logger.h"
+
+#include <string>
+extern "C" {
 #ifdef WIN32
 #include <srtp.h>
 #else
@@ -16,164 +12,162 @@ extern "C"
 #endif
 }
 
-#include <openssl/e_os2.h>
-#include <openssl/rand.h>
 #include <openssl/err.h>
-#include <openssl/crypto.h>
 #include <openssl/ssl.h>
 
 #include <boost/thread/mutex.hpp>
 #include <boost/shared_ptr.hpp>
 
-#include "logger.h"
-
 const int SRTP_MASTER_KEY_KEY_LEN = 16;
 const int SRTP_MASTER_KEY_SALT_LEN = 14;
 const int SRTP_MASTER_KEY_BASE64_LEN = SRTP_MASTER_KEY_LEN * 4 / 3;
 
-namespace dtls
-{
+namespace dtls {
 class DtlsFactory;
 class DtlsSocketContext;
 class DtlsTimer;
 class DtlsSocketTimer;
 
-class SrtpSessionKeys
-{
-public:
-    SrtpSessionKeys() {
-        clientMasterKey = new unsigned char[SRTP_MASTER_KEY_KEY_LEN];
-        clientMasterKeyLen = 0;
-        clientMasterSalt = new unsigned char[SRTP_MASTER_KEY_SALT_LEN];
-        clientMasterSaltLen = 0;
-        serverMasterKey = new unsigned char[SRTP_MASTER_KEY_KEY_LEN];
-        serverMasterKeyLen = 0;
-        serverMasterSalt = new unsigned char[SRTP_MASTER_KEY_SALT_LEN];
-        serverMasterSaltLen = 0;
+class SrtpSessionKeys {
+  public:
+  SrtpSessionKeys()
+  {
+    clientMasterKey = new unsigned char[SRTP_MASTER_KEY_KEY_LEN];
+    clientMasterKeyLen = 0;
+    clientMasterSalt = new unsigned char[SRTP_MASTER_KEY_SALT_LEN];
+    clientMasterSaltLen = 0;
+    serverMasterKey = new unsigned char[SRTP_MASTER_KEY_KEY_LEN];
+    serverMasterKeyLen = 0;
+    serverMasterSalt = new unsigned char[SRTP_MASTER_KEY_SALT_LEN];
+    serverMasterSaltLen = 0;
+  }
+  ~SrtpSessionKeys()
+  {
+    if (clientMasterKey) {
+      delete[] clientMasterKey;
+      clientMasterKey = NULL;
     }
-    ~SrtpSessionKeys() {
-        if(clientMasterKey) {
-            delete[] clientMasterKey; clientMasterKey = NULL;
-        }
-        if(serverMasterKey) {
-            delete[] serverMasterKey; serverMasterKey = NULL;
-        }
-        if( clientMasterSalt) {
-            delete[] clientMasterSalt; clientMasterSalt = NULL;
-        }
-        if(serverMasterSalt) {
-            delete[] serverMasterSalt; serverMasterSalt = NULL;
-        }
+    if (serverMasterKey) {
+      delete[] serverMasterKey;
+      serverMasterKey = NULL;
     }
-      unsigned char *clientMasterKey;
-      int clientMasterKeyLen;
-      unsigned char *serverMasterKey;
-      int serverMasterKeyLen;
-      unsigned char *clientMasterSalt;
-      int clientMasterSaltLen;
-      unsigned char *serverMasterSalt;
-      int serverMasterSaltLen;
+    if (clientMasterSalt) {
+      delete[] clientMasterSalt;
+      clientMasterSalt = NULL;
+    }
+    if (serverMasterSalt) {
+      delete[] serverMasterSalt;
+      serverMasterSalt = NULL;
+    }
+  }
+  unsigned char* clientMasterKey;
+  int clientMasterKeyLen;
+  unsigned char* serverMasterKey;
+  int serverMasterKeyLen;
+  unsigned char* clientMasterSalt;
+  int clientMasterSaltLen;
+  unsigned char* serverMasterSalt;
+  int serverMasterSaltLen;
 };
 
-class DtlsSocket
-{
-   DECLARE_LOGGER();
-   public:
-      enum SocketType { Client, Server};
-      ~DtlsSocket();
+class DtlsSocket {
+  DECLARE_LOGGER();
 
-      // Inspects packet to see if it's a DTLS packet, if so continue processing
-      bool handlePacketMaybe(const unsigned char* bytes, unsigned int len);
+  public:
+  enum SocketType { Client,
+    Server };
+  ~DtlsSocket();
 
-      // Called by DtlSocketTimer when timer expires - causes a retransmission (forceRetransmit)
-      void expired(DtlsSocketTimer*);
+  // Inspects packet to see if it's a DTLS packet, if so continue processing
+  bool handlePacketMaybe(const unsigned char* bytes, unsigned int len);
 
-      // Retrieves the finger print of the certificate presented by the remote party
-      bool getRemoteFingerprint(char *fingerprint);
+  // Called by DtlSocketTimer when timer expires - causes a retransmission (forceRetransmit)
+  void expired(DtlsSocketTimer*);
 
-      // Retrieves the finger print of the certificate presented by the remote party and checks
-      // it agains the passed in certificate
-      bool checkFingerprint(const char* fingerprint, unsigned int len);
+  // Retrieves the finger print of the certificate presented by the remote party
+  bool getRemoteFingerprint(char* fingerprint);
 
-      // Retrieves the finger print of our local certificate, same as getMyCertFingerprint from DtlsFactory
-      void getMyCertFingerprint(char *fingerprint);
+  // Retrieves the finger print of the certificate presented by the remote party and checks
+  // it agains the passed in certificate
+  bool checkFingerprint(const char* fingerprint, unsigned int len);
 
-      // For client sockets only - causes a client handshake to start (doHandshakeIteration)
-      void startClient();
+  // Retrieves the finger print of our local certificate, same as getMyCertFingerprint from DtlsFactory
+  void getMyCertFingerprint(char* fingerprint);
 
-      // Retreives the SRTP session keys from the Dtls session
-      SrtpSessionKeys* getSrtpSessionKeys();
+  // For client sockets only - causes a client handshake to start (doHandshakeIteration)
+  void startClient();
 
-      // Utility fn to compute a certificates fingerprint
-      static void computeFingerprint(X509 *cert, char *fingerprint);
+  // Retreives the SRTP session keys from the Dtls session
+  SrtpSessionKeys* getSrtpSessionKeys();
 
-      // Retrieves the DTLS negotiated SRTP profile - may return 0 if profile selection failed
-      SRTP_PROTECTION_PROFILE* getSrtpProfile();
+  // Utility fn to compute a certificates fingerprint
+  static void computeFingerprint(X509* cert, char* fingerprint);
 
-      // Creates SRTP session policies appropriately based on socket type (client vs server) and keys
-      // extracted from the DTLS handshake process
-      void createSrtpSessionPolicies(srtp_policy_t& outboundPolicy, srtp_policy_t& inboundPolicy);
+  // Retrieves the DTLS negotiated SRTP profile - may return 0 if profile selection failed
+  SRTP_PROTECTION_PROFILE* getSrtpProfile();
 
-      DtlsSocketContext* getSocketContext() { return mSocketContext.get(); }
+  // Creates SRTP session policies appropriately based on socket type (client vs server) and keys
+  // extracted from the DTLS handshake process
+  void createSrtpSessionPolicies(srtp_policy_t& outboundPolicy, srtp_policy_t& inboundPolicy);
 
-   private:
-      friend class DtlsFactory;
+  DtlsSocketContext* getSocketContext() { return mSocketContext.get(); }
 
-      // Causes an immediate handshake iteration to happen, which will retransmit the handshake
-      void forceRetransmit();
+  private:
+  friend class DtlsFactory;
 
-      // Creates an SSL socket, and if client sets state to connect_state and if server sets state to accept_state.  Sets SSL BIO's.
-      DtlsSocket(boost::shared_ptr<DtlsSocketContext> socketContext, DtlsFactory* factory, enum SocketType);
+  // Causes an immediate handshake iteration to happen, which will retransmit the handshake
+  void forceRetransmit();
 
-      // Give CPU cyces to the handshake process - checks current state and acts appropraitely
-      void doHandshakeIteration();
+  // Creates an SSL socket, and if client sets state to connect_state and if server sets state to accept_state.  Sets SSL BIO's.
+  DtlsSocket(boost::shared_ptr<DtlsSocketContext> socketContext, DtlsFactory* factory, enum SocketType);
 
-      // Internals
-      boost::shared_ptr<DtlsSocketContext> mSocketContext;
-      DtlsFactory* mFactory;
-      DtlsTimer *mReadTimer;  // Timer used during handshake process
+  // Give CPU cyces to the handshake process - checks current state and acts appropraitely
+  void doHandshakeIteration();
 
-      // OpenSSL context data
-      SSL *mSsl;
-      BIO *mInBio;
-      BIO *mOutBio;
+  // Internals
+  boost::shared_ptr<DtlsSocketContext> mSocketContext;
+  DtlsFactory* mFactory;
+  DtlsTimer* mReadTimer; // Timer used during handshake process
 
-      SocketType mSocketType;
-      bool mHandshakeCompleted;
-      boost::mutex handshakeMutex_;
+  // OpenSSL context data
+  SSL* mSsl;
+  BIO* mInBio;
+  BIO* mOutBio;
+
+  SocketType mSocketType;
+  bool mHandshakeCompleted;
+  boost::mutex handshakeMutex_;
 };
 
-class DtlsReceiver
-{
-public:
-      virtual void writeDtls(DtlsSocketContext *ctx, const unsigned char* data, unsigned int len)=0;
-      virtual void onHandshakeCompleted(DtlsSocketContext *ctx, std::string clientKey, std::string serverKey, std::string srtp_profile) = 0;
+class DtlsReceiver {
+  public:
+  virtual void writeDtls(DtlsSocketContext* ctx, const unsigned char* data, unsigned int len) = 0;
+  virtual void onHandshakeCompleted(DtlsSocketContext* ctx, std::string clientKey, std::string serverKey, std::string srtp_profile) = 0;
 };
 
-class DtlsSocketContext
-{
-   DECLARE_LOGGER();
-   public:
-      bool started;
-      //memory is only valid for duration of callback; must be copied if queueing
-      //is required
-      DtlsSocketContext();
-      virtual ~DtlsSocketContext();
-      void start();
-      void read(const unsigned char* data, unsigned int len);
-      void write(const unsigned char* data, unsigned int len);
-      void handshakeCompleted();
-      void handshakeFailed(const char *err);
-      void setDtlsReceiver(DtlsReceiver *recv);
-      void setDtlsSocket(DtlsSocket *sock) {mSocket = sock;}
-      std::string getFingerprint();
+class DtlsSocketContext {
+  DECLARE_LOGGER();
 
-   protected:
-      DtlsSocket *mSocket;
-      DtlsReceiver *receiver;
-      DtlsFactory *clientFactory;
+  public:
+  bool started;
+  //memory is only valid for duration of callback; must be copied if queueing
+  //is required
+  DtlsSocketContext();
+  virtual ~DtlsSocketContext();
+  void start();
+  void read(const unsigned char* data, unsigned int len);
+  void write(const unsigned char* data, unsigned int len);
+  void handshakeCompleted();
+  void handshakeFailed(const char* err);
+  void setDtlsReceiver(DtlsReceiver* recv);
+  void setDtlsSocket(DtlsSocket* sock) { mSocket = sock; }
+  std::string getFingerprint();
+
+  protected:
+  DtlsSocket* mSocket;
+  DtlsReceiver* receiver;
+  DtlsFactory* clientFactory;
 };
-
 }
 
 #endif
