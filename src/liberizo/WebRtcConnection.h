@@ -56,7 +56,6 @@ class WebRtcConnection : public MediaSink, public MediaSource, public FeedbackSi
      * Inits the WebConnection by starting ICE Candidate Gathering.
      * @return True if the candidates are gathered.
      */
-  bool init();
   void close();
   /**
      * Sets the SDP of the remote peer.

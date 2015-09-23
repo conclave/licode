@@ -62,11 +62,6 @@ WebRtcConnection::~WebRtcConnection()
   audioTransport_ = NULL;
 }
 
-bool WebRtcConnection::init()
-{
-  return true;
-}
-
 bool WebRtcConnection::setRemoteSdp(const std::string& sdp)
 {
   ELOG_DEBUG("Set Remote SDP %s", sdp.c_str());

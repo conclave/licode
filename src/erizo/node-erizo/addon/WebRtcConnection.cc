@@ -4,10 +4,11 @@
 using namespace v8;
 
 Persistent<Function> WebRtcConnection::constructor;
-WebRtcConnection::WebRtcConnection() {};
-WebRtcConnection::~WebRtcConnection() {};
+WebRtcConnection::WebRtcConnection(){};
+WebRtcConnection::~WebRtcConnection(){};
 
-void WebRtcConnection::Init(Handle<Object> exports) {
+void WebRtcConnection::Init(Handle<Object> exports)
+{
   Isolate* isolate = Isolate::GetCurrent();
   // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
@@ -30,11 +31,12 @@ void WebRtcConnection::Init(Handle<Object> exports) {
   exports->Set(String::NewFromUtf8(isolate, "WebRtcConnection"), tpl->GetFunction());
 }
 
-void WebRtcConnection::New(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void WebRtcConnection::New(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
-  if (args.Length()<7){
+  if (args.Length() < 7) {
     isolate->ThrowException(Exception::TypeError(String::NewFromUtf8(isolate, "Wrong number of arguments")));
     return;
   }
@@ -49,7 +51,7 @@ void WebRtcConnection::New(const v8::FunctionCallbackInfo<v8::Value>& args) {
   bool t = (args[6]->ToBoolean())->BooleanValue();
 
   erizo::IceConfig iceConfig;
-  if (args.Length()==11){
+  if (args.Length() == 11) {
     String::Utf8Value param2(args[7]->ToString());
     std::string turnServer = std::string(*param2);
     int turnPort = args[8]->IntegerValue();
@@ -74,7 +76,8 @@ void WebRtcConnection::New(const v8::FunctionCallbackInfo<v8::Value>& args) {
   args.GetReturnValue().Set(args.This());
 }
 
-void WebRtcConnection::close(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void WebRtcConnection::close(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
@@ -82,23 +85,22 @@ void WebRtcConnection::close(const v8::FunctionCallbackInfo<v8::Value>& args) {
   obj->me = nullptr;
 }
 
-void WebRtcConnection::init(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void WebRtcConnection::init(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
   Local<Object>::New(isolate, obj->mStore)->Set(String::NewFromUtf8(isolate, "connection"), args[0]);
-  erizo::WebRtcConnection *me = obj->me;
-  bool r = me->init();
-  args.GetReturnValue().Set(Boolean::New(isolate, r));
 }
 
-void WebRtcConnection::setRemoteSdp(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void WebRtcConnection::setRemoteSdp(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
-  erizo::WebRtcConnection *me = obj->me;
+  erizo::WebRtcConnection* me = obj->me;
 
   String::Utf8Value param(args[0]->ToString());
   std::string sdp = std::string(*param);
@@ -106,12 +108,13 @@ void WebRtcConnection::setRemoteSdp(const v8::FunctionCallbackInfo<v8::Value>& a
   args.GetReturnValue().Set(Boolean::New(isolate, r));
 }
 
-void WebRtcConnection::addRemoteCandidate(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void WebRtcConnection::addRemoteCandidate(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
-  erizo::WebRtcConnection *me = obj->me;
+  erizo::WebRtcConnection* me = obj->me;
 
   String::Utf8Value param(args[0]->ToString());
   std::string mid = std::string(*param);
@@ -123,48 +126,51 @@ void WebRtcConnection::addRemoteCandidate(const v8::FunctionCallbackInfo<v8::Val
   args.GetReturnValue().Set(Boolean::New(isolate, r));
 }
 
-void WebRtcConnection::getLocalSdp(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void WebRtcConnection::getLocalSdp(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
-  erizo::WebRtcConnection *me = obj->me;
+  erizo::WebRtcConnection* me = obj->me;
 
   std::string sdp = me->getLocalSdp();
   args.GetReturnValue().Set(String::NewFromUtf8(isolate, sdp.c_str()));
 }
 
-
-void WebRtcConnection::setAudioReceiver(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void WebRtcConnection::setAudioReceiver(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
-  erizo::WebRtcConnection *me = obj->me;
+  erizo::WebRtcConnection* me = obj->me;
 
   MediaSink* param = ObjectWrap::Unwrap<MediaSink>(args[0]->ToObject());
-  erizo::MediaSink *mr = param->msink;
+  erizo::MediaSink* mr = param->msink;
   me->setAudioSink(mr);
 }
 
-void WebRtcConnection::setVideoReceiver(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void WebRtcConnection::setVideoReceiver(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
-  erizo::WebRtcConnection *me = obj->me;
+  erizo::WebRtcConnection* me = obj->me;
 
   MediaSink* param = ObjectWrap::Unwrap<MediaSink>(args[0]->ToObject());
-  erizo::MediaSink *mr = param->msink;
+  erizo::MediaSink* mr = param->msink;
   me->setVideoSink(mr);
 }
 
-void WebRtcConnection::getCurrentState(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void WebRtcConnection::getCurrentState(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
-  erizo::WebRtcConnection *me = obj->me;
+  erizo::WebRtcConnection* me = obj->me;
   int state = me->getCurrentState();
   args.GetReturnValue().Set(Number::New(isolate, state));
 }
@@ -186,21 +192,23 @@ void WebRtcConnection::getStats(const v8::FunctionCallbackInfo<v8::Value>& args)
   }
 }
 
-void WebRtcConnection::generatePLIPacket(const v8::FunctionCallbackInfo<v8::Value>& args){
+void WebRtcConnection::generatePLIPacket(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
-  erizo::WebRtcConnection *me = obj->me;
+  erizo::WebRtcConnection* me = obj->me;
   me->sendPLI();
 }
 
-void WebRtcConnection::setFeedbackReports(const v8::FunctionCallbackInfo<v8::Value>& args){
+void WebRtcConnection::setFeedbackReports(const v8::FunctionCallbackInfo<v8::Value>& args)
+{
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   WebRtcConnection* obj = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
-  erizo::WebRtcConnection *me = obj->me;
+  erizo::WebRtcConnection* me = obj->me;
   bool v = (args[0]->ToBoolean())->BooleanValue();
   int fbreps = args[1]->IntegerValue(); // From bps to Kbps
   me->setFeedbackReports(v, fbreps);
