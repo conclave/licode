@@ -1,6 +1,7 @@
 #ifndef TRANSPORT_H_
 #define TRANSPORT_H_
 
+#include "SdpInfo.h"
 #include "NiceConnection.h"
 #include <string>
 
