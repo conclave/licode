@@ -16,8 +16,7 @@ var conn = new addon.WebRtcConnection(
   '',
   0,
   '',
-  ''
-);
+  '');
 conn.init(function (data) {
   console.log(data);
 });
@@ -27,6 +26,8 @@ var evt = new addon.CrossNotification();
 evt.on('abc', function(v) {
   console.log(v);
 });
+
+console.log(evt.self());
 
 setInterval(function() {
   evt.emit('abc', Math.random());

@@ -24,6 +24,7 @@ void CrossNotification::Init(Handle<Object> exports)
   // Prototype
   NODE_SET_PROTOTYPE_METHOD(tpl, "emit", Emit);
   NODE_SET_PROTOTYPE_METHOD(tpl, "on", On);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "self", Self);
 
   constructor.Reset(isolate, tpl->GetFunction());
   exports->Set(String::NewFromUtf8(isolate, "CrossNotification"), tpl->GetFunction());
@@ -47,6 +48,14 @@ void CrossNotification::New(const FunctionCallbackInfo<Value>& args)
   }
 }
 
+void CrossNotification::Self(const FunctionCallbackInfo<Value>& args)
+{
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
+  CrossNotification* n = ObjectWrap::Unwrap<CrossNotification>(args.Holder());
+  args.GetReturnValue().Set(n->mStore);
+}
+
 void CrossNotification::Emit(const FunctionCallbackInfo<Value>& args)
 {
   Isolate* isolate = Isolate::GetCurrent();
@@ -67,6 +76,18 @@ void CrossNotification::On(const FunctionCallbackInfo<Value>& args)
     return;
   CrossNotification* n = ObjectWrap::Unwrap<CrossNotification>(args.Holder());
   Local<Object>::New(isolate, n->mStore)->Set(args[0], args[1]);
+}
+
+void CrossNotification::Once(const FunctionCallbackInfo<Value>& args)
+{
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
+}
+
+void CrossNotification::Off(const FunctionCallbackInfo<Value>& args)
+{
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
 }
 
 // ------------------------NodeAsyncCallback-----------------------------------

@@ -78,6 +78,9 @@ class WebRtcConnection : public node::ObjectWrap, NodeAsyncCallback {
   static void setFeedbackReports(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   static void getStats(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void addEventListener(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void removeEventListener(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void clearEventListener(const v8::FunctionCallbackInfo<v8::Value>& args);
 };
 
 #endif
