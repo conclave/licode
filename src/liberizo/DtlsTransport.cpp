@@ -8,20 +8,21 @@
 #include "rtp/RtpHeaders.h"
 #include "SrtpChannel.h"
 
-using namespace erizo;
-using namespace std;
 using namespace dtls;
+
+namespace erizo {
 
 DEFINE_LOGGER(DtlsTransport, "DtlsTransport");
 DEFINE_LOGGER(Resender, "Resender");
 
 Resender::Resender(boost::shared_ptr<NiceConnection> nice, unsigned int comp, const unsigned char* data, unsigned int len)
-    : nice_(nice)
-    , comp_(comp)
-    , sent_(0)
-    , data_(data)
-    , len_(len)
-    , timer_(service_)
+    : nice_{ nice }
+    , comp_{ comp }
+    , sent_{ 0 }
+    , data_{ data }
+    , len_{ len }
+    , service_{}
+    , timer_{ service_ }
 {
 }
 
@@ -44,6 +45,7 @@ void Resender::cancel()
 
 void Resender::start()
 {
+  ELOG_DEBUG("start");
   sent_ = 0;
   timer_.cancel();
   if (thread_.get() != NULL) {
@@ -328,18 +330,20 @@ void DtlsTransport::processLocalSdp(SdpInfo* sdp)
 void DtlsTransport::getNiceDataLoop()
 {
   while (running_) {
-    p_ = nice_->getPacket();
-    if (p_->length > 0) {
-      this->onNiceData(p_->comp, p_->data, p_->length, NULL);
+    auto pkt = nice_->getPacket();
+    if (pkt->length > 0) {
+      this->onNiceData(pkt->comp, pkt->data, pkt->length, NULL);
     }
-    if (p_->length == -1) {
+    if (pkt->length == -1) {
       running_ = false;
       return;
     }
   }
 }
+
 bool DtlsTransport::isDtlsPacket(const char* buf, int len)
 {
   int data = DtlsFactory::demuxPacket(reinterpret_cast<const unsigned char*>(buf), len);
   return (data == DtlsFactory::dtls);
+}
 }

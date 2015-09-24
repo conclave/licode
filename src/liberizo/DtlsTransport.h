@@ -42,7 +42,6 @@ class DtlsTransport : dtls::DtlsReceiver, public Transport {
   bool running_;
   boost::scoped_ptr<Resender> rtcpResender_, rtpResender_;
   boost::thread getNice_Thread_;
-  packetPtr p_;
 
   void getNiceDataLoop();
 };
