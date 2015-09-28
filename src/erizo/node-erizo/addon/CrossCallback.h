@@ -52,15 +52,16 @@ class CrossCallbackWrap : public node::ObjectWrap, public NodeAsyncCallback {
     NODE_SET_PROTOTYPE_METHOD(tmpl, "on", On);
     NODE_SET_PROTOTYPE_METHOD(tmpl, "addEventListener", On);
     NODE_SET_PROTOTYPE_METHOD(tmpl, "once", Once);
-    NODE_SET_PROTOTYPE_METHOD(tmpl, "of", Off);
+    NODE_SET_PROTOTYPE_METHOD(tmpl, "off", Off);
     NODE_SET_PROTOTYPE_METHOD(tmpl, "removeEventListener", Off);
     NODE_SET_PROTOTYPE_METHOD(tmpl, "clearEventListener", Clear);
   }
 
-  private:
+  protected:
   explicit CrossCallbackWrap();
-  ~CrossCallbackWrap();
+  virtual ~CrossCallbackWrap();
 
+  private:
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void Self(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void Emit(const v8::FunctionCallbackInfo<v8::Value>& args);

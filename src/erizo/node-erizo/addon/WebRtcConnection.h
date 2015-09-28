@@ -13,7 +13,7 @@
  * A WebRTC Connection. This class represents a WebRtcConnection that can be established with other peers via a SDP negotiation
  * it comprises all the necessary ICE and SRTP components.
  */
-class WebRtcConnection : public node::ObjectWrap, NodeAsyncCallback {
+class WebRtcConnection : public CrossCallbackWrap {
   public:
   static void Init(v8::Handle<v8::Object> exports);
   erizo::WebRtcConnection* me;
@@ -74,9 +74,6 @@ class WebRtcConnection : public node::ObjectWrap, NodeAsyncCallback {
   static void setFeedbackReports(const v8::FunctionCallbackInfo<v8::Value>& args);
 
   static void getStats(const v8::FunctionCallbackInfo<v8::Value>& args);
-  static void addEventListener(const v8::FunctionCallbackInfo<v8::Value>& args);
-  static void removeEventListener(const v8::FunctionCallbackInfo<v8::Value>& args);
-  static void clearEventListener(const v8::FunctionCallbackInfo<v8::Value>& args);
 };
 
 #endif

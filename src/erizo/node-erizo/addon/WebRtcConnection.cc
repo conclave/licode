@@ -15,6 +15,7 @@ void WebRtcConnection::Init(Handle<Object> exports)
   tpl->SetClassName(String::NewFromUtf8(isolate, "WebRtcConnection"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   // Prototype
+  SETUP_CROSSCALLBACK_PROTOTYPE_METHODS(tpl);
   NODE_SET_PROTOTYPE_METHOD(tpl, "close", close);
   NODE_SET_PROTOTYPE_METHOD(tpl, "setRemoteSdp", setRemoteSdp);
   NODE_SET_PROTOTYPE_METHOD(tpl, "addRemoteCandidate", addRemoteCandidate);
@@ -25,11 +26,6 @@ void WebRtcConnection::Init(Handle<Object> exports)
   NODE_SET_PROTOTYPE_METHOD(tpl, "getStats", getStats);
   NODE_SET_PROTOTYPE_METHOD(tpl, "generatePLIPacket", generatePLIPacket);
   NODE_SET_PROTOTYPE_METHOD(tpl, "setFeedbackReports", setFeedbackReports);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "addEventListener", addEventListener);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "on", addEventListener);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "removeEventListener", removeEventListener);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "off", removeEventListener);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "clearEventListener", clearEventListener);
 
   constructor.Reset(isolate, tpl->GetFunction());
   exports->Set(String::NewFromUtf8(isolate, "WebRtcConnection"), tpl->GetFunction());
@@ -179,28 +175,6 @@ void WebRtcConnection::getStats(const v8::FunctionCallbackInfo<v8::Value>& args)
     return;
   std::string lastStats = obj->me->getJSONStats();
   args.GetReturnValue().Set(String::NewFromUtf8(isolate, lastStats.c_str()));
-}
-
-void WebRtcConnection::addEventListener(const FunctionCallbackInfo<Value>& args)
-{
-  Isolate* isolate = Isolate::GetCurrent();
-  HandleScope scope(isolate);
-  if (args.Length() < 2 || !args[0]->IsString() || !args[1]->IsFunction())
-    return;
-  WebRtcConnection* conn = ObjectWrap::Unwrap<WebRtcConnection>(args.Holder());
-  Local<Object>::New(isolate, conn->mStore)->Set(args[0], args[1]);
-}
-
-void WebRtcConnection::removeEventListener(const FunctionCallbackInfo<Value>& args)
-{
-  Isolate* isolate = Isolate::GetCurrent();
-  HandleScope scope(isolate);
-}
-
-void WebRtcConnection::clearEventListener(const FunctionCallbackInfo<Value>& args)
-{
-  Isolate* isolate = Isolate::GetCurrent();
-  HandleScope scope(isolate);
 }
 
 void WebRtcConnection::generatePLIPacket(const v8::FunctionCallbackInfo<v8::Value>& args)
