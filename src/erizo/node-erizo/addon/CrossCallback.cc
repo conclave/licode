@@ -2,23 +2,23 @@
 
 using namespace v8;
 
-Persistent<Function> CrossNotification::constructor;
-CrossNotification::CrossNotification()
+Persistent<Function> CrossCallbackWrap::constructor;
+CrossCallbackWrap::CrossCallbackWrap()
     : NodeAsyncCallback{}
 {
 }
 
-CrossNotification::~CrossNotification()
+CrossCallbackWrap::~CrossCallbackWrap()
 {
 }
 
-void CrossNotification::Init(Handle<Object> exports)
+void CrossCallbackWrap::Init(Handle<Object> exports)
 {
   Isolate* isolate = Isolate::GetCurrent();
 
   // Prepare constructor template
   Local<FunctionTemplate> tpl = FunctionTemplate::New(isolate, New);
-  tpl->SetClassName(String::NewFromUtf8(isolate, "CrossNotification"));
+  tpl->SetClassName(String::NewFromUtf8(isolate, "CrossCallback"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Prototype
@@ -27,16 +27,16 @@ void CrossNotification::Init(Handle<Object> exports)
   NODE_SET_PROTOTYPE_METHOD(tpl, "self", Self);
 
   constructor.Reset(isolate, tpl->GetFunction());
-  exports->Set(String::NewFromUtf8(isolate, "CrossNotification"), tpl->GetFunction());
+  exports->Set(String::NewFromUtf8(isolate, "CrossCallback"), tpl->GetFunction());
 }
 
-void CrossNotification::New(const FunctionCallbackInfo<Value>& args)
+void CrossCallbackWrap::New(const FunctionCallbackInfo<Value>& args)
 {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   if (args.IsConstructCall()) {
-    CrossNotification* n = new CrossNotification();
+    CrossCallbackWrap* n = new CrossCallbackWrap();
     n->Wrap(args.This());
     args.GetReturnValue().Set(args.This());
   }
@@ -48,43 +48,49 @@ void CrossNotification::New(const FunctionCallbackInfo<Value>& args)
   }
 }
 
-void CrossNotification::Self(const FunctionCallbackInfo<Value>& args)
+void CrossCallbackWrap::Self(const FunctionCallbackInfo<Value>& args)
 {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
-  CrossNotification* n = ObjectWrap::Unwrap<CrossNotification>(args.Holder());
+  CrossCallbackWrap* n = ObjectWrap::Unwrap<CrossCallbackWrap>(args.Holder());
   args.GetReturnValue().Set(n->mStore);
 }
 
-void CrossNotification::Emit(const FunctionCallbackInfo<Value>& args)
+void CrossCallbackWrap::Emit(const FunctionCallbackInfo<Value>& args)
 {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
   if (args.Length() < 2 || !args[0]->IsString())
     return;
-  CrossNotification* n = ObjectWrap::Unwrap<CrossNotification>(args.Holder());
+  CrossCallbackWrap* n = ObjectWrap::Unwrap<CrossCallbackWrap>(args.Holder());
   std::string event = std::string(*String::Utf8Value(args[0]->ToString()));
   std::string data = std::string(*String::Utf8Value(args[1]->ToString()));
   n->notify(event, data);
 }
 
-void CrossNotification::On(const FunctionCallbackInfo<Value>& args)
+void CrossCallbackWrap::On(const FunctionCallbackInfo<Value>& args)
 {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
   if (args.Length() < 2 || !args[0]->IsString() || !args[1]->IsFunction())
     return;
-  CrossNotification* n = ObjectWrap::Unwrap<CrossNotification>(args.Holder());
+  CrossCallbackWrap* n = ObjectWrap::Unwrap<CrossCallbackWrap>(args.Holder());
   Local<Object>::New(isolate, n->mStore)->Set(args[0], args[1]);
 }
 
-void CrossNotification::Once(const FunctionCallbackInfo<Value>& args)
+void CrossCallbackWrap::Once(const FunctionCallbackInfo<Value>& args)
 {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 }
 
-void CrossNotification::Off(const FunctionCallbackInfo<Value>& args)
+void CrossCallbackWrap::Off(const FunctionCallbackInfo<Value>& args)
+{
+  Isolate* isolate = Isolate::GetCurrent();
+  HandleScope scope(isolate);
+}
+
+void CrossCallbackWrap::Clear(const FunctionCallbackInfo<Value>& args)
 {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);

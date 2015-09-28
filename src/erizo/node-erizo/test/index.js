@@ -28,7 +28,7 @@ conn.on('stats', function (data) {
 
 console.log(conn.getLocalSdp());
 
-var evt = new addon.CrossNotification();
+var evt = new addon.CrossCallback();
 evt.on('abc', function(v) {
   console.log(v);
 });

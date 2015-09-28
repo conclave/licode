@@ -44,13 +44,22 @@ class NodeAsyncCallback : public UvAsyncCallback {
   v8::Persistent<v8::Object> mStore;
 };
 
-class CrossNotification : public node::ObjectWrap, NodeAsyncCallback {
+class CrossCallbackWrap : public node::ObjectWrap, public NodeAsyncCallback {
   public:
   static void Init(v8::Handle<v8::Object> exports);
+  inline static void SETUP_CROSSCALLBACK_PROTOTYPE_METHODS(v8::Local<v8::FunctionTemplate> tmpl)
+  {
+    NODE_SET_PROTOTYPE_METHOD(tmpl, "on", On);
+    NODE_SET_PROTOTYPE_METHOD(tmpl, "addEventListener", On);
+    NODE_SET_PROTOTYPE_METHOD(tmpl, "once", Once);
+    NODE_SET_PROTOTYPE_METHOD(tmpl, "of", Off);
+    NODE_SET_PROTOTYPE_METHOD(tmpl, "removeEventListener", Off);
+    NODE_SET_PROTOTYPE_METHOD(tmpl, "clearEventListener", Clear);
+  }
 
   private:
-  explicit CrossNotification();
-  ~CrossNotification();
+  explicit CrossCallbackWrap();
+  ~CrossCallbackWrap();
 
   static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void Self(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -58,6 +67,8 @@ class CrossNotification : public node::ObjectWrap, NodeAsyncCallback {
   static void On(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void Once(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void Off(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void Clear(const v8::FunctionCallbackInfo<v8::Value>& args);
+
   static v8::Persistent<v8::Function> constructor;
 };
 

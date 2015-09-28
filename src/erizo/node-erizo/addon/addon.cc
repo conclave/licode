@@ -14,7 +14,7 @@ void InitAll(Handle<Object> exports)
   OneToManyTranscoder::Init(exports);
   ExternalInput::Init(exports);
   ExternalOutput::Init(exports);
-  CrossNotification::Init(exports);
+  CrossCallbackWrap::Init(exports);
 }
 
 NODE_MODULE(addon, InitAll)
