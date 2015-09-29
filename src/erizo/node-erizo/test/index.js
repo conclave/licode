@@ -47,6 +47,11 @@ setInterval(function() {
 setTimeout(function() {
   evt.removeEventListener('abc', abcHandler);
   console.log(evt.self());
+  evt.on('abc', abcHandler);
+  console.log(evt.self());
+  evt.removeEventListener('abc', abcHandler);
+  console.log(evt.self());
+  evt.on('bcd', abcHandler);
 }, 1000);
 
 setTimeout(function() {
