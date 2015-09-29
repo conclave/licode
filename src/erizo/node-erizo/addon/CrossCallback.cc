@@ -22,8 +22,8 @@ void CrossCallbackWrap::Init(Handle<Object> exports)
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Prototype
+  SETUP_CROSSCALLBACK_PROTOTYPE_METHODS(tpl);
   NODE_SET_PROTOTYPE_METHOD(tpl, "emit", Emit);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "on", On);
   NODE_SET_PROTOTYPE_METHOD(tpl, "self", Self);
 
   constructor.Reset(isolate, tpl->GetFunction());
@@ -104,6 +104,18 @@ void CrossCallbackWrap::Clear(const FunctionCallbackInfo<Value>& args)
 {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
+  CrossCallbackWrap* n = ObjectWrap::Unwrap<CrossCallbackWrap>(args.Holder());
+  auto store = Local<Object>::New(isolate, n->mStore);
+  if (args.Length() == 0) {
+    n->mStore.Reset(isolate, Object::New(isolate));
+    return;
+  }
+  else if (args[0]->IsString()) {
+    auto val = store->Get(args[0]);
+    if (!val->IsArray())
+      return;
+    store->Set(args[0], Undefined(isolate));
+  }
 }
 
 // ------------------------NodeAsyncCallback-----------------------------------

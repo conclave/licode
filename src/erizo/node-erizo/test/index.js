@@ -44,5 +44,12 @@ setInterval(function() {
 }, 100);
 
 setTimeout(function() {
+  evt.clearEventListener('abc');
+  console.log(evt.self());
+  evt.clearEventListener();
+  console.log(evt.self());
+}, 1500);
+
+setTimeout(function() {
   process.exit();
 }, 2000);
