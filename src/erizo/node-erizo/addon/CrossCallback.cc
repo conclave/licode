@@ -98,6 +98,21 @@ void CrossCallbackWrap::Off(const FunctionCallbackInfo<Value>& args)
 {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
+  if (args.Length() < 2 || !args[0]->IsString() || !args[1]->IsFunction())
+    return;
+  CrossCallbackWrap* n = ObjectWrap::Unwrap<CrossCallbackWrap>(args.Holder());
+  auto store = Local<Object>::New(isolate, n->mStore);
+  auto val = store->Get(args[0]);
+  if (!val->IsArray())
+    return;
+  Local<Array> array = Local<Array>::Cast(val);
+  for (uint32_t i = 0; i < array->Length(); ++i) {
+    if (array->Get(i)->Equals(args[1])) {
+      for (uint32_t j = i; j < array->Length(); ++j) {
+        array->Set(j, array->Get(j + 1));
+      }
+    }
+  }
 }
 
 void CrossCallbackWrap::Clear(const FunctionCallbackInfo<Value>& args)
@@ -138,9 +153,12 @@ void NodeAsyncCallback::operator()(const Data& data)
   TryCatch try_catch;
   Local<Array> array = Local<Array>::Cast(val);
   for (uint32_t i = 0; i < array->Length(); ++i) {
-    Local<Function>::Cast(array->Get(i))->Call(isolate->GetCurrentContext()->Global(), argc, argv);
-    if (try_catch.HasCaught()) {
-      node::FatalException(isolate, try_catch);
+    Local<Value> f = array->Get(i);
+    if (f->IsFunction()) {
+      Local<Function>::Cast(f)->Call(isolate->GetCurrentContext()->Global(), argc, argv);
+      if (try_catch.HasCaught()) {
+        node::FatalException(isolate, try_catch);
+      }
     }
   }
 }
