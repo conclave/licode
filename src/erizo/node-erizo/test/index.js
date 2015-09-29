@@ -30,7 +30,11 @@ console.log(conn.getLocalSdp());
 
 var evt = new addon.CrossCallback();
 evt.on('abc', function(v) {
-  console.log(v);
+  console.log('1:', v);
+});
+
+evt.on('abc', function(v) {
+  console.log('2:', v);
 });
 
 console.log(evt.self());
