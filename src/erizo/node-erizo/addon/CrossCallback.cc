@@ -79,7 +79,7 @@ void CrossCallbackWrap::On(const FunctionCallbackInfo<Value>& args)
   auto val = store->Get(args[0]);
   if (val->IsArray()) {
     Local<Array> array = Local<Array>::Cast(val);
-    array->Set(array->GetOwnPropertyNames()->Length(), args[1]);
+    array->Set(array->Length(), args[1]);
   }
   else {
     Local<Array> array = Array::New(isolate);
@@ -111,7 +111,9 @@ void CrossCallbackWrap::Off(const FunctionCallbackInfo<Value>& args)
       for (uint32_t j = i; j < array->Length(); ++j) {
         array->Set(j, array->Get(j + 1));
       }
-      array->Delete(array->Length() - 1);
+      uint32_t new_length = array->Length() - 1;
+      array->Delete(new_length);
+      array->Set(String::NewFromUtf8(isolate, "length"), Integer::New(isolate, new_length));
     }
   }
 }
