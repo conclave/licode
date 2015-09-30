@@ -6,7 +6,7 @@ Persistent<Function> ExternalOutput::constructor;
 ExternalOutput::ExternalOutput(){};
 ExternalOutput::~ExternalOutput(){};
 
-void ExternalOutput::Init(Handle<Object> exports)
+void ExternalOutput::Init(Local<Object> exports)
 {
   Isolate* isolate = Isolate::GetCurrent();
   // Prepare constructor template

@@ -7,7 +7,7 @@ Persistent<Function> ExternalInput::constructor;
 ExternalInput::ExternalInput(){};
 ExternalInput::~ExternalInput(){};
 
-void ExternalInput::Init(Handle<Object> exports)
+void ExternalInput::Init(Local<Object> exports)
 {
   Isolate* isolate = Isolate::GetCurrent();
   // Prepare constructor template

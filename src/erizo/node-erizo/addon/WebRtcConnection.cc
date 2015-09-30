@@ -7,7 +7,7 @@ Persistent<Function> WebRtcConnection::constructor;
 WebRtcConnection::WebRtcConnection(){};
 WebRtcConnection::~WebRtcConnection(){};
 
-void WebRtcConnection::Init(Handle<Object> exports)
+void WebRtcConnection::Init(Local<Object> exports)
 {
   Isolate* isolate = Isolate::GetCurrent();
   // Prepare constructor template

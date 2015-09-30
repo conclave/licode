@@ -7,7 +7,7 @@ Persistent<Function> OneToManyTranscoder::constructor;
 OneToManyTranscoder::OneToManyTranscoder(){};
 OneToManyTranscoder::~OneToManyTranscoder(){};
 
-void OneToManyTranscoder::Init(Handle<Object> exports)
+void OneToManyTranscoder::Init(Local<Object> exports)
 {
   Isolate* isolate = Isolate::GetCurrent();
   // Prepare constructor template

@@ -12,7 +12,7 @@ CrossCallbackWrap::~CrossCallbackWrap()
 {
 }
 
-void CrossCallbackWrap::Init(Handle<Object> exports)
+void CrossCallbackWrap::Init(Local<Object> exports)
 {
   Isolate* isolate = Isolate::GetCurrent();
 

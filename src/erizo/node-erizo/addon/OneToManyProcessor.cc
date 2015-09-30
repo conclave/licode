@@ -9,7 +9,7 @@ Persistent<Function> OneToManyProcessor::constructor;
 OneToManyProcessor::OneToManyProcessor(){};
 OneToManyProcessor::~OneToManyProcessor(){};
 
-void OneToManyProcessor::Init(Handle<Object> exports)
+void OneToManyProcessor::Init(Local<Object> exports)
 {
   Isolate* isolate = Isolate::GetCurrent();
   // Prepare constructor template

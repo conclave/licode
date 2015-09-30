@@ -13,7 +13,7 @@
  */
 class OneToManyTranscoder : public MediaSink {
   public:
-  static void Init(v8::Handle<v8::Object> exports);
+  static void Init(v8::Local<v8::Object> exports);
   erizo::OneToManyTranscoder* me;
 
   private:

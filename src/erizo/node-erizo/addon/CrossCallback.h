@@ -46,7 +46,7 @@ class NodeAsyncCallback : public UvAsyncCallback {
 
 class CrossCallbackWrap : public node::ObjectWrap, public NodeAsyncCallback {
   public:
-  static void Init(v8::Handle<v8::Object> exports);
+  static void Init(v8::Local<v8::Object> exports);
   inline static void SETUP_CROSSCALLBACK_PROTOTYPE_METHODS(v8::Local<v8::FunctionTemplate> tmpl)
   {
     NODE_SET_PROTOTYPE_METHOD(tmpl, "on", On);
