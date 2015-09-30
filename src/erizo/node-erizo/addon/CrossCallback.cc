@@ -106,12 +106,13 @@ void CrossCallbackWrap::Off(const FunctionCallbackInfo<Value>& args)
   if (!val->IsArray())
     return;
   Local<Array> array = Local<Array>::Cast(val);
-  for (uint32_t i = 0; i < array->Length(); ++i) {
+  uint32_t new_length = array->Length();
+  for (uint32_t i = 0; i < new_length; ++i) {
     if (array->Get(i)->Equals(args[1])) {
-      for (uint32_t j = i; j < array->Length(); ++j) {
+      for (uint32_t j = i; j < new_length; ++j) {
         array->Set(j, array->Get(j + 1));
       }
-      uint32_t new_length = array->Length() - 1;
+      --new_length;
       array->Delete(new_length);
       array->Set(String::NewFromUtf8(isolate, "length"), Integer::New(isolate, new_length));
     }

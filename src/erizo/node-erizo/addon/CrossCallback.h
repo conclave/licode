@@ -53,6 +53,7 @@ class CrossCallbackWrap : public node::ObjectWrap, public NodeAsyncCallback {
     NODE_SET_PROTOTYPE_METHOD(tmpl, "addEventListener", On);
     NODE_SET_PROTOTYPE_METHOD(tmpl, "off", Off);
     NODE_SET_PROTOTYPE_METHOD(tmpl, "removeEventListener", Off);
+    NODE_SET_PROTOTYPE_METHOD(tmpl, "removeAllEventListeners", Clear);
     NODE_SET_PROTOTYPE_METHOD(tmpl, "clearEventListener", Clear);
     // NODE_SET_PROTOTYPE_METHOD(tmpl, "once", Once);
   }
