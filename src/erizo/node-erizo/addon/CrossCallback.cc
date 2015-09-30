@@ -200,7 +200,7 @@ UvAsyncCallback::~UvAsyncCallback()
 }
 
 // main thread
-void UvAsyncCallback::operator()()
+void UvAsyncCallback::process()
 {
   while (!mBuffer.empty()) {
     {
@@ -237,6 +237,6 @@ void UvAsyncCallback::closeCallback(uv_handle_t* handle)
 }
 
 void UvAsyncCallback::callback(uv_async_t* handle)
-{ // libuv <HEAD>
-  (*reinterpret_cast<UvAsyncCallback*>(handle->data))();
+{
+  reinterpret_cast<UvAsyncCallback*>(handle->data)->process();
 }

@@ -29,7 +29,7 @@ class UvAsyncCallback : public erizo::AsyncCallback {
   std::queue<Data> mBuffer;
   Data mData;
 
-  void operator()();
+  void process();
   static void closeCallback(uv_handle_t*);
   static void callback(uv_async_t*);
 };
