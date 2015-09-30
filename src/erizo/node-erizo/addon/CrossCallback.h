@@ -3,6 +3,7 @@
 
 #include <AsyncCallback.h>
 
+#include <memory>
 #include <mutex>
 #include <node.h>
 #include <node_object_wrap.h>
@@ -15,6 +16,7 @@ class UvAsyncCallback : public erizo::AsyncCallback {
   explicit UvAsyncCallback(uv_loop_t*);
   virtual ~UvAsyncCallback();
   virtual bool notify(const std::string& event, const std::string& data);
+  virtual bool operator()(const std::string& data) { return notify("", data); }
   virtual size_t size();
 
   protected:
@@ -36,10 +38,13 @@ class UvAsyncCallback : public erizo::AsyncCallback {
 
 class NodeAsyncCallback : public UvAsyncCallback {
   public:
-  explicit NodeAsyncCallback();
+  static std::shared_ptr<NodeAsyncCallback> New(v8::Isolate*, const v8::Local<v8::Function>&);
+  static std::shared_ptr<NodeAsyncCallback> New(const v8::Local<v8::Function>&);
   virtual ~NodeAsyncCallback();
 
   protected:
+  explicit NodeAsyncCallback();
+  explicit NodeAsyncCallback(v8::Isolate*, const v8::Local<v8::Function>&);
   void operator()(const Data& data);
   v8::Persistent<v8::Object> mStore;
 };
@@ -55,7 +60,6 @@ class CrossCallbackWrap : public node::ObjectWrap, public NodeAsyncCallback {
     NODE_SET_PROTOTYPE_METHOD(tmpl, "removeEventListener", Off);
     NODE_SET_PROTOTYPE_METHOD(tmpl, "removeAllEventListeners", Clear);
     NODE_SET_PROTOTYPE_METHOD(tmpl, "clearEventListener", Clear);
-    // NODE_SET_PROTOTYPE_METHOD(tmpl, "once", Once);
   }
 
   protected:
@@ -67,7 +71,6 @@ class CrossCallbackWrap : public node::ObjectWrap, public NodeAsyncCallback {
   static void Self(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void Emit(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void On(const v8::FunctionCallbackInfo<v8::Value>& args);
-  static void Once(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void Off(const v8::FunctionCallbackInfo<v8::Value>& args);
   static void Clear(const v8::FunctionCallbackInfo<v8::Value>& args);
 

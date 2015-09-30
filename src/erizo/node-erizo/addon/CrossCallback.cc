@@ -88,12 +88,6 @@ void CrossCallbackWrap::On(const FunctionCallbackInfo<Value>& args)
   }
 }
 
-void CrossCallbackWrap::Once(const FunctionCallbackInfo<Value>& args)
-{
-  Isolate* isolate = Isolate::GetCurrent();
-  HandleScope scope(isolate);
-}
-
 void CrossCallbackWrap::Off(const FunctionCallbackInfo<Value>& args)
 {
   Isolate* isolate = Isolate::GetCurrent();
@@ -139,6 +133,16 @@ void CrossCallbackWrap::Clear(const FunctionCallbackInfo<Value>& args)
 
 // ------------------------NodeAsyncCallback-----------------------------------
 
+std::shared_ptr<NodeAsyncCallback> NodeAsyncCallback::New(Isolate* isolate, const Local<Function>& f)
+{
+  return std::shared_ptr<NodeAsyncCallback>(new NodeAsyncCallback(isolate, f));
+}
+
+std::shared_ptr<NodeAsyncCallback> NodeAsyncCallback::New(const Local<Function>& f)
+{
+  return New(Isolate::GetCurrent(), f);
+}
+
 void NodeAsyncCallback::operator()(const Data& data)
 {
   Isolate* isolate = Isolate::GetCurrent();
@@ -147,14 +151,24 @@ void NodeAsyncCallback::operator()(const Data& data)
   if (store.IsEmpty())
     return;
 
-  auto val = store->Get(String::NewFromUtf8(isolate, data.event.c_str()));
-  if (!val->IsArray())
-    return;
   const unsigned argc = 1;
   Local<Value> argv[argc] = {
     String::NewFromUtf8(isolate, data.message.c_str())
   };
+
   TryCatch try_catch;
+  if (store->IsFunction()) {
+    Local<Function>::Cast(store)->Call(isolate->GetCurrentContext()->Global(), argc, argv);
+    if (try_catch.HasCaught()) {
+      node::FatalException(isolate, try_catch);
+    }
+    mStore.Reset();
+    return;
+  }
+
+  auto val = store->Get(String::NewFromUtf8(isolate, data.event.c_str()));
+  if (!val->IsArray())
+    return;
   Local<Array> array = Local<Array>::Cast(val);
   for (uint32_t i = 0; i < array->Length(); ++i) {
     Local<Value> f = array->Get(i);
@@ -170,6 +184,12 @@ void NodeAsyncCallback::operator()(const Data& data)
 NodeAsyncCallback::NodeAsyncCallback()
     : UvAsyncCallback{ uv_default_loop() }
     , mStore{ Isolate::GetCurrent(), Object::New(Isolate::GetCurrent()) }
+{
+}
+
+NodeAsyncCallback::NodeAsyncCallback(Isolate* isolate, const Local<Function>& f)
+    : UvAsyncCallback{ uv_default_loop() }
+    , mStore{ isolate, f }
 {
 }
 
