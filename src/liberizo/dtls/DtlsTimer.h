@@ -4,43 +4,43 @@
 namespace dtls {
 
 class DtlsTimer {
-  public:
-  DtlsTimer(unsigned int seq);
-  virtual ~DtlsTimer();
+public:
+    DtlsTimer(unsigned int seq);
+    virtual ~DtlsTimer();
 
-  virtual void expired() = 0;
-  virtual void fire();
-  unsigned int getSeq() { return mSeq; }
-  //invalid could call though to context and call an external cancel
-  void invalidate() { mValid = false; }
+    virtual void expired() = 0;
+    virtual void fire();
+    unsigned int getSeq() { return mSeq; }
+    //invalid could call though to context and call an external cancel
+    void invalidate() { mValid = false; }
 
-  private:
-  unsigned int mSeq;
-  bool mValid;
+private:
+    unsigned int mSeq;
+    bool mValid;
 };
 
 class DtlsTimerContext {
-  public:
-  virtual ~DtlsTimerContext() {}
-  virtual void addTimer(DtlsTimer* timer, unsigned int waitMs) = 0;
-  //could add cancel here
-  protected:
-  void fire(DtlsTimer* timer);
+public:
+    virtual ~DtlsTimerContext() {}
+    virtual void addTimer(DtlsTimer* timer, unsigned int waitMs) = 0;
+    //could add cancel here
+protected:
+    void fire(DtlsTimer* timer);
 };
 
 class TestTimerContext : public DtlsTimerContext {
-  public:
-  TestTimerContext()
-      : DtlsTimerContext()
-  {
-    mTimer = 0;
-  }
-  void addTimer(DtlsTimer* timer, unsigned int seq);
-  long long getRemainingTime();
-  void updateTimer();
+public:
+    TestTimerContext()
+        : DtlsTimerContext()
+    {
+        mTimer = 0;
+    }
+    void addTimer(DtlsTimer* timer, unsigned int seq);
+    long long getRemainingTime();
+    void updateTimer();
 
-  DtlsTimer* mTimer;
-  long long mExpiryTime;
+    DtlsTimer* mTimer;
+    long long mExpiryTime;
 };
 }
 

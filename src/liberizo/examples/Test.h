@@ -4,26 +4,24 @@
 
 #ifndef TEST_H_
 #define TEST_H_
-namespace erizo{
-class Test: public RawDataReceiver {
+namespace erizo {
+class Test : public RawDataReceiver {
 public:
-	Test();
-	virtual ~Test();
-	void receiveRawData(RawDataPacket& packet);
+    Test();
+    virtual ~Test();
+    void receiveRawData(RawDataPacket& packet);
 
-	void rec();
-	void send(char *buff, int buffSize);
+    void rec();
+    void send(char* buff, int buffSize);
+
 private:
+    boost::asio::ip::udp::socket* socket_;
+    boost::asio::ip::udp::resolver* resolver_;
 
-	boost::asio::ip::udp::socket* socket_;
-	boost::asio::ip::udp::resolver* resolver_;
-
-	boost::asio::ip::udp::resolver::query* query_;
-	boost::asio::io_service* ioservice_;
-	InputProcessor* ip;
-	erizo::RtpVP8Parser pars;
-
+    boost::asio::ip::udp::resolver::query* query_;
+    boost::asio::io_service* ioservice_;
+    InputProcessor* ip;
+    erizo::RtpVP8Parser pars;
 };
-
 }
 #endif /* TEST_H_ */

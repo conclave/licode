@@ -9,12 +9,12 @@ using namespace v8;
 
 void InitAll(Local<Object> exports)
 {
-  WebRtcConnection::Init(exports);
-  OneToManyProcessor::Init(exports);
-  OneToManyTranscoder::Init(exports);
-  ExternalInput::Init(exports);
-  ExternalOutput::Init(exports);
-  CrossCallbackWrap::Init(exports);
+    WebRtcConnection::Init(exports);
+    OneToManyProcessor::Init(exports);
+    OneToManyTranscoder::Init(exports);
+    ExternalInput::Init(exports);
+    ExternalOutput::Init(exports);
+    CrossCallbackWrap::Init(exports);
 }
 
 NODE_MODULE(addon, InitAll)

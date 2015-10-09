@@ -25,39 +25,39 @@ extern "C" {
 namespace erizo {
 
 class VideoEncoder {
-  DECLARE_LOGGER();
+    DECLARE_LOGGER();
 
-  public:
-  VideoEncoder();
-  virtual ~VideoEncoder();
-  int initEncoder(const VideoCodecInfo& info);
-  int encodeVideo(unsigned char* inBuffer, int length,
-      unsigned char* outBuffer, int outLength, int& hasFrame);
-  int closeEncoder();
+public:
+    VideoEncoder();
+    virtual ~VideoEncoder();
+    int initEncoder(const VideoCodecInfo& info);
+    int encodeVideo(unsigned char* inBuffer, int length,
+        unsigned char* outBuffer, int outLength, int& hasFrame);
+    int closeEncoder();
 
-  private:
-  AVCodec* vCoder;
-  AVCodecContext* vCoderContext;
-  AVFrame* cPicture;
+private:
+    AVCodec* vCoder;
+    AVCodecContext* vCoderContext;
+    AVFrame* cPicture;
 };
 
 class VideoDecoder {
-  DECLARE_LOGGER();
+    DECLARE_LOGGER();
 
-  public:
-  VideoDecoder();
-  virtual ~VideoDecoder();
-  int initDecoder(const VideoCodecInfo& info);
-  int initDecoder(AVCodecContext* context);
-  int decodeVideo(unsigned char* inBuff, int inBuffLen,
-      unsigned char* outBuff, int outBuffLen, int* gotFrame);
-  int closeDecoder();
+public:
+    VideoDecoder();
+    virtual ~VideoDecoder();
+    int initDecoder(const VideoCodecInfo& info);
+    int initDecoder(AVCodecContext* context);
+    int decodeVideo(unsigned char* inBuff, int inBuffLen,
+        unsigned char* outBuff, int outBuffLen, int* gotFrame);
+    int closeDecoder();
 
-  private:
-  AVCodec* vDecoder;
-  bool initWithContext_;
-  AVCodecContext* vDecoderContext;
-  AVFrame* dPicture;
+private:
+    AVCodec* vDecoder;
+    bool initWithContext_;
+    AVCodecContext* vDecoderContext;
+    AVFrame* dPicture;
 };
 }
 #endif /* VIDEOCODEC_H_ */

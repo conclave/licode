@@ -36,31 +36,31 @@ static const double DEFAULT_MAX = 5.0;
 // 3. pop data with popPacket().  popPacket returns a null shared_ptr if nothing is available.
 // 4. popPacket() can be called with an override to drain the queue regardless of the current depth.
 class RtpPacketQueue {
-  DECLARE_LOGGER();
+    DECLARE_LOGGER();
 
-  public:
-  RtpPacketQueue(double depthInSeconds = DEFAULT_DEPTH, double maxDepthInSeconds = DEFAULT_MAX);
-  ~RtpPacketQueue(void);
-  void setTimebase(unsigned int timebase);
-  void pushPacket(const char* data, int length);
-  boost::shared_ptr<dataPacket> popPacket(bool ignore_depth = false);
-  int getSize(); // total size of all items in the queue
-  bool hasData(); // whether or not current queue depth is >= depth_
+public:
+    RtpPacketQueue(double depthInSeconds = DEFAULT_DEPTH, double maxDepthInSeconds = DEFAULT_MAX);
+    ~RtpPacketQueue(void);
+    void setTimebase(unsigned int timebase);
+    void pushPacket(const char* data, int length);
+    boost::shared_ptr<dataPacket> popPacket(bool ignore_depth = false);
+    int getSize(); // total size of all items in the queue
+    bool hasData(); // whether or not current queue depth is >= depth_
 
-  private:
-  // Only used internally; does the math to calculate our current depth based on the supplied timebase.
-  // Must be called with queueMutex_ locked.
-  double getDepthInSeconds();
+private:
+    // Only used internally; does the math to calculate our current depth based on the supplied timebase.
+    // Must be called with queueMutex_ locked.
+    double getDepthInSeconds();
 
-  boost::mutex queueMutex_;
-  std::list<boost::shared_ptr<dataPacket>> queue_;
-  int lastSequenceNumberGiven_;
-  bool rtpSequenceLessThan(uint16_t x, uint16_t y);
+    boost::mutex queueMutex_;
+    std::list<boost::shared_ptr<dataPacket>> queue_;
+    int lastSequenceNumberGiven_;
+    bool rtpSequenceLessThan(uint16_t x, uint16_t y);
 
-  // We use a timebase so we can understand how many seconds of data we have in our queue.
-  unsigned int timebase_;
-  double depthInSeconds_;
-  double maxDepthInSeconds_;
+    // We use a timebase so we can understand how many seconds of data we have in our queue.
+    unsigned int timebase_;
+    double depthInSeconds_;
+    double maxDepthInSeconds_;
 };
 } /* namespace erizo */
 

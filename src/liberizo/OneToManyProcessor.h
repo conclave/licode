@@ -19,39 +19,39 @@ namespace erizo {
  * Receives media from one publisher and retransmits it to every subscriber.
  */
 class OneToManyProcessor : public MediaSink, public FeedbackSink {
-  DECLARE_LOGGER();
+    DECLARE_LOGGER();
 
-  public:
-  std::map<std::string, boost::shared_ptr<MediaSink>> subscribers;
-  boost::shared_ptr<MediaSource> publisher;
+public:
+    std::map<std::string, boost::shared_ptr<MediaSink>> subscribers;
+    boost::shared_ptr<MediaSource> publisher;
 
-  OneToManyProcessor();
-  virtual ~OneToManyProcessor();
-  /**
+    OneToManyProcessor();
+    virtual ~OneToManyProcessor();
+    /**
    * Sets the Publisher
    * @param webRtcConn The WebRtcConnection of the Publisher
    */
-  void setPublisher(MediaSource* webRtcConn);
-  /**
+    void setPublisher(MediaSource* webRtcConn);
+    /**
    * Sets the subscriber
    * @param webRtcConn The WebRtcConnection of the subscriber
    * @param peerId An unique Id for the subscriber
    */
-  void addSubscriber(MediaSink* webRtcConn, const std::string& peerId);
-  /**
+    void addSubscriber(MediaSink* webRtcConn, const std::string& peerId);
+    /**
    * Eliminates the subscriber given its peer id
    * @param peerId the peerId
    */
-  void removeSubscriber(const std::string& peerId);
+    void removeSubscriber(const std::string& peerId);
 
-  private:
-  typedef boost::shared_ptr<MediaSink> sink_ptr;
-  FeedbackSink* feedbackSink_;
+private:
+    typedef boost::shared_ptr<MediaSink> sink_ptr;
+    FeedbackSink* feedbackSink_;
 
-  int deliverAudioData_(char* buf, int len);
-  int deliverVideoData_(char* buf, int len);
-  int deliverFeedback_(char* buf, int len);
-  void closeAll();
+    int deliverAudioData_(char* buf, int len);
+    int deliverVideoData_(char* buf, int len);
+    int deliverFeedback_(char* buf, int len);
+    void closeAll();
 };
 
 } /* namespace erizo */

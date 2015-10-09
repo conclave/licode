@@ -9,8 +9,8 @@
  * Wrapper class of erizo::MediaReceiver
  */
 class MediaSink : public node::ObjectWrap {
-  public:
-  erizo::MediaSink* msink;
+public:
+    erizo::MediaSink* msink;
 };
 
 #endif

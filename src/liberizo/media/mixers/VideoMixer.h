@@ -21,54 +21,54 @@ class RTPSink;
  * Receives media from one publisher and retransmits it to every subscriber.
  */
 class VideoMixer : public MediaSink, public RawDataReceiver, public RTPDataReceiver {
-  DECLARE_LOGGER();
+    DECLARE_LOGGER();
 
-  public:
-  WebRtcConnection* subscriber;
-  std::map<int, WebRtcConnection*> publishers;
+public:
+    WebRtcConnection* subscriber;
+    std::map<int, WebRtcConnection*> publishers;
 
-  VideoMixer();
-  virtual ~VideoMixer();
-  /**
-   * Sets the Publisher
-   * @param webRtcConn The WebRtcConnection of the Publisher
-   */
-  void addPublisher(WebRtcConnection* webRtcConn, int peerSSRC);
-  /**
-   * Sets the subscriber
-   * @param webRtcConn The WebRtcConnection of the subscriber
-   * @param peerId An unique Id for the subscriber
-   */
-  void setSubscriber(WebRtcConnection* webRtcConn);
-  /**
-   * Eliminates the subscriber given its peer id
-   * @param peerId the peerId
-   */
-  void removePublisher(int peerSSRC);
-  int deliverAudioData(char* buf, int len);
-  int deliverVideoData(char* buf, int len);
-  void receiveRawData(RawDataPacket& packet);
-  void receiveRtpData(unsigned char* rtpdata, int len);
+    VideoMixer();
+    virtual ~VideoMixer();
+    /**
+     * Sets the Publisher
+     * @param webRtcConn The WebRtcConnection of the Publisher
+     */
+    void addPublisher(WebRtcConnection* webRtcConn, int peerSSRC);
+    /**
+     * Sets the subscriber
+     * @param webRtcConn The WebRtcConnection of the subscriber
+     * @param peerId An unique Id for the subscriber
+     */
+    void setSubscriber(WebRtcConnection* webRtcConn);
+    /**
+     * Eliminates the subscriber given its peer id
+     * @param peerId the peerId
+     */
+    void removePublisher(int peerSSRC);
+    int deliverAudioData(char* buf, int len);
+    int deliverVideoData(char* buf, int len);
+    void receiveRawData(RawDataPacket& packet);
+    void receiveRtpData(unsigned char* rtpdata, int len);
 
-  void closeSink();
+    void closeSink();
 
-  //  MediaProcessor *mp;
-  InputProcessor* ip;
-  OutputProcessor* op;
-  /**
-   * Closes all the subscribers and the publisher, the object is useless after this
-   */
-  void closeAll();
+    //  MediaProcessor *mp;
+    InputProcessor* ip;
+    OutputProcessor* op;
+    /**
+     * Closes all the subscribers and the publisher, the object is useless after this
+     */
+    void closeAll();
 
-  private:
-  char sendVideoBuffer_[2000];
-  char sendAudioBuffer_[2000];
-  RTPSink* sink_;
-  std::vector<dataPacket> head;
-  int gotFrame_, gotDecodedFrame_, size_;
-  void sendHead(WebRtcConnection* conn);
-  RtpVP8Parser pars;
-  unsigned int sentPackets_;
+private:
+    char sendVideoBuffer_[2000];
+    char sendAudioBuffer_[2000];
+    RTPSink* sink_;
+    std::vector<dataPacket> head;
+    int gotFrame_, gotDecodedFrame_, size_;
+    void sendHead(WebRtcConnection* conn);
+    RtpVP8Parser pars;
+    unsigned int sentPackets_;
 };
 
 } /* namespace erizo */

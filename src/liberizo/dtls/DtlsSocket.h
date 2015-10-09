@@ -29,144 +29,144 @@ class DtlsTimer;
 class DtlsSocketTimer;
 
 class SrtpSessionKeys {
-  public:
-  SrtpSessionKeys()
-  {
-    clientMasterKey = new unsigned char[SRTP_MASTER_KEY_KEY_LEN];
-    clientMasterKeyLen = 0;
-    clientMasterSalt = new unsigned char[SRTP_MASTER_KEY_SALT_LEN];
-    clientMasterSaltLen = 0;
-    serverMasterKey = new unsigned char[SRTP_MASTER_KEY_KEY_LEN];
-    serverMasterKeyLen = 0;
-    serverMasterSalt = new unsigned char[SRTP_MASTER_KEY_SALT_LEN];
-    serverMasterSaltLen = 0;
-  }
-  ~SrtpSessionKeys()
-  {
-    if (clientMasterKey) {
-      delete[] clientMasterKey;
-      clientMasterKey = NULL;
+public:
+    SrtpSessionKeys()
+    {
+        clientMasterKey = new unsigned char[SRTP_MASTER_KEY_KEY_LEN];
+        clientMasterKeyLen = 0;
+        clientMasterSalt = new unsigned char[SRTP_MASTER_KEY_SALT_LEN];
+        clientMasterSaltLen = 0;
+        serverMasterKey = new unsigned char[SRTP_MASTER_KEY_KEY_LEN];
+        serverMasterKeyLen = 0;
+        serverMasterSalt = new unsigned char[SRTP_MASTER_KEY_SALT_LEN];
+        serverMasterSaltLen = 0;
     }
-    if (serverMasterKey) {
-      delete[] serverMasterKey;
-      serverMasterKey = NULL;
+    ~SrtpSessionKeys()
+    {
+        if (clientMasterKey) {
+            delete[] clientMasterKey;
+            clientMasterKey = NULL;
+        }
+        if (serverMasterKey) {
+            delete[] serverMasterKey;
+            serverMasterKey = NULL;
+        }
+        if (clientMasterSalt) {
+            delete[] clientMasterSalt;
+            clientMasterSalt = NULL;
+        }
+        if (serverMasterSalt) {
+            delete[] serverMasterSalt;
+            serverMasterSalt = NULL;
+        }
     }
-    if (clientMasterSalt) {
-      delete[] clientMasterSalt;
-      clientMasterSalt = NULL;
-    }
-    if (serverMasterSalt) {
-      delete[] serverMasterSalt;
-      serverMasterSalt = NULL;
-    }
-  }
-  unsigned char* clientMasterKey;
-  int clientMasterKeyLen;
-  unsigned char* serverMasterKey;
-  int serverMasterKeyLen;
-  unsigned char* clientMasterSalt;
-  int clientMasterSaltLen;
-  unsigned char* serverMasterSalt;
-  int serverMasterSaltLen;
+    unsigned char* clientMasterKey;
+    int clientMasterKeyLen;
+    unsigned char* serverMasterKey;
+    int serverMasterKeyLen;
+    unsigned char* clientMasterSalt;
+    int clientMasterSaltLen;
+    unsigned char* serverMasterSalt;
+    int serverMasterSaltLen;
 };
 
 class DtlsSocket {
-  DECLARE_LOGGER();
+    DECLARE_LOGGER();
 
-  public:
-  enum SocketType { Client,
-    Server };
-  ~DtlsSocket();
+public:
+    enum SocketType { Client,
+        Server };
+    ~DtlsSocket();
 
-  // Inspects packet to see if it's a DTLS packet, if so continue processing
-  bool handlePacketMaybe(const unsigned char* bytes, unsigned int len);
+    // Inspects packet to see if it's a DTLS packet, if so continue processing
+    bool handlePacketMaybe(const unsigned char* bytes, unsigned int len);
 
-  // Called by DtlSocketTimer when timer expires - causes a retransmission (forceRetransmit)
-  void expired(DtlsSocketTimer*);
+    // Called by DtlSocketTimer when timer expires - causes a retransmission (forceRetransmit)
+    void expired(DtlsSocketTimer*);
 
-  // Retrieves the finger print of the certificate presented by the remote party
-  bool getRemoteFingerprint(char* fingerprint);
+    // Retrieves the finger print of the certificate presented by the remote party
+    bool getRemoteFingerprint(char* fingerprint);
 
-  // Retrieves the finger print of the certificate presented by the remote party and checks
-  // it agains the passed in certificate
-  bool checkFingerprint(const char* fingerprint, unsigned int len);
+    // Retrieves the finger print of the certificate presented by the remote party and checks
+    // it agains the passed in certificate
+    bool checkFingerprint(const char* fingerprint, unsigned int len);
 
-  // Retrieves the finger print of our local certificate, same as getMyCertFingerprint from DtlsFactory
-  void getMyCertFingerprint(char* fingerprint);
+    // Retrieves the finger print of our local certificate, same as getMyCertFingerprint from DtlsFactory
+    void getMyCertFingerprint(char* fingerprint);
 
-  // For client sockets only - causes a client handshake to start (doHandshakeIteration)
-  void startClient();
+    // For client sockets only - causes a client handshake to start (doHandshakeIteration)
+    void startClient();
 
-  // Retreives the SRTP session keys from the Dtls session
-  SrtpSessionKeys* getSrtpSessionKeys();
+    // Retreives the SRTP session keys from the Dtls session
+    SrtpSessionKeys* getSrtpSessionKeys();
 
-  // Utility fn to compute a certificates fingerprint
-  static void computeFingerprint(X509* cert, char* fingerprint);
+    // Utility fn to compute a certificates fingerprint
+    static void computeFingerprint(X509* cert, char* fingerprint);
 
-  // Retrieves the DTLS negotiated SRTP profile - may return 0 if profile selection failed
-  SRTP_PROTECTION_PROFILE* getSrtpProfile();
+    // Retrieves the DTLS negotiated SRTP profile - may return 0 if profile selection failed
+    SRTP_PROTECTION_PROFILE* getSrtpProfile();
 
-  // Creates SRTP session policies appropriately based on socket type (client vs server) and keys
-  // extracted from the DTLS handshake process
-  void createSrtpSessionPolicies(srtp_policy_t& outboundPolicy, srtp_policy_t& inboundPolicy);
+    // Creates SRTP session policies appropriately based on socket type (client vs server) and keys
+    // extracted from the DTLS handshake process
+    void createSrtpSessionPolicies(srtp_policy_t& outboundPolicy, srtp_policy_t& inboundPolicy);
 
-  DtlsSocketContext* getSocketContext() { return mSocketContext.get(); }
+    DtlsSocketContext* getSocketContext() { return mSocketContext.get(); }
 
-  private:
-  friend class DtlsFactory;
+private:
+    friend class DtlsFactory;
 
-  // Causes an immediate handshake iteration to happen, which will retransmit the handshake
-  void forceRetransmit();
+    // Causes an immediate handshake iteration to happen, which will retransmit the handshake
+    void forceRetransmit();
 
-  // Creates an SSL socket, and if client sets state to connect_state and if server sets state to accept_state.  Sets SSL BIO's.
-  DtlsSocket(boost::shared_ptr<DtlsSocketContext> socketContext, DtlsFactory* factory, enum SocketType);
+    // Creates an SSL socket, and if client sets state to connect_state and if server sets state to accept_state.  Sets SSL BIO's.
+    DtlsSocket(boost::shared_ptr<DtlsSocketContext> socketContext, DtlsFactory* factory, enum SocketType);
 
-  // Give CPU cyces to the handshake process - checks current state and acts appropraitely
-  void doHandshakeIteration();
+    // Give CPU cyces to the handshake process - checks current state and acts appropraitely
+    void doHandshakeIteration();
 
-  // Internals
-  boost::shared_ptr<DtlsSocketContext> mSocketContext;
-  DtlsFactory* mFactory;
-  DtlsTimer* mReadTimer; // Timer used during handshake process
+    // Internals
+    boost::shared_ptr<DtlsSocketContext> mSocketContext;
+    DtlsFactory* mFactory;
+    DtlsTimer* mReadTimer; // Timer used during handshake process
 
-  // OpenSSL context data
-  SSL* mSsl;
-  BIO* mInBio;
-  BIO* mOutBio;
+    // OpenSSL context data
+    SSL* mSsl;
+    BIO* mInBio;
+    BIO* mOutBio;
 
-  SocketType mSocketType;
-  bool mHandshakeCompleted;
-  boost::mutex handshakeMutex_;
+    SocketType mSocketType;
+    bool mHandshakeCompleted;
+    boost::mutex handshakeMutex_;
 };
 
 class DtlsReceiver {
-  public:
-  virtual void writeDtls(DtlsSocketContext* ctx, const unsigned char* data, unsigned int len) = 0;
-  virtual void onHandshakeCompleted(DtlsSocketContext* ctx, std::string clientKey, std::string serverKey, std::string srtp_profile) = 0;
+public:
+    virtual void writeDtls(DtlsSocketContext* ctx, const unsigned char* data, unsigned int len) = 0;
+    virtual void onHandshakeCompleted(DtlsSocketContext* ctx, std::string clientKey, std::string serverKey, std::string srtp_profile) = 0;
 };
 
 class DtlsSocketContext {
-  DECLARE_LOGGER();
+    DECLARE_LOGGER();
 
-  public:
-  bool started;
-  //memory is only valid for duration of callback; must be copied if queueing
-  //is required
-  DtlsSocketContext();
-  virtual ~DtlsSocketContext();
-  void start();
-  void read(const unsigned char* data, unsigned int len);
-  void write(const unsigned char* data, unsigned int len);
-  void handshakeCompleted();
-  void handshakeFailed(const char* err);
-  void setDtlsReceiver(DtlsReceiver* recv);
-  void setDtlsSocket(DtlsSocket* sock) { mSocket = sock; }
-  std::string getFingerprint();
+public:
+    bool started;
+    //memory is only valid for duration of callback; must be copied if queueing
+    //is required
+    DtlsSocketContext();
+    virtual ~DtlsSocketContext();
+    void start();
+    void read(const unsigned char* data, unsigned int len);
+    void write(const unsigned char* data, unsigned int len);
+    void handshakeCompleted();
+    void handshakeFailed(const char* err);
+    void setDtlsReceiver(DtlsReceiver* recv);
+    void setDtlsSocket(DtlsSocket* sock) { mSocket = sock; }
+    std::string getFingerprint();
 
-  protected:
-  DtlsSocket* mSocket;
-  DtlsReceiver* receiver;
-  DtlsFactory* clientFactory;
+protected:
+    DtlsSocket* mSocket;
+    DtlsReceiver* receiver;
+    DtlsFactory* clientFactory;
 };
 }
 
