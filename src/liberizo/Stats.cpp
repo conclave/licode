@@ -10,7 +10,7 @@ namespace erizo {
 
 DEFINE_LOGGER(Stats, "Stats");
 
-Stats::Stats(AsyncCallback* callback)
+Stats::Stats(cross::AsyncCallback* callback)
     : callback_{ callback }
 {
     ELOG_DEBUG("Constructor Stats");

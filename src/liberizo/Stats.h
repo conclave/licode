@@ -19,7 +19,7 @@ class Stats {
     DECLARE_LOGGER();
 
 public:
-    Stats(AsyncCallback*);
+    Stats(cross::AsyncCallback*);
     virtual ~Stats();
 
     void processRtcpPacket(char* buf, int length);
@@ -39,7 +39,7 @@ private:
     typedef std::map<uint32_t, singleSSRCstatsMap_t> fullStatsMap_t;
     fullStatsMap_t statsPacket_;
     boost::recursive_mutex mapMutex_;
-    AsyncCallback* callback_;
+    cross::AsyncCallback* callback_;
     unsigned int videoSSRC_, audioSSRC_;
 
     void processRtcpPacket(RtcpHeader* chead);

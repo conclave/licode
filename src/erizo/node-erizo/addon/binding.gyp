@@ -2,13 +2,13 @@
   'targets': [{
     'target_name': 'addon',
     'sources': [ 'addon.cc',
-      'CrossCallback.cc',
+      "<!(node -e \"require('crosscallback')\")/CrossCallback.cc",
       'WebRtcConnection.cc',
       'OneToManyProcessor.cc',
       'OneToManyTranscoder.cc',
       'ExternalInput.cc',
       'ExternalOutput.cc' ],
-    'include_dirs' : ['../../../liberizo', '$(PREFIX_DIR)/include'],
+    'include_dirs' : ['../../../liberizo', '$(PREFIX_DIR)/include', "<!(node -e \"require('crosscallback')\")"],
     'conditions': [
       [ 'OS=="mac"', {
         'xcode_settings': {

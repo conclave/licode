@@ -9,7 +9,7 @@ namespace erizo {
 DEFINE_LOGGER(WebRtcConnection, "WebRtcConnection");
 
 WebRtcConnection::WebRtcConnection(bool audioEnabled, bool videoEnabled,
-    const IceConfig& iceConfig, bool trickleEnabled, AsyncCallback* listener)
+    const IceConfig& iceConfig, bool trickleEnabled, cross::AsyncCallback* listener)
     : connEventListener_(listener)
     , stats_(listener)
     , rateControl_(0)
@@ -598,18 +598,7 @@ std::string WebRtcConnection::getJSONStats()
 void WebRtcConnection::notifyEvent(WebRTCEvent newEvent, const std::string& message)
 {
     if (connEventListener_ != nullptr) {
-        std::ostringstream data;
-        data << "{\"status\":" << newEvent << ",\"message\":\"";
-        for (auto it = message.begin(); it != message.end(); ++it) { // escape newlines for JSON.parse
-            if (*it == '\r')
-                data << "\\r";
-            else if (*it == '\n')
-                data << "\\n";
-            else
-                data << *it;
-        }
-        data << "\"}";
-        connEventListener_->notify("connection", data.str());
+        connEventListener_->emit("connection", newEvent, message);
     }
 }
 

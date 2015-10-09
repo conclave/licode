@@ -26,6 +26,7 @@ else()
 endif()
 
 set(LIBNICE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../local/lib/")
+set(CROSSCALLBACK_DIR ../../node_modules/crosscallback)
 
 find_package(PkgConfig)
 #functions
@@ -40,9 +41,10 @@ set(ERIZO_VERSION_MAJOR 0)
 set(ERIZO_VERSION_MINOR 1)
 set(CMAKE_CXX_FLAGS "-g -Wall -std=c++11")
 
-include_directories("${ERIZO_SOURCE_DIR}" "${THIRD_PARTY_INCLUDE}")
+include_directories("${ERIZO_SOURCE_DIR}" "${THIRD_PARTY_INCLUDE}" "${CROSSCALLBACK_DIR}")
 
 set(ERIZO_SOURCES 
+  "${CROSSCALLBACK_DIR}/AsyncCallback.cc"
   "${ERIZO_SOURCE_DIR}/SdpInfo.cpp"
   "${ERIZO_SOURCE_DIR}/SrtpChannel.cpp"
   "${ERIZO_SOURCE_DIR}/DtlsTransport.cpp"

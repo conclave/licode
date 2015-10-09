@@ -47,7 +47,7 @@ public:
      * Constructor.
      * Constructs an empty WebRTCConnection without any configuration.
      */
-    WebRtcConnection(bool audioEnabled, bool videoEnabled, const IceConfig& iceConfig, bool trickleEnabled, AsyncCallback* listener);
+    WebRtcConnection(bool audioEnabled, bool videoEnabled, const IceConfig& iceConfig, bool trickleEnabled, cross::AsyncCallback* listener);
     /**
      * Destructor.
      */
@@ -129,7 +129,7 @@ private:
     boost::mutex receiveVideoMutex_, updateStateMutex_, feedbackMutex_;
     boost::thread send_Thread_;
     std::queue<dataPacket> sendQueue_;
-    AsyncCallback* connEventListener_;
+    cross::AsyncCallback* connEventListener_;
     Stats stats_;
     Transport *videoTransport_, *audioTransport_;
 
