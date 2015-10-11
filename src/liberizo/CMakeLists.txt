@@ -26,7 +26,9 @@ else()
 endif()
 
 set(LIBNICE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../local/lib/")
-set(CROSSCALLBACK_DIR ../../node_modules/crosscallback)
+execute_process(COMMAND node -e "require('crosscallback')"
+  OUTPUT_VARIABLE CROSSCALLBACK_DIR
+  OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 find_package(PkgConfig)
 #functions

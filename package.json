@@ -6,7 +6,7 @@
     "amqp": "*",
     "aws-lib": "*",
     "body-parser": "*",
-    "crosscallback": "0.1.0",
+    "crosscallback": "0.1.2",
     "errorhandler": "*",
     "express": "*",
     "log4js": "*",
