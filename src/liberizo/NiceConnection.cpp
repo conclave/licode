@@ -63,8 +63,7 @@ void cb_component_state_changed(NiceAgent* agent, guint stream_id,
     if (state == NICE_COMPONENT_STATE_CONNECTED) {
         //      NiceConnection *conn = (NiceConnection*) user_data;
         //      conn->updateComponentState(component_id, NICE_READY);
-    }
-    else if (state == NICE_COMPONENT_STATE_FAILED) {
+    } else if (state == NICE_COMPONENT_STATE_FAILED) {
         NiceConnection* conn = (NiceConnection*)user_data;
         conn->updateComponentState(component_id, NICE_FAILED);
     }
@@ -175,8 +174,7 @@ NiceConnection::NiceConnection(MediaType med, const std::string& transport_name,
             nice_agent_attach_recv(agent_, 1, i, context_, cb_nice_recv, this);
         }
         running_ = true;
-    }
-    else {
+    } else {
         running_ = false;
     }
     m_Thread_ = boost::thread(&NiceConnection::init, this);
@@ -334,8 +332,7 @@ bool NiceConnection::setRemoteCandidates(std::vector<CandidateInfo>& candidates,
             nice_address_set_port(&thecandidate->base_addr, cinfo.rPort);
             ELOG_DEBUG("Adding remote candidate type %d addr %s port %d raddr %s rport %d", cinfo.hostType, cinfo.hostAddress.c_str(), cinfo.hostPort,
                 cinfo.rAddress.c_str(), cinfo.rPort);
-        }
-        else {
+        } else {
             ELOG_DEBUG("Adding remote candidate type %d addr %s port %d priority %d componentId %d, username %s, pass %s",
                 cinfo.hostType,
                 cinfo.hostAddress.c_str(),
@@ -460,8 +457,7 @@ void NiceConnection::updateComponentState(unsigned int compId, IceState state)
                 return;
             }
         }
-    }
-    else if (state == NICE_FAILED) {
+    } else if (state == NICE_FAILED) {
         ELOG_ERROR("%s - NICE Component %u FAILED", transportName->c_str(), compId);
         for (unsigned int i = 1; i <= iceComponents_; i++) {
             if (comp_state_list_[i] != NICE_FAILED) {

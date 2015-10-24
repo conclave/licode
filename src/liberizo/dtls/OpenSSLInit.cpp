@@ -77,8 +77,7 @@ void resip_OpenSSLInit_lockingFunction(int mode, int n, const char* file, int li
         return;
     if (mode & CRYPTO_LOCK) {
         resip::OpenSSLInit::mMutexes[n].lock();
-    }
-    else {
+    } else {
         resip::OpenSSLInit::mMutexes[n].unlock();
     }
 }
@@ -117,8 +116,7 @@ void resip_OpenSSLInit_dynLockFunction(int mode, struct CRYPTO_dynlock_value* dy
 {
     if (mode & CRYPTO_LOCK) {
         dynlock->mutex->lock();
-    }
-    else {
+    } else {
         dynlock->mutex->unlock();
     }
 }

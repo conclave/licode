@@ -223,8 +223,7 @@ int AudioDecoder::decodeAudio(unsigned char* inBuff, int inBuffLen,
            }
            */
             outSize = data_size;
-        }
-        else {
+        } else {
             outSize = 0;
         }
 

@@ -16,8 +16,7 @@ void DtlsTimer::fire()
 {
     if (mValid) {
         expired();
-    }
-    else {
+    } else {
         //memory mangement is overly tricky and possibly wrong...deleted by target
         //if valid is the contract. weak pointers would help.
         delete this;
@@ -55,8 +54,7 @@ TestTimerContext::getRemainingTime()
             return (0);
 
         return (mExpiryTime - timeMs);
-    }
-    else {
+    } else {
 #if defined(WIN32) && !defined(__GNUC__)
         return 18446744073709551615ui64;
 #else

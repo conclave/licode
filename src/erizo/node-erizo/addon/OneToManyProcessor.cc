@@ -41,8 +41,7 @@ void OneToManyProcessor::New(const v8::FunctionCallbackInfo<v8::Value>& args)
         obj->msink = obj->me;
         obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
-    }
-    else {
+    } else {
         const int argc = 1;
         Local<Value> argv[argc] = { args[0] };
         args.GetReturnValue().Set((Local<Function>::New(isolate, constructor))->NewInstance(argc, argv));

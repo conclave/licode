@@ -68,8 +68,7 @@ int SrtpChannel::protectRtp(char* buffer, int* len)
     int val = srtp_protect(send_session_, buffer, len);
     if (val == 0) {
         return 0;
-    }
-    else {
+    } else {
         RtcpHeader* head = reinterpret_cast<RtcpHeader*>(buffer);
         RtpHeader* headrtp = reinterpret_cast<RtpHeader*>(buffer);
 
@@ -86,8 +85,7 @@ int SrtpChannel::unprotectRtp(char* buffer, int* len)
     int val = srtp_unprotect(receive_session_, (char*)buffer, len);
     if (val == 0) {
         return 0;
-    }
-    else {
+    } else {
         RtcpHeader* head = reinterpret_cast<RtcpHeader*>(buffer);
         RtpHeader* headrtp = reinterpret_cast<RtpHeader*>(buffer);
         ELOG_WARN("Error SrtpChannel::unprotectRtp %u packettype %d pt %d", val, head->packettype, headrtp->payloadtype);
@@ -101,8 +99,7 @@ int SrtpChannel::protectRtcp(char* buffer, int* len)
     int val = srtp_protect_rtcp(send_session_, (char*)buffer, len);
     if (val == 0) {
         return 0;
-    }
-    else {
+    } else {
         RtcpHeader* head = reinterpret_cast<RtcpHeader*>(buffer);
         ELOG_WARN("Error SrtpChannel::protectRtcp %upackettype %d ", val, head->packettype);
         return -1;
@@ -115,8 +112,7 @@ int SrtpChannel::unprotectRtcp(char* buffer, int* len)
     int val = srtp_unprotect_rtcp(receive_session_, buffer, len);
     if (val == 0) {
         return 0;
-    }
-    else {
+    } else {
         ELOG_WARN("Error SrtpChannel::unprotectRtcp %u", val);
         return -1;
     }
@@ -131,8 +127,7 @@ bool SrtpChannel::configureSrtpSession(srtp_t* session, const char* key,
     crypto_policy_set_aes_cm_128_hmac_sha1_80(&policy.rtcp);
     if (type == SENDING) {
         policy.ssrc.type = ssrc_any_outbound;
-    }
-    else {
+    } else {
 
         policy.ssrc.type = ssrc_any_inbound;
     }

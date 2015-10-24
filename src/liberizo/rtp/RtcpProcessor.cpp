@@ -36,8 +36,7 @@ void RtcpProcessor::addSourceSsrc(uint32_t ssrc)
         if (ssrc == this->rtcpSource_->getAudioSourceSSRC()) {
             ELOG_DEBUG("It is an audio SSRC %u", ssrc);
             this->rtcpData_[ssrc]->mediaType = AUDIO_TYPE;
-        }
-        else {
+        } else {
             ELOG_DEBUG("It is a video SSRC %u", ssrc);
             this->rtcpData_[ssrc]->mediaType = VIDEO_TYPE;
         }
@@ -106,8 +105,7 @@ void RtcpProcessor::analyzeFeedback(char* buf, int len)
                 theData->rrsReceivedInPeriod++;
                 if (chead->getSourceSSRC() == rtcpSource_->getVideoSourceSSRC()) {
                     ELOG_DEBUG("Analyzing Video RR: PacketLost %u, Ratio %u, partNum %d, blocks %d, sourceSSRC %u", chead->getLostPackets(), chead->getFractionLost(), partNum, chead->getBlockCount(), chead->getSourceSSRC());
-                }
-                else {
+                } else {
                     ELOG_DEBUG("Analyzing Audio RR: PacketLost %u, Ratio %u, partNum %d, blocks %d, sourceSSRC %u", chead->getLostPackets(), chead->getFractionLost(), partNum, chead->getBlockCount(), chead->getSourceSSRC());
                 }
                 theData->ratioLost = theData->ratioLost > chead->getFractionLost() ? theData->ratioLost : chead->getFractionLost();
@@ -130,8 +128,7 @@ void RtcpProcessor::analyzeFeedback(char* buf, int len)
                     theData->delaySinceLastSr = chead->getDelaySinceLastSr();
                     theData->lastSrUpdated = now;
                     theData->lastDelay = delay;
-                }
-                else {
+                } else {
                     //              ELOG_DEBUG("Not recording delay %u, lastDelay %u", delay, theData->lastDelay);
                 }
                 break;
@@ -167,8 +164,7 @@ void RtcpProcessor::analyzeFeedback(char* buf, int len)
                             theData->reportedBandwidth = bitrate;
                             theData->shouldSendREMB = true;
                         }
-                    }
-                    else {
+                    } else {
                         ELOG_DEBUG("Unsupported AFB Packet not REMB")
                     }
                     break;
@@ -213,8 +209,7 @@ void RtcpProcessor::checkRtcpFb()
                 ELOG_DEBUG("Sending Audio RR: PacketLost %u, Ratio %u, DLSR %u, lastSR %u, DLSR Adjusted %u dt %u, rrsSinceLast %u highestSeqNum %u", rtcpData->totalPacketsLost, rtcpData->ratioLost, rtcpData->delaySinceLastSr, rtcpData->lastSr, (rtcpData->delaySinceLastSr + edlsr), dt, rtcpData->rrsReceivedInPeriod, rtcpData->highestSeqNumReceived);
                 rtcpHead.setSSRC(rtcpSink_->getAudioSinkSSRC());
                 rtcpHead.setSourceSSRC(rtcpSource_->getAudioSourceSSRC());
-            }
-            else {
+            } else {
                 sinkSsrc = rtcpSink_->getVideoSinkSSRC();
                 ELOG_DEBUG("Sending Video RR: SOurcessrc %u sinkSsrc %u PacketLost %u, Ratio %u, DLSR %u, lastSR %u, DLSR Adjusted %u dt %u, rrsSinceLast %u highestSeqNum %u jitter %u", sourceSsrc, rtcpSink_->getVideoSinkSSRC(), rtcpData->totalPacketsLost, rtcpData->ratioLost, rtcpData->delaySinceLastSr, rtcpData->lastSr, (rtcpData->delaySinceLastSr + edlsr), dt, rtcpData->rrsReceivedInPeriod, rtcpData->highestSeqNumReceived, rtcpData->jitter);
                 rtcpHead.setSSRC(rtcpSink_->getVideoSinkSSRC());
@@ -254,8 +249,7 @@ void RtcpProcessor::checkRtcpFb()
             }
             if (sourceSsrc == rtcpSource_->getVideoSourceSSRC()) {
                 rtcpSink_->deliverVideoData((char*)packet_, length);
-            }
-            else {
+            } else {
                 rtcpSink_->deliverAudioData((char*)packet_, length);
             }
             rtcpData->lastRrSent = now;
@@ -267,8 +261,7 @@ void RtcpProcessor::checkRtcpFb()
             if (rtcpData->mediaType == AUDIO_TYPE) {
                 rtcpData->nextPacketInMs = RR_AUDIO_PERIOD * random;
                 ELOG_DEBUG("Scheduled next Audio RR in %u ms", rtcpData->nextPacketInMs);
-            }
-            else {
+            } else {
                 rtcpData->nextPacketInMs = (RR_VIDEO_BASE)*random;
                 ELOG_DEBUG("Scheduled next Video RR in %u ms", rtcpData->nextPacketInMs);
             }

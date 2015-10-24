@@ -80,8 +80,7 @@ void Resender::resend(const boost::system::error_code& ec)
         int val = nice_->sendData(comp_, data_, len_);
         if (val < 0) {
             sent_ = -1;
-        }
-        else {
+        } else {
             sent_ = 2;
         }
     }
@@ -138,16 +137,14 @@ void DtlsTransport::onNiceData(unsigned int component_id, char* data, int len, N
                 rtpResender_->cancel();
             }
             dtlsRtp_->read(reinterpret_cast<unsigned char*>(data), len);
-        }
-        else {
+        } else {
             if (rtcpResender_.get() != NULL) {
                 rtcpResender_->cancel();
             }
             dtlsRtcp_->read(reinterpret_cast<unsigned char*>(data), len);
         }
         return;
-    }
-    else if (this->getTransportState() == TRANSPORT_READY) {
+    } else if (this->getTransportState() == TRANSPORT_READY) {
         memcpy(unprotectBuf_, data, len);
 
         if (dtlsRtcp_ != NULL && component_id == 2) {
@@ -159,14 +156,12 @@ void DtlsTransport::onNiceData(unsigned int component_id, char* data, int len, N
                 if (srtp->unprotectRtcp(unprotectBuf_, &length) < 0) {
                     return;
                 }
-            }
-            else {
+            } else {
                 if (srtp->unprotectRtp(unprotectBuf_, &length) < 0) {
                     return;
                 }
             }
-        }
-        else {
+        } else {
             return;
         }
 
@@ -207,8 +202,7 @@ void DtlsTransport::write(char* data, int len)
                     return;
                 }
             }
-        }
-        else {
+        } else {
             comp = 1;
 
             if (srtp && nice_->checkIceState() == NICE_READY) {
@@ -233,8 +227,7 @@ void DtlsTransport::writeDtls(DtlsSocketContext* ctx, const unsigned char* data,
         comp = 2;
         rtcpResender_.reset(new Resender(nice_, comp, data, len));
         rtcpResender_->start();
-    }
-    else {
+    } else {
         rtpResender_.reset(new Resender(nice_, comp, data, len));
         rtpResender_->start();
     }
@@ -252,8 +245,7 @@ void DtlsTransport::onHandshakeCompleted(DtlsSocketContext* ctx, std::string cli
         srtp_.reset(new SrtpChannel());
         if (srtp_->setRtpParams((char*)clientKey.c_str(), (char*)serverKey.c_str())) {
             readyRtp_ = true;
-        }
-        else {
+        } else {
             updateTransportState(TRANSPORT_FAILED);
         }
         if (dtlsRtcp_ == NULL) {
@@ -265,8 +257,7 @@ void DtlsTransport::onHandshakeCompleted(DtlsSocketContext* ctx, std::string cli
         srtcp_.reset(new SrtpChannel());
         if (srtcp_->setRtpParams((char*)clientKey.c_str(), (char*)serverKey.c_str())) {
             readyRtcp_ = true;
-        }
-        else {
+        } else {
             updateTransportState(TRANSPORT_FAILED);
         }
     }
@@ -287,16 +278,13 @@ void DtlsTransport::updateIceState(IceState state, NiceConnection* conn)
     ELOG_DEBUG("%s - New NICE state state: %d - Media: %d - is Bundle: %d", transport_name.c_str(), state, mediaType, bundle_);
     if (state == NICE_INITIAL && this->getTransportState() != TRANSPORT_STARTED) {
         updateTransportState(TRANSPORT_STARTED);
-    }
-    else if (state == NICE_CANDIDATES_RECEIVED && this->getTransportState() != TRANSPORT_GATHERED) {
+    } else if (state == NICE_CANDIDATES_RECEIVED && this->getTransportState() != TRANSPORT_GATHERED) {
         updateTransportState(TRANSPORT_GATHERED);
-    }
-    else if (state == NICE_FAILED) {
+    } else if (state == NICE_FAILED) {
         ELOG_DEBUG("Nice Failed, no more reading packets");
         running_ = false;
         updateTransportState(TRANSPORT_FAILED);
-    }
-    else if (state == NICE_READY) {
+    } else if (state == NICE_READY) {
         ELOG_INFO("%s - Nice ready", transport_name.c_str());
         if (dtlsRtp_ && !dtlsRtp_->started) {
             ELOG_INFO("%s - DTLSRTP Start", transport_name.c_str());
@@ -320,8 +308,7 @@ void DtlsTransport::processLocalSdp(SdpInfo* sdp)
     if (bundle_) {
         sdp->setCredentials(username, password, VIDEO_TYPE);
         sdp->setCredentials(username, password, AUDIO_TYPE);
-    }
-    else {
+    } else {
         sdp->setCredentials(username, password, this->mediaType);
     }
     ELOG_DEBUG("Processed Local SDP in DTLS Transport with credentials %s, %s", username.c_str(), password.c_str());

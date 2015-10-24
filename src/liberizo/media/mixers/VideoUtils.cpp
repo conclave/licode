@@ -188,8 +188,7 @@ vPutImageP(unsigned char* inBuff,
                 }
             }
         }
-    }
-    else {
+    } else {
         for (unsigned i = 0; i < H; i++) {
             position1 = initRectPos1 + lineSize1 * i; //save image1 position
             position2 = initRectPos2 + lineSize2 * i; //save image2 position

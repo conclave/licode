@@ -311,8 +311,7 @@ std::string SdpInfo::getSdp()
         if (iceAudioUsername_.size() > 0) {
             sdp << "a=ice-ufrag:" << iceAudioUsername_ << endl;
             sdp << "a=ice-pwd:" << iceAudioPassword_ << endl;
-        }
-        else {
+        } else {
             sdp << "a=ice-ufrag:" << iceVideoUsername_ << endl;
             sdp << "a=ice-pwd:" << iceVideoPassword_ << endl;
         }
@@ -359,8 +358,7 @@ std::string SdpInfo::getSdp()
                 if (rtp.channels > 1) {
                     sdp << "a=rtpmap:" << payloadType << " " << rtp.encodingName << "/"
                         << rtp.clockRate << "/" << rtp.channels << endl;
-                }
-                else {
+                } else {
                     sdp << "a=rtpmap:" << payloadType << " " << rtp.encodingName << "/"
                         << rtp.clockRate << endl;
                 }
@@ -368,8 +366,7 @@ std::string SdpInfo::getSdp()
                      theIt != rtp.formatParameters.end(); theIt++) {
                     if (theIt->first.compare("none")) {
                         sdp << "a=fmtp:" << payloadType << " " << theIt->first << "=" << theIt->second << endl;
-                    }
-                    else {
+                    } else {
                         sdp << "a=fmtp:" << payloadType << " " << theIt->second << endl;
                     }
                 }
@@ -462,8 +459,7 @@ std::string SdpInfo::getSdp()
                      theIt != rtp.formatParameters.end(); theIt++) {
                     if (theIt->first.compare("none")) {
                         sdp << "a=fmtp:" << payloadType << " " << theIt->first << "=" << theIt->second << endl;
-                    }
-                    else {
+                    } else {
                         sdp << "a=fmtp:" << payloadType << " " << theIt->second << endl;
                     }
                 }
@@ -581,8 +577,7 @@ bool SdpInfo::processSdp(const std::string& sdp, const std::string& media)
     MediaType mtype = OTHER;
     if (media == "audio") {
         mtype = AUDIO_TYPE;
-    }
-    else if (media == "video") {
+    } else if (media == "video") {
         mtype = VIDEO_TYPE;
     }
 
@@ -620,25 +615,20 @@ bool SdpInfo::processSdp(const std::string& sdp, const std::string& media)
             ELOG_DEBUG("RecvOnly sdp")
             if (mtype == AUDIO_TYPE) {
                 this->audioDirection = RECVONLY;
-            }
-            else {
+            } else {
                 this->videoDirection = RECVONLY;
             }
-        }
-        else if (isSendOnly != std::string::npos) {
+        } else if (isSendOnly != std::string::npos) {
             ELOG_DEBUG("SendOnly sdp")
             if (mtype == AUDIO_TYPE) {
                 this->audioDirection = SENDONLY;
-            }
-            else {
+            } else {
                 this->videoDirection = SENDONLY;
             }
-        }
-        else if (isSendRecv != std::string::npos) {
+        } else if (isSendRecv != std::string::npos) {
             if (mtype == AUDIO_TYPE) {
                 this->audioDirection = SENDRECV;
-            }
-            else {
+            } else {
                 this->videoDirection = SENDRECV;
             }
             ELOG_DEBUG("SendRecv sdp")
@@ -709,12 +699,10 @@ bool SdpInfo::processSdp(const std::string& sdp, const std::string& media)
             if (mtype == VIDEO_TYPE) {
                 iceVideoUsername_ = parts[0];
                 ELOG_DEBUG("ICE Video username: %s", iceVideoUsername_.c_str());
-            }
-            else if (mtype == AUDIO_TYPE) {
+            } else if (mtype == AUDIO_TYPE) {
                 iceAudioUsername_ = parts[0];
                 ELOG_DEBUG("ICE Audio username: %s", iceAudioUsername_.c_str());
-            }
-            else {
+            } else {
                 ELOG_DEBUG("Unknown media type for ICE credentials, looks like Firefox");
                 iceVideoUsername_ = parts[0];
             }
@@ -725,12 +713,10 @@ bool SdpInfo::processSdp(const std::string& sdp, const std::string& media)
             if (mtype == VIDEO_TYPE) {
                 iceVideoPassword_ = parts[0];
                 ELOG_DEBUG("ICE Video password: %s", iceVideoPassword_.c_str());
-            }
-            else if (mtype == AUDIO_TYPE) {
+            } else if (mtype == AUDIO_TYPE) {
                 iceAudioPassword_ = parts[0];
                 ELOG_DEBUG("ICE Audio password: %s", iceAudioPassword_.c_str());
-            }
-            else {
+            } else {
                 ELOG_DEBUG("Unknown media type for ICE credentials, looks like Firefox");
                 iceVideoPassword_ = parts[0];
             }
@@ -745,8 +731,7 @@ bool SdpInfo::processSdp(const std::string& sdp, const std::string& media)
                         bundleTags[i].mediaType = mtype;
                     }
                 }
-            }
-            else {
+            } else {
                 ELOG_WARN("Unexpected size of a=mid element");
             }
         }
@@ -756,8 +741,7 @@ bool SdpInfo::processSdp(const std::string& sdp, const std::string& media)
             if ((mtype == VIDEO_TYPE) && (videoSsrc == 0)) {
                 videoSsrc = strtoul(parts[1].c_str(), NULL, 10);
                 ELOG_DEBUG("video ssrc: %u", videoSsrc);
-            }
-            else if ((mtype == AUDIO_TYPE) && (audioSsrc == 0)) {
+            } else if ((mtype == AUDIO_TYPE) && (audioSsrc == 0)) {
                 audioSsrc = strtoul(parts[1].c_str(), NULL, 10);
                 ELOG_DEBUG("audio ssrc: %u", audioSsrc);
             }
@@ -818,8 +802,7 @@ bool SdpInfo::processSdp(const std::string& sdp, const std::string& media)
                 std::string value = "none";
                 if (parts.size() == 4) {
                     value = parts[3].c_str();
-                }
-                else {
+                } else {
                     option = parts[3].c_str();
                     value = parts[4].c_str();
                 }
@@ -831,8 +814,7 @@ bool SdpInfo::processSdp(const std::string& sdp, const std::string& media)
                         rtp.formatParameters[option] = value;
                     }
                 }
-            }
-            else if (parts.size() == 4) {
+            } else if (parts.size() == 4) {
             }
         }
 
@@ -850,13 +832,11 @@ bool SdpInfo::processSdp(const std::string& sdp, const std::string& media)
     if (iceVideoUsername_.empty() && iceAudioUsername_.empty()) {
         ELOG_ERROR("No valid credentials for ICE")
         return false;
-    }
-    else if (iceVideoUsername_.empty()) {
+    } else if (iceVideoUsername_.empty()) {
         ELOG_DEBUG("Video credentials empty, setting the audio ones");
         iceVideoUsername_ = iceAudioUsername_;
         iceVideoPassword_ = iceAudioPassword_;
-    }
-    else if (iceAudioUsername_.empty()) {
+    } else if (iceAudioUsername_.empty()) {
         ELOG_DEBUG("Audio credentials empty, setting the video ones");
         iceAudioUsername_ = iceVideoUsername_;
         iceAudioPassword_ = iceVideoPassword_;
@@ -868,8 +848,7 @@ bool SdpInfo::processSdp(const std::string& sdp, const std::string& media)
         if (c.mediaType == VIDEO_TYPE) {
             c.username = iceVideoUsername_;
             c.password = iceVideoPassword_;
-        }
-        else {
+        } else {
             c.username = iceAudioUsername_;
             c.password = iceAudioPassword_;
         }

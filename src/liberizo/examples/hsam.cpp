@@ -19,11 +19,11 @@ int main()
 
     new Test();
 
-    //	SDPReceiver* receiver = new SDPReceiver();
-    //	Observer *subscriber = new Observer("subscriber", receiver);
-    //	new Observer("publisher", receiver);
-    //	subscriber->wait();
-    //	return 0;
+    //  SDPReceiver* receiver = new SDPReceiver();
+    //  Observer *subscriber = new Observer("subscriber", receiver);
+    //  new Observer("publisher", receiver);
+    //  subscriber->wait();
+    //  return 0;
 }
 
 SDPReceiver::SDPReceiver()
@@ -41,8 +41,7 @@ bool SDPReceiver::createPublisher(int peer_id)
         newConn->setVideoSink(muxer);
         muxer->setPublisher(newConn);
         publisherid = peer_id;
-    }
-    else {
+    } else {
         printf("PUBLISHER ALREADY SET\n");
         return false;
     }
@@ -65,8 +64,7 @@ void SDPReceiver::setRemoteSDP(int peer_id, const std::string& sdp)
 {
     if (peer_id == publisherid) {
         muxer->publisher->setRemoteSdp(sdp);
-    }
-    else {
+    } else {
         muxer->subscribers[std::to_string(peer_id)]->setRemoteSdp(sdp);
     }
 }
@@ -75,8 +73,7 @@ std::string SDPReceiver::getLocalSDP(int peer_id)
     std::string sdp;
     if (peer_id == publisherid) {
         sdp = muxer->publisher->getLocalSdp();
-    }
-    else {
+    } else {
         sdp = muxer->subscribers[std::to_string(peer_id)]->getLocalSdp();
     }
     printf("Getting localSDP %s\n", sdp.c_str());

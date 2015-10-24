@@ -1,10 +1,5 @@
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-extern "C"
-{
-     BIO_METHOD *BIO_f_dwrap(void);
+extern "C" {
+BIO_METHOD* BIO_f_dwrap(void);
 }
 
 /* ====================================================================

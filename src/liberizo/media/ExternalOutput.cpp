@@ -33,16 +33,14 @@ ExternalOutput::ExternalOutput(const std::string& outputUrl)
     context_ = avformat_alloc_context();
     if (context_ == NULL) {
         ELOG_ERROR("Error allocating memory for IO context");
-    }
-    else {
+    } else {
 
         outputUrl.copy(context_->filename, sizeof(context_->filename), 0);
 
         context_->oformat = av_guess_format(NULL, context_->filename, NULL);
         if (!context_->oformat) {
             ELOG_ERROR("Error guessing format %s", context_->filename);
-        }
-        else {
+        } else {
             context_->oformat->video_codec = AV_CODEC_ID_VP8;
             context_->oformat->audio_codec = AV_CODEC_ID_NONE; // We'll figure this out once we start receiving data; it's either PCM or OPUS
         }
@@ -136,8 +134,7 @@ void ExternalOutput::writeAudioData(char* buf, int len)
         //We dont need any other payload at this time
         if (head->getPayloadType() == PCMU_8000_PT) {
             context_->oformat->audio_codec = AV_CODEC_ID_PCM_MULAW;
-        }
-        else if (head->getPayloadType() == OPUS_48000_PT) {
+        } else if (head->getPayloadType() == OPUS_48000_PT) {
             context_->oformat->audio_codec = AV_CODEC_ID_OPUS;
         }
     }
@@ -212,20 +209,17 @@ void ExternalOutput::writeVideoData(char* buf, int len)
             unpackagedSize_ += payload->dataLength;
             unpackagedBufferpart_ += payload->dataLength;
             deliver = true;
-        }
-        else if (!startOfFrame && !endOfFrame) {
+        } else if (!startOfFrame && !endOfFrame) {
             // This is neither the start nor the end of a frame.  Reset our buffers.  Look for start.
             unpackagedSize_ = 0;
             unpackagedBufferpart_ = unpackagedBuffer_;
-        }
-        else if (startOfFrame && !endOfFrame) {
+        } else if (startOfFrame && !endOfFrame) {
             // Found start frame.  Copy to buffers.  Look for our end.
             memcpy(unpackagedBufferpart_, payload->data, payload->dataLength);
             unpackagedSize_ += payload->dataLength;
             unpackagedBufferpart_ += payload->dataLength;
             vp8SearchState_ = lookingForEnd;
-        }
-        else { // (!startOfFrame && endOfFrame)
+        } else { // (!startOfFrame && endOfFrame)
             // We got the end of a frame.  Reset our buffers.
             unpackagedSize_ = 0;
             unpackagedBufferpart_ = unpackagedBuffer_;
@@ -242,22 +236,19 @@ void ExternalOutput::writeVideoData(char* buf, int len)
             unpackagedSize_ += payload->dataLength;
             unpackagedBufferpart_ += payload->dataLength;
             deliver = true;
-        }
-        else if (!startOfFrame && !endOfFrame) {
+        } else if (!startOfFrame && !endOfFrame) {
             // This is neither the start nor the end.  Add it to our unpackage buffer.
             memcpy(unpackagedBufferpart_, payload->data, payload->dataLength);
             unpackagedSize_ += payload->dataLength;
             unpackagedBufferpart_ += payload->dataLength;
-        }
-        else if (startOfFrame && !endOfFrame) {
+        } else if (startOfFrame && !endOfFrame) {
             // Unexpected.  We got the start of a frame.  Clear out our buffer, toss this payload in, and continue looking for the end.
             unpackagedSize_ = 0;
             unpackagedBufferpart_ = unpackagedBuffer_;
             memcpy(unpackagedBufferpart_, payload->data, payload->dataLength);
             unpackagedSize_ += payload->dataLength;
             unpackagedBufferpart_ += payload->dataLength;
-        }
-        else { // (!startOfFrame && endOfFrame)
+        } else { // (!startOfFrame && endOfFrame)
             // Got the end of a frame.  Let's deliver and start looking for the start of a frame.
             vp8SearchState_ = lookingForStart;
             memcpy(unpackagedBufferpart_, payload->data, payload->dataLength);
@@ -429,12 +420,10 @@ void ExternalOutput::queueData(char* buffer, int length, packetType type)
             if (0 == fec_receiver_.AddReceivedRedPacket(hackyHeader, (const uint8_t*)buffer, length, ULP_90000_PT)) {
                 fec_receiver_.ProcessReceivedFec();
             }
-        }
-        else {
+        } else {
             videoQueue_.pushPacket(buffer, length);
         }
-    }
-    else {
+    } else {
         if (this->audioOffsetMsec_ == -1) {
             timeval time;
             gettimeofday(&time, NULL);
@@ -445,8 +434,7 @@ void ExternalOutput::queueData(char* buffer, int length, packetType type)
             RtpHeader* h = reinterpret_cast<RtpHeader*>(buffer);
             if (h->getPayloadType() == PCMU_8000_PT) {
                 audioQueue_.setTimebase(8000);
-            }
-            else if (h->getPayloadType() == OPUS_48000_PT) {
+            } else if (h->getPayloadType() == OPUS_48000_PT) {
                 audioQueue_.setTimebase(48000);
             }
         }

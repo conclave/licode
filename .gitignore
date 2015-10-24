@@ -11,3 +11,5 @@ local/
 etc/default
 run/
 .tags*
+*.sublime-project
+*.sublime-workspace

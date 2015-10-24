@@ -215,8 +215,7 @@ int InputProcessor::decodeAudio(unsigned char* inBuff, int inBuffLen,
            }
            */
             outSize = data_size;
-        }
-        else {
+        } else {
             outSize = 0;
         }
 
@@ -410,8 +409,7 @@ void OutputProcessor::receiveRawData(RawDataPacket& packet)
         int a = vCoder.encodeVideo(packet.data, packet.length, encodedBuffer_, UNPACKAGED_BUFFER_SIZE, hasFrame);
         if (a > 0)
             this->packageVideo(encodedBuffer_, a, packagedBuffer_);
-    }
-    else {
+    } else {
         //      int a = this->encodeAudio(packet.data, packet.length, &pkt);
         //      if (a > 0) {
         //        ELOG_DEBUG("GUAY a %d", a);
@@ -483,8 +481,7 @@ int OutputProcessor::packageAudio(unsigned char* inBuff, int inBuffLen,
     if (pts == 0) {
         //      head.setTimestamp(audioSeqnum_*160);
         head.setTimestamp(av_rescale(audioSeqnum_, (mediaInfo.audioCodec.sampleRate / 1000), 1));
-    }
-    else {
+    } else {
         //      head.setTimestamp(pts*8);
         head.setTimestamp(av_rescale(pts, mediaInfo.audioCodec.sampleRate, 1000));
     }
@@ -528,8 +525,7 @@ int OutputProcessor::packageVideo(unsigned char* inBuff, int buffSize, unsigned 
         rtpHeader.setSeqNumber(seqnum_++);
         if (pts == 0) {
             rtpHeader.setTimestamp(av_rescale(millis, 90000, 1000));
-        }
-        else {
+        } else {
             rtpHeader.setTimestamp(av_rescale(pts, 90000, 1000));
         }
         rtpHeader.setSSRC(55543);

@@ -134,8 +134,7 @@ bool WebRtcConnection::addRemoteCandidate(const std::string& mid, int mLineIndex
     if ((!mid.compare("video")) || (mLineIndex == remoteSdp_.videoSdpMLine)) {
         theType = VIDEO_TYPE;
         theMid = "video";
-    }
-    else {
+    } else {
         theType = AUDIO_TYPE;
         theMid = "audio";
     }
@@ -148,12 +147,10 @@ bool WebRtcConnection::addRemoteCandidate(const std::string& mid, int mLineIndex
         if (theType == VIDEO_TYPE || bundle_) {
             ELOG_DEBUG("Setting VIDEO CANDIDATE");
             res = videoTransport_->setRemoteCandidates(tempSdp.getCandidateInfos(), bundle_);
-        }
-        else if (theType == AUDIO_TYPE) {
+        } else if (theType == AUDIO_TYPE) {
             ELOG_DEBUG("Setting AUDIO CANDIDATE");
             res = audioTransport_->setRemoteCandidates(tempSdp.getCandidateInfos(), bundle_);
-        }
-        else {
+        } else {
             ELOG_ERROR("Cannot add remote candidate with no Media (video or audio)");
         }
     }
@@ -208,8 +205,7 @@ void WebRtcConnection::onCandidate(const CandidateInfo& cand, Transport* transpo
             if (!bundle_) {
                 std::string object = this->getJSONCandidate(transport->transport_name, sdp);
                 notifyEvent(CONN_CANDIDATE, object);
-            }
-            else {
+            } else {
                 if (remoteSdp_.hasAudio) {
                     std::string object = this->getJSONCandidate("audio", sdp);
                     notifyEvent(CONN_CANDIDATE, object);
@@ -231,8 +227,7 @@ int WebRtcConnection::deliverAudioData_(char* buf, int len)
                 this->queueData(0, buf, len, videoTransport_, AUDIO_PACKET);
             }
         }
-    }
-    else if (audioTransport_ != NULL) {
+    } else if (audioTransport_ != NULL) {
         if (audioEnabled_ == true) {
             this->queueData(0, buf, len, audioTransport_, AUDIO_PACKET);
         }
@@ -269,8 +264,7 @@ int WebRtcConnection::deliverVideoData_(char* buf, int len)
                 if (fec_receiver_.AddReceivedRedPacket(hackyHeader, (const uint8_t*)buf, len, ULP_90000_PT) == 0) {
                     fec_receiver_.ProcessReceivedFec();
                 }
-            }
-            else {
+            } else {
                 this->queueData(0, buf, len, videoTransport_, VIDEO_PACKET);
             }
         }
@@ -309,8 +303,7 @@ void WebRtcConnection::writeSsrc(char* buf, int len, unsigned int ssrc)
                 }
             }
         } while (totalLength < len);
-    }
-    else {
+    } else {
         head->setSSRC(ssrc);
     }
 }
@@ -335,8 +328,7 @@ void WebRtcConnection::onTransportData(char* buf, int len, Transport* transport)
         if (fbSink_ != NULL && shouldSendFeedback_) {
             fbSink_->deliverFeedback(buf, len);
         }
-    }
-    else {
+    } else {
         // RTP or RTCP Sender Report
         if (bundle_) {
             // Check incoming SSRC
@@ -345,24 +337,20 @@ void WebRtcConnection::onTransportData(char* buf, int len, Transport* transport)
             uint32_t recvSSRC;
             if (chead->packettype == RTCP_Sender_PT) { //Sender Report
                 recvSSRC = chead->getSSRC();
-            }
-            else {
+            } else {
                 recvSSRC = head->getSSRC();
             }
             // Deliver data
             if (recvSSRC == this->getVideoSourceSSRC()) {
                 parseIncomingPayloadType(buf, len, VIDEO_PACKET);
                 videoSink_->deliverVideoData(buf, len);
-            }
-            else if (recvSSRC == this->getAudioSourceSSRC()) {
+            } else if (recvSSRC == this->getAudioSourceSSRC()) {
                 parseIncomingPayloadType(buf, len, AUDIO_PACKET);
                 audioSink_->deliverAudioData(buf, len);
-            }
-            else {
+            } else {
                 ELOG_ERROR("Unknown SSRC %u, localVideo %u, remoteVideo %u, ignoring", recvSSRC, this->getVideoSourceSSRC(), this->getVideoSinkSSRC());
             }
-        }
-        else if (transport->mediaType == AUDIO_TYPE) {
+        } else if (transport->mediaType == AUDIO_TYPE) {
             if (audioSink_ != NULL) {
                 parseIncomingPayloadType(buf, len, AUDIO_PACKET);
                 RtpHeader* head = reinterpret_cast<RtpHeader*>(buf);
@@ -373,8 +361,7 @@ void WebRtcConnection::onTransportData(char* buf, int len, Transport* transport)
                     this->setAudioSourceSSRC(head->getSSRC());
                     if (chead->packettype == RTCP_Sender_PT) { // Sender Report
                         recvSSRC = chead->getSSRC();
-                    }
-                    else {
+                    } else {
                         recvSSRC = head->getSSRC();
                     }
                     ELOG_DEBUG("Audio Source SSRC is %u", recvSSRC);
@@ -382,8 +369,7 @@ void WebRtcConnection::onTransportData(char* buf, int len, Transport* transport)
                 }
                 audioSink_->deliverAudioData(buf, len);
             }
-        }
-        else if (transport->mediaType == VIDEO_TYPE) {
+        } else if (transport->mediaType == VIDEO_TYPE) {
             if (videoSink_ != NULL) {
                 parseIncomingPayloadType(buf, len, VIDEO_PACKET);
                 RtpHeader* head = reinterpret_cast<RtpHeader*>(buf);
@@ -393,8 +379,7 @@ void WebRtcConnection::onTransportData(char* buf, int len, Transport* transport)
                     unsigned int recvSSRC;
                     if (chead->packettype == RTCP_Sender_PT) { //Sender Report
                         recvSSRC = chead->getSSRC();
-                    }
-                    else {
+                    } else {
                         recvSSRC = head->getSSRC();
                     }
                     ELOG_DEBUG("Video Source SSRC is %u", recvSSRC);
@@ -443,8 +428,7 @@ void WebRtcConnection::updateState(TransportState state, Transport* transport)
     case TRANSPORT_STARTED:
         if (bundle_) {
             temp = CONN_STARTED;
-        }
-        else {
+        } else {
             if ((!remoteSdp_.hasAudio || (audioTransport_ != NULL && audioTransport_->getTransportState() == TRANSPORT_STARTED)) && (!remoteSdp_.hasVideo || (videoTransport_ != NULL && videoTransport_->getTransportState() == TRANSPORT_STARTED))) {
                 // WebRTCConnection will be ready only when all channels are ready.
                 temp = CONN_STARTED;
@@ -457,8 +441,7 @@ void WebRtcConnection::updateState(TransportState state, Transport* transport)
                 temp = CONN_GATHERED;
                 msg = this->getLocalSdp();
             }
-        }
-        else {
+        } else {
             if ((!remoteSdp_.hasAudio || (audioTransport_ != NULL && audioTransport_->getTransportState() == TRANSPORT_GATHERED)) && (!remoteSdp_.hasVideo || (videoTransport_ != NULL && videoTransport_->getTransportState() == TRANSPORT_GATHERED))) {
                 // WebRTCConnection will be ready only when all channels are ready.
                 if (!trickleEnabled_) {
@@ -471,8 +454,7 @@ void WebRtcConnection::updateState(TransportState state, Transport* transport)
     case TRANSPORT_READY:
         if (bundle_) {
             temp = CONN_READY;
-        }
-        else {
+        } else {
             if ((!remoteSdp_.hasAudio || (audioTransport_ != NULL && audioTransport_->getTransportState() == TRANSPORT_READY)) && (!remoteSdp_.hasVideo || (videoTransport_ != NULL && videoTransport_->getTransportState() == TRANSPORT_READY))) {
                 // WebRTCConnection will be ready only when all channels are ready.
                 temp = CONN_READY;
@@ -518,8 +500,7 @@ void WebRtcConnection::changeDeliverPayloadType(dataPacket* dp, packetType type)
         int externalPT = internalPT;
         if (type == AUDIO_PACKET) {
             externalPT = remoteSdp_.getAudioExternalPT(internalPT);
-        }
-        else if (type == VIDEO_PACKET) {
+        } else if (type == VIDEO_PACKET) {
             externalPT = remoteSdp_.getVideoExternalPT(externalPT);
         }
         if (internalPT != externalPT) {
@@ -538,15 +519,13 @@ void WebRtcConnection::parseIncomingPayloadType(char* buf, int len, packetType t
         int internalPT = externalPT;
         if (type == AUDIO_PACKET) {
             internalPT = remoteSdp_.getAudioInternalPT(externalPT);
-        }
-        else if (type == VIDEO_PACKET) {
+        } else if (type == VIDEO_PACKET) {
             internalPT = remoteSdp_.getVideoInternalPT(externalPT);
         }
         if (externalPT != internalPT) {
             h->setPayloadType(internalPT);
             // ELOG_ERROR("onTransportData mapping %i to %i", externalPT, internalPT);
-        }
-        else {
+        } else {
             // ELOG_ERROR("onTransportData did not find mapping for %i", externalPT);
         }
     }
@@ -578,8 +557,7 @@ void WebRtcConnection::queueData(int comp, const char* buf, int length, Transpor
         p_.length = length;
         changeDeliverPayloadType(&p_, type);
         sendQueue_.push(p_);
-    }
-    else {
+    } else {
         ELOG_DEBUG("Discarding Packets");
     }
     cond_.notify_one();
@@ -648,8 +626,7 @@ void WebRtcConnection::sendLoop()
                 }
             }
             videoTransport_->write(p.data, p.length);
-        }
-        else {
+        } else {
             audioTransport_->write(p.data, p.length);
         }
     }

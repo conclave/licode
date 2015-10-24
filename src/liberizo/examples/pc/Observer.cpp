@@ -47,13 +47,12 @@ void Observer::processMessage(int peer_id, const std::string& message)
     printf("OFFER1\n");
     std::string roap = message;
 
-    // 	Pillar el OffererId
-    // 	Generar AnswererId
+    //  Pillar el OffererId
+    //  Generar AnswererId
     if (name_ == "publisher") {
         if (!receiver_->createPublisher(peer_id))
             return;
-    }
-    else {
+    } else {
         if (!receiver_->createSubscriber(peer_id))
             return;
     }
@@ -66,7 +65,7 @@ void Observer::processMessage(int peer_id, const std::string& message)
 
     Observer::Replace(sdp, "\n", "\\\\r\\\\n");
     std::string answererSessionId = "106";
-    //	std::string offererSessionId = Observer::Match(roap, "^.*offererSessionId\":(.{32,32}).*$");
+    //  std::string offererSessionId = Observer::Match(roap, "^.*offererSessionId\":(.{32,32}).*$");
     std::string offererSessionId = Observer::Match(roap,
         "^.*offererSessionId\":(...).*$");
     std::string answer1("\n{\n \"messageType\":\"ANSWER\",\n");

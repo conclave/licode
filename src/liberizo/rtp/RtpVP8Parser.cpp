@@ -200,8 +200,7 @@ RTPPayloadVP8* RtpVP8Parser::parseVP8(unsigned char* data,
     if (dataLength > 0 && vp8->beginningOfPartition && vp8->partitionID == 0) {
         //parsedPacket.frameType = (*dataPtr & 0x01) ? kPFrame : kIFrame;
         vp8->frameType = (*dataPtr & 0x01) ? kPFrame : kIFrame;
-    }
-    else {
+    } else {
 
         vp8->frameType = kPFrame;
     }

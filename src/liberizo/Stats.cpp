@@ -83,8 +83,7 @@ void Stats::processRtcpPacket(RtcpHeader* chead)
                 uint64_t bitrate = chead->getBrMantis() << chead->getBrExp();
                 ELOG_DEBUG("REMB Packet numSSRC %u mantissa %u exp %u, tot %lu bps", chead->getREMBNumSSRC(), chead->getBrMantis(), chead->getBrExp(), bitrate);
                 setBandwidth(bitrate, ssrc);
-            }
-            else {
+            } else {
                 ELOG_DEBUG("Unsupported AFB Packet not REMB")
             }
             break;
@@ -111,8 +110,7 @@ std::string Stats::getStats()
         if (currentSSRC == videoSSRC_) {
             theString << "\"type\":\""
                       << "video\",\n";
-        }
-        else if (currentSSRC == audioSSRC_) {
+        } else if (currentSSRC == audioSSRC_) {
             theString << "\"type\":\""
                       << "audio\",\n";
         }

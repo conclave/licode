@@ -22,26 +22,22 @@ void SSLInfoCallback(const SSL* s, int where, int ret)
     int w = where & ~SSL_ST_MASK;
     if (w & SSL_ST_CONNECT) {
         str = "SSL_connect";
-    }
-    else if (w & SSL_ST_ACCEPT) {
+    } else if (w & SSL_ST_ACCEPT) {
         str = "SSL_accept";
     }
     if (where & SSL_CB_LOOP) {
         ELOG_DEBUG2(sslLogger, "%s", SSL_state_string_long(s));
-    }
-    else if (where & SSL_CB_ALERT) {
+    } else if (where & SSL_CB_ALERT) {
         str = (where & SSL_CB_READ) ? "read" : "write";
         ELOG_DEBUG2(sslLogger, "SSL3 alert %d - %s; %s : %s",
             ret,
             str,
             SSL_alert_type_string_long(ret),
             SSL_alert_desc_string_long(ret));
-    }
-    else if (where & SSL_CB_EXIT) {
+    } else if (where & SSL_CB_EXIT) {
         if (ret == 0) {
             ELOG_WARN2(sslLogger, "failed in %s", SSL_state_string_long(s));
-        }
-        else if (ret < 0) {
+        } else if (ret < 0) {
             ELOG_WARN2(sslLogger, "error in %s", SSL_state_string_long(s));
         }
     }

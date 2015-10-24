@@ -136,11 +136,9 @@ bool RtpPacketQueue::rtpSequenceLessThan(uint16_t x, uint16_t y)
     int diff = y - x;
     if (diff > 0) {
         return (diff < 0x8000);
-    }
-    else if (diff < 0) {
+    } else if (diff < 0) {
         return (diff < -0x8000);
-    }
-    else { // diff == 0
+    } else { // diff == 0
         return false;
     }
 }

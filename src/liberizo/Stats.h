@@ -101,8 +101,7 @@ private:
     {
         if (statsPacket_[ssrc].count("PLI")) {
             statsPacket_[ssrc]["PLI"]++;
-        }
-        else {
+        } else {
             statsPacket_[ssrc]["PLI"] = 1;
         }
     }
@@ -110,8 +109,7 @@ private:
     {
         if (statsPacket_[ssrc].count("SLI")) {
             statsPacket_[ssrc]["SLI"]++;
-        }
-        else {
+        } else {
             statsPacket_[ssrc]["SLI"] = 1;
         }
     }
@@ -119,8 +117,7 @@ private:
     {
         if (statsPacket_[ssrc].count("FIR")) {
             statsPacket_[ssrc]["FIR"]++;
-        }
-        else {
+        } else {
             statsPacket_[ssrc]["FIR"] = 1;
         }
     }
@@ -129,8 +126,7 @@ private:
     {
         if (statsPacket_[ssrc].count("NACK")) {
             statsPacket_[ssrc]["NACK"]++;
-        }
-        else {
+        } else {
             statsPacket_[ssrc]["NACK"] = 1;
         }
     }

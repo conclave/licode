@@ -25,8 +25,7 @@ PC::PC(const std::string& name)
 
     if (name.compare("publisher") == 0) {
         control_socket_ = CreateClientSocket(PUBLISHER_PORT);
-    }
-    else if (name.compare("subscriber") == 0) {
+    } else if (name.compare("subscriber") == 0) {
         control_socket_ = CreateClientSocket(SUBSCRIBER_PORT);
     }
 }
@@ -57,7 +56,7 @@ void PC::RegisterObserver(PCClientObserver* callback)
 
 tcp::socket* PC::CreateClientSocket(int port)
 {
-    //	tcp::socket *sock = new tcp::socket (servAddress, port);
+    //  tcp::socket *sock = new tcp::socket (servAddress, port);
     char portchar[6];
     sprintf(portchar, "%d", port);
     tcp::resolver::query query(tcp::v4(), servAddress, portchar);
@@ -114,7 +113,7 @@ void PC::OnRead(boost::asio::ip::tcp::socket* socket)
     std::string the_data;
     if (state_ == CONNECTED) {
         if (ReadIntoBuffer(socket, &the_data, &content_length)) {
-            //			printf("DATA\n%s\n", the_data.c_str());
+            //          printf("DATA\n%s\n", the_data.c_str());
         }
     }
 }
@@ -174,7 +173,7 @@ bool PC::SendToPeer(int peer_id, const std::string& message)
     sprintf((char*)peer, "%d", peer_id);
     std::string msg;
     msg.append("MSG_TO_PEER;").append((char*)peer).append(";").append(message);
-    //	control_socket_->send(msg.c_str(), msg.length());
+    //  control_socket_->send(msg.c_str(), msg.length());
     boost::asio::write(*control_socket_,
         boost::asio::buffer((char*)msg.c_str(), msg.length()));
 

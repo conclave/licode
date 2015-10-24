@@ -60,8 +60,7 @@ unsigned int RtpVP8Fragmenter::writeFragment(const Fragment& fragment,
             buffer[0] |= 0x10; // S bit 1 // era 01
         memcpy(&buffer[1], &totalData_[fragment.position], fragment.size);
         return (fragment.size + 1);
-    }
-    else {
+    } else {
         memcpy(&buffer[0], &totalData_[fragment.position], fragment.size);
         return fragment.size;
     }

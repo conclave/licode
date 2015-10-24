@@ -62,8 +62,7 @@ int ExternalInput::init()
     if (streamNo < 0) {
         ELOG_WARN("No Video stream found");
         //return streamNo;
-    }
-    else {
+    } else {
         om.hasVideo = true;
         video_stream_index_ = streamNo;
         st = context_->streams[streamNo];
@@ -74,8 +73,7 @@ int ExternalInput::init()
         ELOG_WARN("No Audio stream found");
         ELOG_DEBUG("Has video, audio stream number %d. time base = %d / %d ", video_stream_index_, st->time_base.num, st->time_base.den);
         //return streamNo;
-    }
-    else {
+    } else {
         om.hasAudio = true;
         audio_stream_index_ = audioStreamNo;
         audio_st = context_->streams[audio_stream_index_];
@@ -87,8 +85,7 @@ int ExternalInput::init()
             om.audioCodec.sampleRate = 8000;
             om.audioCodec.codec = AUDIO_CODEC_PCM_U8;
             om.rtpAudioInfo.PT = PCMU_8000_PT;
-        }
-        else if (audio_st->codec->codec_id == AV_CODEC_ID_OPUS) {
+        } else if (audio_st->codec->codec_id == AV_CODEC_ID_OPUS) {
             ELOG_DEBUG("OPUS");
             om.audioCodec.sampleRate = 48000;
             om.audioCodec.codec = AUDIO_CODEC_OPUS;
@@ -110,8 +107,7 @@ int ExternalInput::init()
             om.audioCodec.sampleRate = 8000;
             om.audioCodec.codec = AUDIO_CODEC_PCM_U8;
             om.rtpAudioInfo.PT = PCMU_8000_PT;
-        }
-        else if (audio_st->codec->codec_id == AV_CODEC_ID_OPUS) {
+        } else if (audio_st->codec->codec_id == AV_CODEC_ID_OPUS) {
             ELOG_DEBUG("OPUS");
             om.audioCodec.sampleRate = 48000;
             om.audioCodec.codec = AUDIO_CODEC_OPUS;
@@ -119,8 +115,7 @@ int ExternalInput::init()
         }
         op_.reset(new OutputProcessor());
         op_->init(om, this);
-    }
-    else {
+    } else {
         needTranscoding_ = true;
         inCodec_.initDecoder(st->codec);
 
@@ -193,8 +188,7 @@ void ExternalInput::receiveLoop()
                     gotDecodedFrame = 0;
                 }
             }
-        }
-        else {
+        } else {
             if (avpacket_.stream_index == video_stream_index_) { //packet is video
                 // av_rescale(input, new_scale, old_scale)
                 int64_t pts = av_rescale(lastPts_, 1000000, (long int)video_time_base_);
@@ -204,8 +198,7 @@ void ExternalInput::receiveLoop()
                 }
                 lastPts_ = avpacket_.pts;
                 op_->packageVideo(avpacket_.data, avpacket_.size, decodedBuffer_.get(), avpacket_.pts);
-            }
-            else if (avpacket_.stream_index == audio_stream_index_) { //packet is audio
+            } else if (avpacket_.stream_index == audio_stream_index_) { //packet is audio
                 int64_t pts = av_rescale(lastAudioPts_, 1000000, (long int)audio_time_base_);
                 int64_t now = av_gettime() - startTime_;
                 if (pts > now) {
@@ -232,8 +225,7 @@ void ExternalInput::encodeLoop()
             op_->receiveRawData(packetQueue_.front());
             packetQueue_.pop();
             queueMutex_.unlock();
-        }
-        else {
+        } else {
             queueMutex_.unlock();
             usleep(10000);
         }

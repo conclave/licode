@@ -110,8 +110,7 @@ void DtlsSocketContext::handshakeCompleted()
         if (receiver != nullptr) {
             receiver->onHandshakeCompleted(this, clientKey, serverKey, srtp_profile->name);
         }
-    }
-    else {
+    } else {
         ELOG_DEBUG("Peer did not authenticate");
     }
 }

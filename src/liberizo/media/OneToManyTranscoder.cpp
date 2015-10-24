@@ -74,8 +74,7 @@ int OneToManyTranscoder::deliverVideoData_(char* buf, int len)
 
     if (theHead->getPayloadType() == 100) {
         ip_->deliverVideoData(sendVideoBuffer_, len);
-    }
-    else {
+    } else {
         this->receiveRtpData((unsigned char*)buf, len);
     }
 

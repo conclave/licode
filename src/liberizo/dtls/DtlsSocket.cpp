@@ -123,8 +123,7 @@ bool DtlsSocket::handlePacketMaybe(const unsigned char* bytes, unsigned int len)
     // Note: we must catch any below exceptions--if there are any
     try {
         doHandshakeIteration();
-    }
-    catch (int e) {
+    } catch (int e) {
         return false;
     }
     return true;
@@ -375,8 +374,7 @@ void DtlsSocket::createSrtpSessionPolicies(srtp_policy_t& outboundPolicy, srtp_p
 
         server_policy.ssrc.type = ssrc_any_inbound;
         inboundPolicy = server_policy;
-    }
-    else {
+    } else {
         server_policy.ssrc.type = ssrc_any_outbound;
         outboundPolicy = server_policy;
 
